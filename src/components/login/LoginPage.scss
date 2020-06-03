@@ -1,0 +1,44 @@
+section.login {
+  width: 95%;
+  // height: 80vh;
+  margin-block-start: 4rem !important;
+  img {
+    width: 60%;
+  }
+
+  form {
+    border: 2px solid #c4c4c4;
+    border-radius: 4px;
+    box-sizing: border-box;
+    padding: 58px 74px 80px;
+    color: #333333;
+    h3 {
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 21px;
+      text-transform: capitalize;
+      text-align: center;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      background: #ffffff;
+      border: 2px solid #c4c4c4;
+      border-radius: 4px;
+      box-sizing: border-box;
+      height: 52px;
+    }
+
+    input[type="submit"] {
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 21px;
+      text-transform: uppercase;
+      padding: 10px;
+      color: #ffffff;
+      border: none;
+      color: white;
+      background: #4180fe;
+    }
+  }
+}

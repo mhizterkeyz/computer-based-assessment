@@ -1,0 +1,42 @@
+header {
+  margin-block-start: 2rem;
+  text-align: center;
+  img {
+    margin-inline-end: 54px;
+  }
+
+  h1,
+  h2 {
+    font-weight: 600;
+    font-size: 25px;
+    line-height: 37px;
+    text-transform: uppercase;
+    color: #4f4f4f;
+    margin: 0;
+  }
+
+  h2 {
+    text-transform: capitalize;
+  }
+}
+
+footer {
+  position: absolute;
+  bottom: 2%;
+  right: 10%;
+  left: 10%;
+  width: 80%;
+  margin: auto;
+  hr {
+    border: 1px solid #c4c4c4;
+  }
+
+  h6 {
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 18px;
+    text-align: center;
+    text-transform: capitalize;
+    color: #4f4f4f;
+  }
+}
