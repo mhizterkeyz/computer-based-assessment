@@ -10,13 +10,13 @@ section.login {
     border: 2px solid #c4c4c4;
     border-radius: 4px;
     box-sizing: border-box;
-    padding: 58px 74px 80px;
+    padding: 58px 74px;
     color: #333333;
     h3 {
       font-weight: 600;
       font-size: 14px;
       line-height: 21px;
-      text-transform: capitalize;
+      // text-transform: capitalize;
       text-align: center;
     }
 
@@ -27,6 +27,11 @@ section.login {
       border-radius: 4px;
       box-sizing: border-box;
       height: 52px;
+      padding: 10px;
+    }
+    
+    input::placeholder {
+      color: #ccc;
     }
 
     input[type="submit"] {

@@ -1,5 +1,4 @@
 import React from 'react';
-import ksu_logo from '../image/ksu-logo.png';
 
 const Footer = () => (
   <footer className="m-auto text-center">
