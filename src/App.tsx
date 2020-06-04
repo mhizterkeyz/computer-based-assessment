@@ -9,6 +9,7 @@ import LoginPage from './components/login/LoginPage';
 import InstructionPage from './components/instruction/InstructionPage';
 import QuestionPage from './components/question/QuestionPage';
 import CredentialsPage from './components/credentials/CredentialsPage';
+import SubmitPage from './components/submit/SubmitPage';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/exam/credentials" component={CredentialsPage} />
         <Route path="/exam/instruction" component={InstructionPage} />
         <Route path={`/exam/question-${1}`} component={QuestionPage} />
+        <Route path={"/exam/submit"} component={SubmitPage} />
       </Switch>
     </Router>
   );

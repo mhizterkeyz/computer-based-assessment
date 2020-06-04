@@ -56,7 +56,7 @@ const CredentialsPage = () => {
     }, 5000);
 
     return () => clearTimeout(id);
-  })
+  });
 
   return redirectState
     ? <Redirect to="/exam/instruction" />

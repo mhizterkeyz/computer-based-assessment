@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-// import { useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import './QuestionPage.scss';
 import display_img from '../../image/Rectangle-19.png';
 import Modal from '../Modal';
@@ -50,6 +50,37 @@ const Credentials = (props: CredentialsProps) => {
     </>
   );
 };
+
+interface ConfirmSubmitProps {
+  handleModalClose: () => void;
+}
+
+const ConfirmSubmit = ({handleModalClose}:ConfirmSubmitProps) => {
+  const history = useHistory();
+  return (
+  <div className="text-center confirm-modal">
+    <h2>Do you want to submit?</h2>
+    <p>Submitting will automatically end your Examination <br />
+                        Continue by clicking on Submit if you're done.</p>
+
+    <div className="text-right">
+      <button
+        className="btn"
+        onClick={handleModalClose}
+      >
+        Don't Submit
+                            </button>
+
+      <button
+        className="btn ml-2"
+        onClick={() => {
+          history.push("/exam/submit");
+        }}>
+        Submit
+      </button>
+    </div>
+  </div>
+);};
 
 const QuestionPage = () => {
 
@@ -163,16 +194,7 @@ const QuestionPage = () => {
                     setModalData({
                       show: true,
                       display: (
-                        <div className="text-center confirm-modal">
-                          <h2>Do you want to submit?</h2>
-                          <p>Submitting will automatically end your Examination <br />
-                        Continue by clicking on Submit if you're done.</p>
-
-                          <div className="text-right">
-                            <button className="btn" onClick={handleModalClose}>Don't Submit</button>
-                            <button className="btn ml-2" onClick={handleModalClose}>Submit</button>
-                          </div>
-                        </div>
+                        <ConfirmSubmit handleModalClose={handleModalClose}/>
                       ),
                     });
                   }}
