@@ -2,7 +2,8 @@ section.instruction {
   width: 80%;
   margin-block-start: 2rem !important;
 
-  h3, h4 {
+  h3,
+  h4 {
     font-weight: bold;
     font-size: 20px;
     line-height: 27px;
@@ -20,11 +21,23 @@ section.instruction {
     }
   }
 
+  div.timer {
+    display: grid;
+    grid-template-columns: .3fr 1fr;
+    grid-gap: 2px;
+    h4 {
+      font-weight: 600;
+    }
+    span {
+      font-size: 2rem;
+    }
+  }
+
   > div.instruction {
     border: 2px solid #c4c4c4;
     border-radius: 4px;
     box-sizing: border-box;
-    padding: 2rem 10% ;
+    padding: 2rem 10%;
     h4 {
       font-weight: bold;
       font-size: 18px;
@@ -37,7 +50,6 @@ section.instruction {
       font-size: 16px;
       line-height: 21px;
       margin-block-end: 2rem;
-
     }
 
     > span {
@@ -45,7 +57,7 @@ section.instruction {
       font-size: 16px;
       line-height: 21px;
       text-transform: uppercase;
-      margin-block-end: .5rem;
+      margin-block-end: 0.5rem;
 
       span {
         font-weight: normal;

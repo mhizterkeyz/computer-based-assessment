@@ -4,13 +4,17 @@ import './InstructionPage.scss';
 
 const InstructionPage = () => {
   const history = useHistory();
-  
+
   return (
     <section className="m-auto instruction">
       <div className="d-flex justify-content-between">
         <h3>Course - <span>NIGERIAN PEOPLE and culture (GST 103)</span></h3>
 
-        <h4>Time Left: <span>45:00</span></h4>
+        <div className="timer align-items-end">
+          <h4>Time:</h4>
+          <span>45:00 minutes</span>
+        </div>
+
       </div>
       <div className="d-flex flex-column mb-5 instruction">
         <h4>Instruction</h4>
@@ -33,7 +37,7 @@ const InstructionPage = () => {
         <span>45 minutes</span>
         </span>
 
-       <div className="text-right">
+        <div className="text-right">
           <button
             className="btn"
             onClick={() => {
@@ -42,7 +46,7 @@ const InstructionPage = () => {
           >
             Start
         </button>
-       </div>
+        </div>
       </div>
     </section>
   );
