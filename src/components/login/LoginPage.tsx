@@ -10,7 +10,7 @@ const LoginPage = () => {
   return (
     <>
       {/* <Header /> */}
-      <section className=" row m-auto login">
+      <section className=" row m-auto  align-items-center login">
         <div className="col-6 text-center">
           <img src={assesment_SVG} alt="assesment" />
         </div>
@@ -20,13 +20,13 @@ const LoginPage = () => {
             className="d-flex flex-column col-8"
             onSubmit={(e) => { e.preventDefault() }}
           >
-            <h3>Login with your Matric number and "password" as your Password to start your Exam</h3>
+            <h3>Login to start you exam</h3>
             <label htmlFor="matric-no" className="mt-4"> Matric Number</label>
-            <input type="text" name="matric-no" placeholder="19PA100" />
+            <input type="text" name="matric-no" placeholder="Enter matric number" />
             <label htmlFor="password" className="mt-4"> Password</label>
-            <input type="password" name="password" placeholder="**********" />
+            <input type="password" name="password" placeholder="Enter password" />
 
-            <input type="submit" value="Login" className="offset-9 mt-4" onClick={() => {
+            <input type="submit" value="Login" className="" onClick={() => {
               history.push(`/exam/credentials`);
             }} />
           </form>

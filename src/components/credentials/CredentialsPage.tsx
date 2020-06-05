@@ -53,7 +53,7 @@ const CredentialsPage = () => {
   useEffect(() => {
     const id = setTimeout(() => {
       setRedirectState(true);
-    }, 5000);
+    }, 100000);
 
     return () => clearTimeout(id);
   });

@@ -7,17 +7,18 @@ const InstructionPage = () => {
 
   return (
     <section className="m-auto instruction">
-      <div className="d-flex justify-content-between">
-        <h3>Course - <span>NIGERIAN PEOPLE and culture (GST 103)</span></h3>
 
-        <div className="timer align-items-end">
-          <h4>Time:</h4>
-          <span>45:00 minutes</span>
+      <h3 className="mt-5">Course - <span>NIGERIAN PEOPLE and culture (GST 103)</span></h3>
+      
+      <div className="d-flex flex-column mb-5 instruction">
+        <div className="d-flex justify-content-between">
+          <h4>Instruction</h4>
+          <div className="timer align-items-end">
+            <h4>Time:  <span>45:00 Minutes</span></h4>
+           
+          </div>
         </div>
 
-      </div>
-      <div className="d-flex flex-column mb-5 instruction">
-        <h4>Instruction</h4>
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent efficitur, turpis quis condimentum
         convallis, nibh urna viverra neque, ac tristique odio diam sit amet libero. Donec pretium ac magna ut
         sagittis. Sed euismod, velit et interdum porttitor, ex ex dapibus augue, eget interdum nisi orci vitae lorem.

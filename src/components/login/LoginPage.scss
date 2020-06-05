@@ -7,31 +7,46 @@ section.login {
   }
 
   form {
-    border: 2px solid #c4c4c4;
-    border-radius: 4px;
+    background: #ffffff;
+    border: 1px solid #f1f1f1;
     box-sizing: border-box;
+    border-radius: 8px;
     padding: 58px 74px;
     color: #333333;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.15);
     h3 {
-      font-weight: 600;
+      font-weight: 500;
+      font-size: 20px;
+      line-height: 30px;
+      text-transform: capitalize;
+    }
+
+    label {
+      font-weight: 500;
       font-size: 14px;
       line-height: 21px;
-      // text-transform: capitalize;
-      text-align: center;
+      color: #abb4bd;
     }
 
     input[type="text"],
     input[type="password"] {
-      background: #ffffff;
-      border: 2px solid #c4c4c4;
-      border-radius: 4px;
+      border: 1px solid #8cb2fc;
+      background-color: #ecf2fc;
       box-sizing: border-box;
-      height: 52px;
+      border-radius: 4px;
+      font-size: 16px;
+      line-height: 24px;
+      color: #333333;
+      height: 48px;
       padding: 10px;
     }
-    
+
     input::placeholder {
-      color: #ccc;
+      color: #333333;
+    }
+
+    input:focus {
+      // opacity: 0.33;
     }
 
     input[type="submit"] {
@@ -40,10 +55,11 @@ section.login {
       line-height: 21px;
       text-transform: uppercase;
       padding: 10px;
+      margin-block-start: 2.6rem;
       color: #ffffff;
       border: none;
-      color: white;
-      background: #4180fe;
+      background: #4180FE;
+      border-radius: 4px;
     }
   }
 }
