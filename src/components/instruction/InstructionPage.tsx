@@ -8,7 +8,7 @@ const InstructionPage = () => {
   return (
     <section className="m-auto instruction">
 
-      <h3 className="mt-5">Course - <span>NIGERIAN PEOPLE and culture (GST 103)</span></h3>
+      <h3 className="mt-5">Course - <span>Nigeria People and Culture (GST 103)</span></h3>
       
       <div className="d-flex flex-column mb-5 instruction">
         <div className="d-flex justify-content-between">

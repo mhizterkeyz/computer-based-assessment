@@ -26,8 +26,8 @@ const LoginPage = () => {
             <label htmlFor="password" className="mt-4"> Password</label>
             <input type="password" name="password" placeholder="Enter password" />
 
-            <input type="submit" value="Login" className="" onClick={() => {
-              history.push(`/exam/credentials`);
+            <input type="submit" value="Login" className="btn" onClick={() => {
+              history.push("/exam/credentials");
             }} />
           </form>
         </div>

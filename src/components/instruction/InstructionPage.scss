@@ -12,6 +12,7 @@ section.instruction {
     span {
       font-weight: normal;
       margin-inline-start: 0.5rem;
+      text-transform: capitalize;
     }
   }
 
@@ -36,7 +37,7 @@ section.instruction {
     border: 1px solid #f1f1f1;
     box-sizing: border-box;
     border-radius: 4px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.15);
+    // box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.15);
     padding: 85px 15% 40px;
     h4 {
       font-weight: bold;
