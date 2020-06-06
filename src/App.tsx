@@ -10,6 +10,7 @@ import LoginPage from "./components/login/LoginPage";
 import InstructionPage from "./components/instruction/InstructionPage";
 import QuestionPage from "./components/question/QuestionPage";
 import CredentialsPage from "./components/credentials/CredentialsPage";
+import SubmitPage from "./components/submit/SubmitPage";
 
 function App() {
   const [user, setUser] = useState({
@@ -39,6 +40,7 @@ function App() {
       <Header />
       <Switch>
         <Route path="/exam/instruction" component={InstructionPage} />
+        <Route path={"/exam/submit"} component={SubmitPage} />
         <Route path="/exam/:question" component={QuestionPage} />
         <Route path="/exam" component={QuestionPage} />
         <Route

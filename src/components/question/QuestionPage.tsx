@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-// import { useHistory } from "react-router-dom";
 import "./QuestionPage.scss";
 import display_img from "../../image/Rectangle-19.png";
-import { Link } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
+import Modal from "../Modal";
 
 const credentialsObj: CredentialsProps = {
   displayImg: display_img,
@@ -50,6 +50,39 @@ const Credentials = (props: CredentialsProps) => {
         </div>
       </div>
     </>
+  );
+};
+
+interface ConfirmSubmitProps {
+  handleModalClose: () => void;
+}
+
+const ConfirmSubmit = ({ handleModalClose }: ConfirmSubmitProps) => {
+  const history = useHistory();
+  return (
+    <div className="text-center confirm-modal">
+      <h2>Do you want to submit?</h2>
+      <p>
+        Submitting will automatically end your Examination <br />
+        Continue by clicking on Submit if you're done.
+      </p>
+
+      <div className="text-right">
+        <button className="btn" onClick={handleModalClose}>
+          Don't Submit
+        </button>
+
+        <button
+          className="btn ml-2"
+          onClick={() => {
+            delete localStorage["jwt"];
+            history.push("/exam/submit");
+          }}
+        >
+          Submit
+        </button>
+      </div>
+    </div>
   );
 };
 
@@ -101,6 +134,11 @@ const QuestionPage = (props: any) => {
       },
     },
     answered: {},
+  });
+
+  const [modalData, setModalData] = useState({
+    show: false,
+    display: <></>,
   });
 
   const { minutes, seconds } = counter;
@@ -157,90 +195,105 @@ const QuestionPage = (props: any) => {
     });
   };
 
+  const handleModalClose = () => setModalData({ ...modalData, show: false });
   return (
-    <section className="m-auto d-flex question">
-      <Credentials {...credentialsObj} />
+    <>
+      <Modal show={modalData.show} handleClose={handleModalClose}>
+        {modalData.display}
+      </Modal>
+      <section className="m-auto d-flex question">
+        {/* <Credentials {...credentialsObj} /> */}
+        <div className="question">
+          <div className="d-flex justify-content-between align-items-center">
+            <h3>
+              Course - <span>NIGERIAN PEOPLE and culture (GST 103)</span>
+            </h3>
 
-      <div className="question">
-        <div className="d-flex justify-content-between">
-          <h3>
-            Course - <span>NIGERIAN PEOPLE and culture (GST 103)</span>
-          </h3>
-
-          {/* <h4>Time Left: <span>45:00</span></h4> */}
-          <h4>
-            Time Left:{" "}
-            <span>
-              {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
-            </span>
-          </h4>
-        </div>
-
-        <div className="d-flex flex-column question-pane">
-          <h4 className="text-center mb-4">
-            {question.question_no &&
-              question.question_no.toUpperCase().replace("-", " ")}
-          </h4>
-          <p>{question.question && question.question}</p>
-
-          <form className="d-flex flex-column">
-            {question.options &&
-              Object.keys(question.options).map((opt) => {
-                const val: any = Object.values(exam.answered).find(
-                  (elem: any) => elem._id === question._id
-                );
-                return (
-                  <div key={`${question._id}_opt_${opt}`}>
-                    <label>
-                      {opt.toUpperCase()}.
-                      <input
-                        type="radio"
-                        checked={val && val.value === opt}
-                        name="answer"
-                        value={opt}
-                        className="ml-3 mr-2"
-                        onChange={handleChoose}
-                      />
-                      {question.options[opt]}
-                    </label>
-                  </div>
-                );
-              })}
-          </form>
-
-          <div className="row">
-            <div className="col-6">
-              <Link className="btn mr-4" to={`/exam/${prev}`}>
-                Previous
-              </Link>
-              <Link className="btn mr-4" to={`/exam/${next}`}>
-                Next
-              </Link>
-            </div>
-
-            <div className="col-6 text-right">
-              <button className="btn" onClick={() => {}}>
-                Submit
-              </button>
+            {/* <h4>Time Left: <span>45:00</span></h4> */}
+            <div className="timer align-items-end">
+              <h4>Time Left:</h4>
+              <span>
+                {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
+              </span>
             </div>
           </div>
-        </div>
 
-        <div className="mt-3 mb-5 question-btn">
-          {Object.keys(exam.questions).map((elem, key) => (
-            <Link
-              className={`btn ${
-                exam.answered.hasOwnProperty(elem) ? "answered" : ""
-              }`}
-              to={`/exam/${elem}`}
-              key={key}
-            >
-              {key + 1}
-            </Link>
-          ))}
+          <div className="d-flex flex-column question-pane">
+            <h4 className="text-center mb-4">
+              {question.question_no &&
+                question.question_no.toUpperCase().replace("-", " ")}
+            </h4>
+            <p>{question.question && question.question}</p>
+
+            <form className="d-flex flex-column">
+              {question.options &&
+                Object.keys(question.options).map((opt) => {
+                  const val: any = Object.values(exam.answered).find(
+                    (elem: any) => elem._id === question._id
+                  );
+                  return (
+                    <div key={`${question._id}_opt_${opt}`}>
+                      <label>
+                        {opt.toUpperCase()}.
+                        <input
+                          type="radio"
+                          checked={val && val.value === opt}
+                          name="answer"
+                          value={opt}
+                          className="ml-3 mr-2"
+                          onChange={handleChoose}
+                        />
+                        {question.options[opt]}
+                      </label>
+                    </div>
+                  );
+                })}
+            </form>
+
+            <div className="row">
+              <div className="col-6">
+                <Link className="btn mr-4" to={`/exam/${prev}`}>
+                  Previous
+                </Link>
+                <Link className="btn mr-4" to={`/exam/${next}`}>
+                  Next
+                </Link>
+              </div>
+
+              <div className="col-6 text-right">
+                <button
+                  className="btn"
+                  onClick={() => {
+                    setModalData({
+                      show: true,
+                      display: (
+                        <ConfirmSubmit handleModalClose={handleModalClose} />
+                      ),
+                    });
+                  }}
+                >
+                  Submit
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-3 mb-5 question-btn">
+            {Object.keys(exam.questions).map((elem, key) => (
+              <Link
+                className={`btn ${
+                  exam.answered.hasOwnProperty(elem) ? "answered" : ""
+                }`}
+                to={`/exam/${elem}`}
+                key={key}
+              >
+                {key + 1}
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 };
 

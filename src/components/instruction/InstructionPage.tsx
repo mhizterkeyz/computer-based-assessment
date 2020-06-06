@@ -12,9 +12,10 @@ const InstructionPage = () => {
           Course - <span>NIGERIAN PEOPLE and culture (GST 103)</span>
         </h3>
 
-        <h4>
-          Time Left: <span>45:00</span>
-        </h4>
+        <div className="timer align-items-end">
+          <h4>Time:</h4>
+          <span>45:00 minutes</span>
+        </div>
       </div>
       <div className="d-flex flex-column mb-5 instruction">
         <h4>Instruction</h4>
