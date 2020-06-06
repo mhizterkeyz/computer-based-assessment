@@ -59,7 +59,6 @@ export const verify_login = async () => {
       return def;
     }
     const user = await res.json();
-    console.log(user);
     return user;
   } catch (e) {
     throw e;

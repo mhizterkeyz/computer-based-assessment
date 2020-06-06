@@ -39,7 +39,8 @@ function App() {
       <Header />
       <Switch>
         <Route path="/exam/instruction" component={InstructionPage} />
-        <Route path={`/exam/question-${1}`} component={QuestionPage} />
+        <Route path="/exam/:question" component={QuestionPage} />
+        <Route path="/exam" component={QuestionPage} />
         <Route
           render={(routeProps) => (
             <CredentialsPage
