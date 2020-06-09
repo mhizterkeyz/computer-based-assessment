@@ -98,6 +98,7 @@ const QuestionPage = (props: any) => {
       "question-1": {
         question_no: "question-1",
         _id: "question-1",
+        questionId: "question-1",
         type: true, //true: multichoice, false: freeanswer
         question:
           "Since mongo park discovered the confluence, who discovered mongo park?",
@@ -111,6 +112,7 @@ const QuestionPage = (props: any) => {
       "question-2": {
         question_no: "question-2",
         _id: "question-2",
+        questionId: "question-2",
         type: true, //true: multichoice, false: freeanswer
         question: "The rain will soon fall, ______________ ?",
         options: {
@@ -122,6 +124,7 @@ const QuestionPage = (props: any) => {
       },
       "question-3": {
         question_no: "question-3",
+        questionId: "question-3",
         _id: "question-3",
         type: true, //true: multichoice, false: freeanswer
         question: "If you talk to a lady in Wuhan, have you wooed her?",
@@ -190,7 +193,11 @@ const QuestionPage = (props: any) => {
       ...exam,
       answered: {
         ...exam.answered,
-        [question._id]: { value, _id: question._id },
+        [question._id]: {
+          answer: value,
+          question: question._id,
+          questionId: question.questionId,
+        },
       },
     });
   };
@@ -229,7 +236,7 @@ const QuestionPage = (props: any) => {
               {question.options &&
                 Object.keys(question.options).map((opt) => {
                   const val: any = Object.values(exam.answered).find(
-                    (elem: any) => elem._id === question._id
+                    (elem: any) => elem.question === question._id
                   );
                   return (
                     <div key={`${question._id}_opt_${opt}`}>
