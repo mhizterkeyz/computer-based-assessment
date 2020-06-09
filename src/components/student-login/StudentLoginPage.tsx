@@ -1,15 +1,16 @@
 import React from 'react';
-import './LoginPage.scss';
+import './StudentLoginPage.scss';
 import assesment_SVG from '../../svg/undraw_exams_g4ow 1.svg'
 import { useHistory } from 'react-router-dom';
+import Header from '../Header';
 // import Header from '../Header';
 // import Footer from '../Footer';
 
-const LoginPage = () => {
+const StudentLoginPage = () => {
   const history = useHistory();
   return (
     <>
-      {/* <Header /> */}
+      <Header />
       <section className=" row m-auto  align-items-center login">
         <div className="col-6 text-center">
           <img src={assesment_SVG} alt="assesment" />
@@ -37,4 +38,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default StudentLoginPage;

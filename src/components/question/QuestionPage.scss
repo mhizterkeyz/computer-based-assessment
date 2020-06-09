@@ -9,10 +9,10 @@ main {
     margin-block-start: 46px;
     height: 50vh;
     background: #ffffff;
-    border: 1px solid #f1f1f1;
+    // border: 1px solid #f1f1f1;
     box-sizing: border-box;
-    border-radius: 4px;
-    // box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.15);
+    border-radius: 15px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.15);
     padding: 25px 20px 40px;
 
     h2 {
@@ -77,10 +77,10 @@ main {
     }
     div.question-body {
       background: #ffffff;
-      border: 1px solid #f1f1f1;
+      // border: 1px solid #f1f1f1;
       box-sizing: border-box;
-      border-radius: 4px;
-      // box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.15);
+      border-radius: 15px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.15);
       padding: 56px 5% 50px;
     }
 
@@ -130,7 +130,7 @@ main {
         background: #ffffff;
         border: 1px solid #c4c4c4;
         box-sizing: border-box;
-        border-radius: 2px;
+        border-radius: 10px;
         margin-inline-end: 12px;
         margin-block-end: 12px;
         padding: 0;
@@ -142,7 +142,7 @@ main {
       button.answered {
         color: #ffffff;
         background: #4180fe;
-        border-radius: 2px;
+        border-radius: 10px;
         border: none;
       }
     }

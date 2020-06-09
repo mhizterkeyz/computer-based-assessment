@@ -39,7 +39,7 @@ const ConfirmSubmit = ({ handleModalClose }: ConfirmSubmitProps) => {
 
 const QuestionPage = () => {
   const [counter, setCounter] = useState({
-    minutes: 45,
+    minutes: 11,
     seconds: 0
   });
 
@@ -109,9 +109,11 @@ const QuestionPage = () => {
             </div>
           </div>
 
-          <div className="d-flex justify-content-center align-items-center mt-3">
+          <div className="d-flex justify-content-center align-items-center mt-3"  style={minutes <= 9 ? {color: "red"} : {color: ""}}>
             <img src={timer_icon} alt="timer icon" className="mr-2" />
-            <h5>{minutes}:{seconds < 10 ? `0${seconds}` : seconds}</h5>
+            <h5>
+              {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
+            </h5>
           </div>
         </section>
 
