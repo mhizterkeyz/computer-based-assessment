@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import logo from "../../../svg/logo.svg"
 import "./Assessment.scss"
 import display_img from "../../../image/Rectangle-19.png";
 import { Link } from 'react-router-dom';
+import Header from '../Header';
 
 const Assessment = (props: any) => {
 
@@ -22,18 +22,7 @@ const Assessment = (props: any) => {
 
   return (
     <>
-      <header className="d-flex justify-content-between align-items-center">
-        <img src={logo} alt="site logo" />
-
-        <nav>
-          <ul className="d-flex">
-            <li><Link to="/admin/running-asssesment">Assessment History</Link></li>
-            <li><Link to="/admin/running-asssesment" className="active">Running Assessment</Link></li>
-            <li><Link to="/admin/running-asssesment">Add Assessment</Link></li>
-          </ul>
-        </nav>
-      </header>
-
+      <Header />
       <h2 className="text-center">GST 101 - Use of English <br /> <span className="running">Running</span></h2>
       <section className="d-flex justify-content-center">
         <div className="d-flex dash-detail">
@@ -137,13 +126,13 @@ const Assessment = (props: any) => {
           </div>
 
           <div className="pagination">
-            <Link to="/admin/running-asssesment" className="btn prev-next">Prev</Link>
-            <Link to="/admin/running-asssesment" className="btn">1</Link>
-            <Link to="/admin/running-asssesment" className="btn">2</Link>
-            <Link to="/admin/running-asssesment" className="btn active">3</Link>
-            <Link to="/admin/running-asssesment" className="btn">4</Link>
-            <Link to="/admin/running-asssesment" className="btn">5</Link>
-            <Link to="/admin/running-asssesment" className="btn prev-next">Next</Link>
+            <Link to="/admin/asssesment" className="btn link prev-next">Prev</Link>
+            <Link to="/admin/asssesment" className="btn link">1</Link>
+            <Link to="/admin/asssesment" className="btn link">2</Link>
+            <Link to="/admin/asssesment" className="btn link active">3</Link>
+            <Link to="/admin/asssesment" className="btn link">4</Link>
+            <Link to="/admin/asssesment" className="btn link">5</Link>
+            <Link to="/admin/asssesment" className="btn link prev-next">Next</Link>
           </div>
         </section>
 

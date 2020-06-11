@@ -11,6 +11,8 @@ import CredentialsPage from './components/credentials/CredentialsPage';
 import SubmitPage from './components/submit/SubmitPage';
 import Login from './components/admin-components/login/Login';
 import Assessment from './components/admin-components/assessment/Assessment';
+import AssessmentHistory from './components/admin-components/assessment-history/AssessmentHistory';
+import AddAssessment from './components/admin-components/add-assessment/AddAssessment';
 
 function App() {
   return (
@@ -24,6 +26,8 @@ function App() {
         <Route path={"/exam/submit"} component={SubmitPage} />
         <Route path={"/admin/login"} component={Login} />
         <Route path={"/admin/asssesment"} component={Assessment} />
+        <Route path={"/admin/asssesment-history"} component={AssessmentHistory} />
+        <Route path={"/admin/add-asssesment"} component={AddAssessment} />
 
       </Switch>
     </Router>

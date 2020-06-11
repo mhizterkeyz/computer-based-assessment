@@ -88,37 +88,7 @@ main {
       margin-block-end: 40px;
     }
 
-    .ctrl-btn {
-      margin-block-start: 50px;
-
-      button {
-        // text-align: right;
-        font-weight: 600;
-        text-transform: uppercase;
-        color: #fff !important;
-        background: #4180fe;
-        border-radius: 4px !important;
-        padding: 1rem 4rem;
-      }
-
-      button:hover {
-        color: #ffffff !important;
-        background-color: #1e5edd;
-      }
-
-      button.prev {
-        background: #ffffff;
-        border: 1px solid #4180fe;
-        color: #4180fe !important;
-        box-sizing: border-box;
-        border-radius: 4px;
-      }
-
-      button.prev:hover {
-        color: #fff !important;
-        background: #4180fe;
-      }
-    }
+    
 
     .question-btn {
       button {
@@ -171,6 +141,38 @@ div.confirm-modal {
     background: #4180fe;
     border-radius: 4px !important;
     padding: .5rem 1rem;
+  }
+}
+
+.ctrl-btn {
+  margin-block-start: 50px;
+
+  button {
+    // text-align: right;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #fff !important;
+    background: #4180fe;
+    border-radius: 4px !important;
+    padding: 1rem 4rem;
+  }
+
+  button:hover {
+    color: #ffffff !important;
+    background-color: #1e5edd;
+  }
+
+  button.prev {
+    background: #ffffff;
+    border: 1px solid #4180fe;
+    color: #4180fe !important;
+    box-sizing: border-box;
+    border-radius: 4px;
+  }
+
+  button.prev:hover {
+    color: #fff !important;
+    background: #4180fe;
   }
 }
 

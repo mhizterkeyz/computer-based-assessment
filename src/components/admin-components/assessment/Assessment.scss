@@ -1,32 +1,3 @@
-header {
-  width: 90%;
-  margin: 0 auto;
-  padding: 20px 0;
-
-  ul {
-    margin: 0;
-    li {
-      list-style-type: none;
-      padding: 0 20px;
-      a {
-        font-weight: 600;
-        font-size: 14px;
-        line-height: 21px;
-        text-transform: capitalize;
-        text-decoration: none;
-        color: #4f4f4f;
-        padding-bottom: 10px;
-      }
-      a:hover,
-      .active {
-        text-decoration: none;
-        color: #4180fe;
-        border-bottom: 3px solid #4180fe;
-      }
-    }
-  }
-}
-
 h2 {
   font-weight: 600;
   font-size: 24px;
@@ -136,6 +107,35 @@ div.dash-detail {
   }
 }
 
+.pagination {
+  margin-top: 80px;
+  margin-bottom: 150px;
+  .link {
+    width: 29px;
+    height: 29px;
+    color: #4f4f4f;
+    // background: #ffffff;
+    border: 1px solid #c4c4c4;
+    box-sizing: border-box;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 21px;
+    padding: 3px 9px;
+    margin: 0 6px;
+    text-decoration: none;
+  }
+  .link:hover,
+  .active {
+    color: #fff;
+    background: #4180fe;
+    border: none;
+  }
+  .prev-next {
+    width: 53px;
+  }
+}
+
 div.student-section {
   display: flex;
   justify-content: space-between;
@@ -186,34 +186,7 @@ div.student-section {
       background: #e8f4f9;
     }
 
-    .pagination {
-      margin-top: 80px;
-      margin-bottom: 150px;
-      a {
-        width: 29px;
-        height: 29px;
-        color: #4f4f4f;
-        // background: #ffffff;
-        border: 1px solid #c4c4c4;
-        box-sizing: border-box;
-        border-radius: 10px;
-        font-weight: 600;
-        font-size: 14px;
-        line-height: 21px;
-        padding: 3px 9px;
-        margin: 0 6px;
-        text-decoration: none;
-      }
-      a:hover,
-      .active {
-        color: #fff;
-        background: #4180fe;
-        border: none;
-      }
-      .prev-next {
-        width: 53px;
-      }
-    }
+    
   }
 
   section.student-info {

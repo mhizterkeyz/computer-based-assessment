@@ -1,0 +1,28 @@
+header {
+  width: 90%;
+  margin: 0 auto;
+  padding: 20px 0;
+
+  ul {
+    margin: 0;
+    li {
+      list-style-type: none;
+      padding: 0 20px;
+      a {
+        font-weight: 600;
+        font-size: 14px;
+        line-height: 21px;
+        text-transform: capitalize;
+        text-decoration: none;
+        color: #4f4f4f;
+        padding-bottom: 10px;
+      }
+      a:hover,
+      .active {
+        text-decoration: none;
+        color: #4180fe;
+        border-bottom: 3px solid #4180fe;
+      }
+    }
+  }
+}
