@@ -1,52 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { Redirect, useHistory } from 'react-router-dom';
-import './CredentialsPage.scss';
-import display_img from '../../image/Rectangle-19.png';
-
-const credentialsObj: CredentialsProps = {
-  displayImg: display_img,
-  name: "Alikali Ojonugwa Justice",
-  matric_no: "13MS1023",
-  department: "Computer Science",
-  faculty: "Natural Science"
-}
+import React, { useState, useEffect } from "react";
+import { Redirect, useHistory } from "react-router-dom";
+import "./CredentialsPage.scss";
+import display_img from "../../image/Rectangle-19.png";
 
 interface CredentialsProps {
-  displayImg: string;
   name: string;
   matric_no: string;
-  department: string;
-  faculty: string;
+  department: any;
+  faculty: any;
 }
 
-const Credentials = (props: CredentialsProps) => {
+const Credentials = ({ detail, data }: { detail: string; data: string }) => {
   return (
-    <>
-      <h3>Welcome {props.name} !</h3>
-      <div className="row d-flex justify-content-center align-items-center">
-        <div className="mr-5"><img src={props.displayImg} alt="ojay" /></div>
-        <div className="details">
-          <div>
-            <h4>Matric. no:</h4>
-            <h5>{props.matric_no}</h5>
-          </div>
-
-          <div>
-            <h4>Department:</h4>
-            <h5>{props.department}</h5>
-          </div>
-
-          <div>
-            <h4>Faculty:</h4>
-            <h5>{props.faculty}</h5>
-          </div>
-        </div>
-      </div>
-    </>
+    <div>
+      <h4>{detail}:</h4>
+      <h5>{data}</h5>
+    </div>
   );
 };
 
-const CredentialsPage = () => {
+const CredentialsPage = ({
+  name,
+  matric_no,
+  department,
+  faculty,
+}: CredentialsProps) => {
   const history = useHistory();
   const [redirectState, setRedirectState] = useState(false);
 
@@ -58,21 +36,40 @@ const CredentialsPage = () => {
     return () => clearTimeout(id);
   });
 
-  return redirectState
-    ? <Redirect to="/exam/instruction" />
-    : (
-      <section className="m-auto credentials">
-        <div className="d-flex flex-column mb-5">
-          <Credentials {...credentialsObj} />
-
-          <p>If this page does not Auotmatically redirect you. <br /> Click on the proceed button.</p>
-
-          <div className="text-center">
-            <button className="btn" onClick={() => { history.push("/exam/instruction"); }}>Proceed</button>
+  return redirectState ? (
+    <Redirect to="/exam/instruction" />
+  ) : (
+    <section className="m-auto credentials">
+      <div className="d-flex flex-column mb-5">
+        <h3>Welcome, {name} !</h3>
+        <div className="row d-flex justify-content-center align-items-center">
+          <div className="mr-5">
+            <img src={display_img} alt="ojay" />
+          </div>
+          <div className="details">
+            <Credentials detail="Matric. no" data={matric_no} />
+            <Credentials detail="Department" data={department.department} />
+            <Credentials detail="Faculty" data={faculty.faculty} />
           </div>
         </div>
-      </section>
-    );
+        <p>
+          If this page does not Auotmatically redirect you. <br /> Click on the
+          proceed button.
+        </p>
+
+        <div className="text-center">
+          <button
+            className="btn"
+            onClick={() => {
+              history.push("/exam/instruction");
+            }}
+          >
+            Proceed
+          </button>
+        </div>
+      </div>
+    </section>
+  );
 };
 
 export default CredentialsPage;

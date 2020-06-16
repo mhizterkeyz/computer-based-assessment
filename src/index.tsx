@@ -4,10 +4,16 @@ import './index.scss';
 import App from './App';
 import './fonts/icomoon/style.css'; 
 import * as serviceWorker from './serviceWorker';
+import configureStore from "./redux/configureStore";
+import { Provider as ReduxProvider } from "react-redux";
+
+const store = configureStore();
 
 ReactDOM.render(
   <React.StrictMode>
+    <ReduxProvider store={store}>
     <App />
+    </ReduxProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
