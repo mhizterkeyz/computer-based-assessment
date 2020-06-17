@@ -1,149 +1,289 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./AddAssessment.scss";
 import Header from "../Header";
-import { useHistory, Switch, Route } from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 import AddQuestion from "../question/AddQuestion";
+import { toBase64 } from "./Functionality";
+import { connect } from "react-redux";
+import {
+  loadUpExams,
+  createExam,
+} from "../../../redux/actions/AdministratorActions";
 
-const AddAssessment = () => {
-  const history = useHistory();
+import * as Fields from "./inputFields";
+
+const AddAssessment = (props: any) => {
+  const [inputs, setInputs] = useState({
+    timeAllowed: 0,
+    scheduledFor: Date.now(),
+    title: "",
+    course: "",
+    questionsPerStudent: 30,
+    markPerQuestion: 2,
+    examType: true,
+    bioData: "",
+    questions: "",
+    instructions: "",
+  });
+  const [durations, setDurations] = useState({
+    dur1: 45,
+    dur2: 0,
+  });
+
+  useEffect(() => {
+    const { exams, loadUpExams } = props;
+    if (Object.keys(exams).length < 1) {
+      (async () => {
+        try {
+          loadUpExams();
+        } catch (error) {
+          console.log(error.message);
+        }
+      })();
+    }
+  }, [props]);
+
+  const handleBase64Convertion = async (ev: any) => {
+    try {
+      const { name, files } = ev.target;
+      const file = await toBase64(files[0]);
+      setInputs({ ...inputs, [name]: file });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleInputs = (ev: any) => {
+    const { name, value } = ev.target;
+    setInputs({ ...inputs, [name]: value });
+  };
+  const handleDuration = (ev: any) => {
+    const { name, value } = ev.target;
+    setDurations({ ...durations, [name]: value });
+    const timeAllowed =
+      parseInt(durations.dur1.toString()) +
+      parseInt(durations.dur2.toString()) / 60;
+    setInputs({ ...inputs, timeAllowed });
+  };
+  const handleSubmit = async (ev: any) => {
+    ev.preventDefault();
+    try {
+      await props.createExam(inputs);
+      setInputs({
+        timeAllowed: 0,
+        scheduledFor: Date.now(),
+        title: "",
+        course: "",
+        questionsPerStudent: 30,
+        markPerQuestion: 2,
+        examType: true,
+        bioData: "",
+        questions: "",
+        instructions: "",
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   return (
     <>
       <Header />
       <Switch>
-        <Route to="add-assesment/Question" component={AddQuestion} />
-        <Route render={() => {
-          return (
-            <section className="add-assessment">
-              <h3>Add Assessment</h3>
+        <Route path="/admin/add-assesment/Question" component={AddQuestion} />
+        <Route
+          render={() => {
+            return (
+              <section className="add-assessment">
+                <h6>Exams</h6>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Course</th>
+                      <th>Title</th>
+                      <th>status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.values(props.exams).map((exam: any, index) => {
+                      return (
+                        <tr key={exam._id}>
+                          <td>{index + 1}.</td>
+                          <td>{exam.course}</td>
+                          <td>{exam.title}</td>
+                          <td>{exam.status ? "Pending" : "Done"}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+                <h3>Add Assessment</h3>
 
-              <form
-                onSubmit={(e) => { e.preventDefault(); }}
-              >
-                <fieldset className="form-section">
-                  <legend>Time</legend>
+                <form onSubmit={handleSubmit}>
+                  <fieldset className="form-section">
+                    <legend>Time</legend>
 
-                  <div className="row time-fieldset">
-                    <div className="align-items-center col-6 grid-group">
-                      <label htmlFor="duration">Duration:</label>
+                    <div className="row time-fieldset">
+                      <Fields.durationField
+                        onChange={handleDuration}
+                        {...durations}
+                      />
 
-                      <div>
-                        <input type="number" placeholder="00" /><span>mins</span>
-                        <input type="number" placeholder="00" className="scnd" /><span>secs</span>
+                      <Fields.regularInput
+                        label="scheduled for"
+                        htmlFor="scheduledFor"
+                        input={{
+                          type: "date",
+                          onChange: (ev: any) => {
+                            setInputs({
+                              ...inputs,
+                              scheduledFor: Date.parse(ev.target.value),
+                            });
+                          },
+                          name: "scheduledFor",
+                        }}
+                      />
+                    </div>
+                  </fieldset>
+
+                  <fieldset className="form-section course-details">
+                    <legend>Course details</legend>
+                    <div className="row ">
+                      <Fields.regularInput
+                        className="data-col"
+                        label="Course title :"
+                        htmlFor="title"
+                        input={{
+                          name: "title",
+                          placeholder: "Enter Course title",
+                          value: inputs.title,
+                          onChange: handleInputs,
+                        }}
+                      />
+                      <Fields.regularInput
+                        className="data-col"
+                        label="Course code :"
+                        htmlFor="course"
+                        input={{
+                          name: "course",
+                          placeholder: "Enter Course code",
+                          value: inputs.course,
+                          onChange: handleInputs,
+                        }}
+                      />
+                      <Fields.regularInput
+                        className="data-col"
+                        label="Question per student :"
+                        htmlFor="questionsPerStudent"
+                        input={{
+                          type: "number",
+                          name: "questionPerStudent",
+                          value: inputs.questionsPerStudent,
+                          onChange: handleInputs,
+                        }}
+                      />
+                      <Fields.regularInput
+                        className="data-col"
+                        label="Mark Per Question"
+                        htmlFor="markPerQuestion"
+                        input={{
+                          type: "number",
+                          name: "markPerQuestion",
+                          value: inputs.markPerQuestion,
+                          onChange: handleInputs,
+                        }}
+                      />
+
+                      <div className="align-items-center col-6 data-col grid-group">
+                        <label htmlFor="examType">Exam Type:</label>
+                        <select
+                          name="examType"
+                          onChange={() =>
+                            setInputs({ ...inputs, examType: !inputs.examType })
+                          }
+                          defaultValue="School Exam"
+                        >
+                          <option>PUTME</option>
+                          <option>School Exam</option>
+                        </select>
                       </div>
                     </div>
+                  </fieldset>
 
-                    <div className="align-items-center col-6 grid-group">
-                      <label htmlFor="duration">Screen Duration:</label>
-
-                      <div>
-                        <input type="number" placeholder="00" /><span>mins</span>
-                        <input type="number" placeholder="00" className="scnd" /><span>secs</span>
-                      </div>
+                  {/* TODO Revisit Style */}
+                  <fieldset className="form-section course-details">
+                    <legend>Course details</legend>
+                    <div className="row">
+                      <Fields.regularInput
+                        htmlFor="bioData"
+                        label={
+                          <>
+                            Upload students data:
+                            <br /> <span>(spread sheet file (.xlsx))</span>
+                          </>
+                        }
+                        className="grid-group-file data-col"
+                        input={{
+                          type: "file",
+                          name: "bioData",
+                          onChange: handleBase64Convertion,
+                        }}
+                      />
+                      <Fields.regularInput
+                        htmlFor="questions"
+                        label={
+                          <>
+                            Upload questions:
+                            <br /> <span>(spread sheet file (.xlsx))</span>
+                          </>
+                        }
+                        className="grid-group-file data-col"
+                        input={{
+                          type: "file",
+                          name: "questions",
+                          onChange: handleBase64Convertion,
+                        }}
+                      />
                     </div>
+                  </fieldset>
+
+                  <fieldset className="row form-section">
+                    <legend>Assessment Instrustion</legend>
+
+                    <label htmlFor="instruction">Instruction</label>
+                    <textarea
+                      name="instructions"
+                      value={inputs.instructions}
+                      onChange={handleInputs}
+                      placeholder="Specify the exam Instruction here..."
+                    />
+                  </fieldset>
+
+                  <div className="d-flex justify-content-center">
+                    <input
+                      type="submit"
+                      value="Proceed"
+                      className="btn btn-primary"
+                    />
                   </div>
-                </fieldset>
-
-                <fieldset className="form-section course-details">
-                  <legend>Course details</legend>
-                  <div className="row ">
-                    <div className="col-6 data-col grid-group">
-                      <label htmlFor="title">Course title :</label>
-                      <input type="text" name="title" placeholder="Enter Course title" />
-                    </div>
-
-                    <div className="col-6 data-col grid-group">
-                      <label htmlFor="code">Course code :</label>
-                      <input type="text" name="code" placeholder="Enter Course code" />
-                    </div>
-
-                    <div className="col-6 data-col grid-group">
-                      <label htmlFor="faculty">Faculty :</label>
-                      <select name="faculty">
-                        <option value="general">General</option>
-                        <option value="natural science">Natural science</option>
-                        <option value="social science">Social science</option>
-                        <option value="law">Law</option>
-                      </select>
-                    </div>
-
-                    <div className="col-6 data-col grid-group">
-                      <label htmlFor="department">Department :</label>
-                      <select name="department">
-                        <option value="all">All</option>
-                        <option value="microbiology">Microbiology</option>
-                        <option value="computer science">Computer Science</option>
-                        <option value="law">Law</option>
-                      </select>
-                    </div>
-
-                    <div className="col-6 data-col grid-group">
-                      <label htmlFor="semester">Semester :</label>
-                      <select name="semester">
-                        <option value="first semester">First semester</option>
-                        <option value="second semester">Second semester</option>
-                      </select>
-                    </div>
-
-
-                    <div className="col-6 data-col grid-group">
-                      <label htmlFor="level">Level :</label>
-                      <select name="level">
-                        <option value="100">100</option>
-                        <option value="200">200</option>
-                        <option value="300">300</option>
-                        <option value="400">400</option>
-                        <option value="500">500</option>
-                      </select>
-                    </div>
-                  </div>
-                </fieldset>
-
-                {/* TODO Revisit Style */}
-                <fieldset className="form-section course-details">
-                  <legend>Course details</legend>
-                  <div className="row">
-                    <div className="col-6 data-col grid-group-file">
-                      <label htmlFor="title">Upload students data:</label>
-                      <input type="file" name="data" />
-                    </div>
-
-                    <div className="col-6 data-col grid-group-file">
-                      <label htmlFor="code">Upload students CA:</label>
-                      <input type="file" name="CA" />
-                    </div>
-
-                    <div className="col-6 data-col grid-group-file">
-                      <label htmlFor="code">Upload students Image: <br /><span>(image should be label with matric no)</span></label>
-                      <input type="file" name="CA" />
-                    </div>
-                  </div>
-                </fieldset>
-
-                <fieldset className="row form-section">
-                  <legend>Assessment Instrustion</legend>
-
-                  <label htmlFor="instruction">Instruction</label>
-                  <textarea name="instruction" placeholder="Specify the exam Instruction here..."/>
-                </fieldset>
-
-                <div className="d-flex justify-content-center">
-                  <input
-                    type="submit"
-                    value="Proceed"
-                    className="btn btn-primary"
-                    onClick={() => {
-                      history.push("add-assesment/Question")
-                    }}
-                  />
-                </div>
-              </form>
-            </section>
-          );
-        }} />
-
+                </form>
+              </section>
+            );
+          }}
+        />
       </Switch>
     </>
   );
 };
 
-export default AddAssessment;
+const mapStateToProps = (state: any) => ({
+  exams: state.exams,
+});
+
+const mapDispatchToProps = {
+  loadUpExams,
+  createExam,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddAssessment);
