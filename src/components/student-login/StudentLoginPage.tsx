@@ -5,10 +5,15 @@ import Header from "../Header";
 import { login } from "../../api/studentApi";
 import { connect } from "react-redux";
 import { loadStudent } from "../../redux/actions/studentAction";
+import { useHistory } from "react-router-dom";
 // import Header from '../Header';
 // import Footer from '../Footer';
 
 const StudentLoginPage = (props: any) => {
+  const history = useHistory();
+  if (window.location.pathname !== "/") {
+    history.push("/");
+  }
   const [inputs, setInputs] = useState({
     "matric-no": "",
     password: "",

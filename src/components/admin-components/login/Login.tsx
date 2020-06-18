@@ -11,6 +11,10 @@ const Login = (props: any) => {
     invalid: false,
   });
 
+  if (window.location.pathname !== "/admin") {
+    props.history.push("/admin")
+  };
+
   const handleInputs = (ev: any) => {
     const { name, value } = ev.target;
     setInputs({ ...inputs, [name]: value });

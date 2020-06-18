@@ -5,22 +5,18 @@ import "./SubmitPage.scss";
 
 const SubmitPage = (props: { deleteStudent: () => Promise<any> }) => {
   // const history = useHistory();
-  const [redirectState, setRedirectState] = useState(false);
 
   useEffect(() => {
     const id = setTimeout(() => {
       delete localStorage["jwt"];
       delete localStorage["route"];
       window.location.reload();
-      setRedirectState(true);
     }, 5000);
 
     return () => clearTimeout(id);
   });
 
-  return redirectState ? (
-    <Redirect to="/" />
-  ) : (
+  return  (
     <section className="m-auto submit">
       <div>
         <h3>
