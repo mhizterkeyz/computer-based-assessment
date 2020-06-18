@@ -1,14 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState} from "react";
 import "./AddAssessment.scss";
 import Header from "../Header";
 import { Switch, Route } from "react-router-dom";
 import AddQuestion from "../question/AddQuestion";
 import { toBase64 } from "./Functionality";
 import { connect } from "react-redux";
-import {
-  loadUpExams,
-  createExam,
-} from "../../../redux/actions/AdministratorActions";
+import { createExam } from "../../../redux/actions/AdministratorActions";
 
 import * as Fields from "./inputFields";
 
@@ -29,19 +26,6 @@ const AddAssessment = (props: any) => {
     dur1: 45,
     dur2: 0,
   });
-
-  useEffect(() => {
-    const { exams, loadUpExams } = props;
-    if (Object.keys(exams).length < 1) {
-      (async () => {
-        try {
-          loadUpExams();
-        } catch (error) {
-          console.log(error.message);
-        }
-      })();
-    }
-  }, [props]);
 
   const handleBase64Convertion = async (ev: any) => {
     try {
@@ -68,6 +52,7 @@ const AddAssessment = (props: any) => {
   const handleSubmit = async (ev: any) => {
     ev.preventDefault();
     try {
+      debugger;
       await props.createExam(inputs);
       setInputs({
         timeAllowed: 0,
@@ -282,7 +267,6 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = {
-  loadUpExams,
   createExam,
 };
 

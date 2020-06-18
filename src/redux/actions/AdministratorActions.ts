@@ -68,6 +68,7 @@ export const createExam = (data: any) => {
   return async (dispatch: any) => {
     try {
       dispatch(beginApiCall());
+      debugger;
       const exam = await Api.submitExam(data);
       return dispatch(createExamSuccess(exam));
     } catch (error) {

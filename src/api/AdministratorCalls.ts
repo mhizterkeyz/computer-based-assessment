@@ -79,9 +79,11 @@ export const getExams = async () => {
 
 export const submitExam = async (data: any) => {
   try {
+    debugger;
     const req = await api.body(data).post(`${apiUrl}/exams`);
     const { statusText, status } = req;
     const res = await req.json();
+    debugger;
     parseResponseError({ res, status, statusText });
     return { [res.data._id]: res.data };
   } catch (error) {

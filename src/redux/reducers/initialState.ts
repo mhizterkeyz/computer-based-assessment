@@ -1,5 +1,5 @@
 export default {
-  students: [],
+  students: {},
   apiCallsInProgress: 0,
   administrator: {},
   exams: {},

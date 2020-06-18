@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.scss";
@@ -12,9 +12,42 @@ import Administrator from "./components/admin-components";
 
 import Header from "./components/Header";
 import { student as studentInterface } from "./components/model/student";
+import { verifyStudent } from "./redux/actions/studentAction";
 
-function App({ student }: { student: studentInterface }) {
-  if (!student.matric)
+function App({
+  student,
+  verifyStudent,
+}: {
+  student: studentInterface;
+  verifyStudent: () => Promise<any>;
+}) {
+  useEffect(() => {
+    if (Object.keys(student).length < 1) {
+      verifyStudent();
+    }
+  }, [verifyStudent, student]);
+
+  if (Object.keys(student).length < 1) {
+    /**
+     * This is just some make shift
+     * loading screen so that the
+     * app doesn't flicker between
+     * login screen and where you
+     * want to go anytime you're logged in
+     * and reload the page
+     */
+    return (
+      <Router>
+        <Route
+          render={() => {
+            return <></>;
+          }}
+        />
+      </Router>
+    );
+  }
+
+  if (!student.hasOwnProperty("matric") || student.matric === "") {
     return (
       <Router>
         <Switch>
@@ -23,6 +56,7 @@ function App({ student }: { student: studentInterface }) {
         </Switch>
       </Router>
     );
+  }
 
   return (
     <Router>
@@ -57,4 +91,8 @@ function mapStateToProps(state: any) {
   };
 }
 
-export default connect(mapStateToProps)(App);
+const mapDispatchToProps = {
+  verifyStudent,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

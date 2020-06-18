@@ -7,6 +7,7 @@ export default function courseReducer(
 ) {
   switch (action.type) {
     case types.LOAD_STUDENT_SUCCESS:
+    case types.VERIFY_STUDENT_SUCCESS:
       return action.student;
     default:
       return state;
