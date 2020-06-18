@@ -36,7 +36,7 @@ export const verifyStudent = async () => {
 
     const req = await api
       .headers({ Authorization: `Bearer ${jwt}` })
-      .get(`${api_url}/user`);
+      .get(`${api_url}/user/me`);
     const { status } = req;
     const res = await req.json();
     if (status >= 400) {

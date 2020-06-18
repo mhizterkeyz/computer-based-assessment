@@ -8,7 +8,7 @@ import { beginApiCall, apiCallError } from "./apiStatusActions";
 // };
 
 export function loadStudentSuccess(student: student) {
-    return { type: types.LOAD_STUDENT_SUCCESS, student };
+  return { type: types.LOAD_STUDENT_SUCCESS, student };
 }
 
 export function verifyStudentSuccess(student: student) {
@@ -16,11 +16,11 @@ export function verifyStudentSuccess(student: student) {
 }
 
 
-export function loadStudent({"matric-no":username, password}:any) {
+export function loadStudent({ "matric-no": username, password }: any) {
   return async function (dispatch: any) {
     try {
       dispatch(beginApiCall());
-      const student = await studentApi.login({username, password});
+      const student = await studentApi.login({ username, password });
       return dispatch(loadStudentSuccess(student));
     } catch (error) {
       dispatch(apiCallError());
@@ -40,4 +40,4 @@ export function verifyStudent() {
       throw error;
     }
   };
-}
+};
