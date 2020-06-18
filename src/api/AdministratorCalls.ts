@@ -7,7 +7,7 @@ const parseResponseError = ({ res, status, statusText }: any) => {
     const message =
       res.message +
       "\n" +
-      Object.values(res.data).reduce((acc: any, cur: any) => {
+      Object.values(res.data || {}).reduce((acc: any, cur: any) => {
         if (typeof cur === "object") {
           return acc + "\n" + JSON.stringify(cur);
         }
