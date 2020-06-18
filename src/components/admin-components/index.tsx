@@ -7,6 +7,8 @@ import Assessment from "./assessment/Assessment";
 import AssessmentHistory from "./assessment-history/AssessmentHistory";
 import AddAssessment from "./add-assessment/AddAssessment";
 import { VerifyAdministrator } from "../../redux/actions/AdministratorActions";
+import Header from "./Header";
+import SettingsPage from "./settingsPage/SettingsPage";
 
 const Index = ({ administrator, VerifyAdministrator }: any) => {
   useEffect(() => {
@@ -41,11 +43,16 @@ const Index = ({ administrator, VerifyAdministrator }: any) => {
 
   return (
     <Router>
+      <Header />
       <Switch>
         <Route path={"/admin/asssesment"} component={Assessment} />
         <Route
-          path={"/admin/asssesment-history"}
+          path={"/admin/history"}
           component={AssessmentHistory}
+        />
+        <Route
+          path={"/admin/settings"}
+          component={SettingsPage}
         />
         <Route component={AddAssessment} />
       </Switch>

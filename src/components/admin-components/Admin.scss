@@ -26,3 +26,85 @@ header {
     }
   }
 }
+
+button.logout {
+  width: 90;
+  margin-left: auto;
+  margin-right: 5%;
+}
+
+section.settings {
+  width: 70%;
+  margin: 126px auto 0;
+  display: grid;
+  grid-template-areas:
+    "myButton1 adminList adminList adminList adminList"
+    "myButton2 adminList adminList adminList adminList";
+  grid-column-gap: 0.5rem;
+  grid-row-gap: 2rem;
+}
+
+div.admin-list {
+  grid-area: adminList;
+  h3 {
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 24px;
+    color: #4f4f4f;
+  }
+  .dta-head {
+    font-weight: 600;
+    width: 79%;
+    grid-template-columns: 0.4fr 0.3fr 0.3fr;
+    margin-top: 0;
+  }
+  button.add-admin {
+    font-weight: 500;
+    font-size: 14px;
+    background: #4180fe;
+    border-radius: 16px;
+  }
+  .dta-body {
+    grid-template-columns: 0.4fr 0.3fr 0.3fr auto;
+    align-items: center;
+    padding: 0 25px;
+    span {
+      padding: 20px 0;
+    }
+    button {
+      border: none;
+      background: transparent;
+    }
+
+    button:hover {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background: #edf5fc;
+    }
+  }
+}
+
+button.button1 {
+  grid-area: myButton1;
+}
+
+button.button2 {
+  grid-area: myButton2;
+}
+
+button.settings-btn {
+  width: 80%;
+  font-weight: bold;
+  font-size: 25px;
+  background: #4180fe !important;
+  box-shadow: 0px 1px 11px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  padding: 41px 59px;
+  margin: 0;
+
+  span {
+    font-weight: 500;
+    font-size: 16px;
+  }
+}

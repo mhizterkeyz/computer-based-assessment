@@ -260,6 +260,41 @@ div.student-section {
   }
 }
 
+.dta-head {
+  display: grid;
+  grid-template-columns: 25% 12% 24% 16% 12%;
+  grid-gap: 2%;
+  color: #ffffff;
+  background: #4180fe;
+  box-shadow: 0px 1px 11px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  padding: 11px 25px;
+  margin-top: 25px;
+
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 21px;
+}
+
+.dta-body {
+  display: grid;
+  grid-template-columns: 25% 12% 24% 16% 12%;
+  grid-gap: 2%;
+  color: #4f4f4f;
+  background: #fff;
+  box-shadow: 0px 1px 11px rgba(0, 0, 0, 0.1);
+  // border: 1px solid #c4c4c4;
+  border-radius: 16px;
+  padding: 24px 25px;
+  margin-top: 10px;
+
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 21px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
 // status style
 .status-running {
   color: #008a52;

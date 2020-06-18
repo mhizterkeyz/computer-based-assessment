@@ -22,7 +22,6 @@ const Assessment = (props: any) => {
 
   return (
     <>
-      <Header />
       <h2 className="text-center">GST 101 - Use of English <br /> <span className="running">Running</span></h2>
       <section className="d-flex justify-content-center">
         <div className="d-flex dash-detail">

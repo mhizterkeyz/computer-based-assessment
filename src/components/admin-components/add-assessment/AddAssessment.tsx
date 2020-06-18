@@ -52,7 +52,6 @@ const AddAssessment = (props: any) => {
   const handleSubmit = async (ev: any) => {
     ev.preventDefault();
     try {
-      debugger;
       await props.createExam(inputs);
       setInputs({
         timeAllowed: 0,
@@ -73,7 +72,6 @@ const AddAssessment = (props: any) => {
 
   return (
     <>
-      <Header />
       <Switch>
         <Route path="/admin/add-assesment/Question" component={AddQuestion} />
         <Route
