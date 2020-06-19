@@ -63,8 +63,13 @@ function App({
       <Header />
       <Switch>
         <Route path="/exam/instruction" component={InstructionPage} />
-        <Route path={`/exam/question-${1}`} component={QuestionPage} />
         <Route path={"/exam/submit"} component={SubmitPage} />
+        <Route path={`/exam/question-${1}`} component={QuestionPage} />
+        <Route path="/exam/:question" component={QuestionPage} />
+        <Route
+          path="/exam"
+          render={(routeProps) => <QuestionPage {...routeProps} />}
+        />
         <Route
           render={() => (
             <CredentialsPage
@@ -75,10 +80,6 @@ function App({
             />
           )}
         />
-        {/* <Route path={"/admin/login"} component={Login} />
-        <Route path={"/admin/asssesment"} component={Assessment} />
-        <Route path={"/admin/asssesment-history"} component={AssessmentHistory} />
-        <Route path={"/admin/add-asssesment"} component={AddAssessment} /> */}
       </Switch>
     </Router>
   );

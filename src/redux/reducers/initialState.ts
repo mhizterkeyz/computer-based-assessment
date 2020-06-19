@@ -3,4 +3,5 @@ export default {
   apiCallsInProgress: 0,
   administrator: {},
   exams: {},
+  studentExamination: {}
 };

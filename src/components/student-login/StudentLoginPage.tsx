@@ -2,7 +2,6 @@ import React, { useState, FormEvent } from "react";
 import "./StudentLoginPage.scss";
 import assesment_SVG from "../../svg/undraw_exams_g4ow 1.svg";
 import Header from "../Header";
-import { login } from "../../api/studentApi";
 import { connect } from "react-redux";
 import { loadStudent } from "../../redux/actions/studentAction";
 import { useHistory } from "react-router-dom";

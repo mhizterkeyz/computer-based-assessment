@@ -12,4 +12,4 @@ export default function courseReducer(
     default:
       return state;
   }
-}
+};
