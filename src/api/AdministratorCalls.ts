@@ -27,6 +27,7 @@ export const loginAdministrator = async ({ username, password }: any) => {
     parseResponseError({ res, status, statusText });
     localStorage["jwt"] = res.data.accessToken;
     localStorage["route"] = "administrator";
+    api.headers({ Authorization: "Bearer " + localStorage["jwt"] });
     return res.data;
   } catch (error) {
     throw error;
@@ -80,7 +81,11 @@ export const getExams = async () => {
 export const submitExam = async (data: any) => {
   try {
     debugger;
-    const req = await api.body(data).post(`${apiUrl}/exams`);
+    const req = await api
+      .body(data)
+      .headers({ Authorization: "Bearer " + localStorage["jwt"] })
+      .post(`${apiUrl}/exams`);
+    console.log(req.headers);
     const { statusText, status } = req;
     const res = await req.json();
     debugger;

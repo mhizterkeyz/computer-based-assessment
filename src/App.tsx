@@ -62,6 +62,7 @@ function App({
     <Router>
       <Header />
       <Switch>
+        <Route path="/admin" component={Administrator} />
         <Route path="/exam/instruction" component={InstructionPage} />
         <Route path={`/exam/question-${1}`} component={QuestionPage} />
         <Route path={"/exam/submit"} component={SubmitPage} />
