@@ -1,5 +1,6 @@
 import React from "react";
 import logo from "../../svg/logo.svg";
+import power_icon from "../../svg/settings_power_24px_outlined.svg";
 import "./Admin.scss";
 import { NavLink } from "react-router-dom";
 
@@ -58,7 +59,7 @@ const Header = () => {
           window.location.reload();
         }}
       >
-        Logout
+        <img src={power_icon} alt="power icon" /> Logout
       </button>
     </>
   );

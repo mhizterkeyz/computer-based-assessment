@@ -321,7 +321,7 @@ function mapStateToProps(state: any) {
     studentExamination: state.studentExamination,
     loading: state.apiCallsInProgress > 0,
   };
-}
+};
 
 const mapDispatchToProps = {
   loadStudentExamination,

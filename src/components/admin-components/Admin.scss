@@ -35,7 +35,7 @@ button.logout {
 
 section.settings {
   width: 70%;
-  margin: 126px auto 0;
+  margin: 75px auto 0;
   display: grid;
   grid-template-areas:
     "myButton1 adminList adminList adminList adminList"
@@ -63,6 +63,7 @@ div.admin-list {
     font-size: 14px;
     background: #4180fe;
     border-radius: 16px;
+    box-shadow: 0px 1px 11px rgba(0, 0, 0, 0.2);
   }
   .dta-body {
     grid-template-columns: 0.4fr 0.3fr 0.3fr auto;
@@ -100,7 +101,7 @@ button.settings-btn {
   background: #4180fe !important;
   box-shadow: 0px 1px 11px rgba(0, 0, 0, 0.1);
   border-radius: 15px;
-  padding: 41px 59px;
+  padding: 41px 45px;
   margin: 0;
 
   span {
@@ -108,3 +109,30 @@ button.settings-btn {
     font-size: 16px;
   }
 }
+
+.profile {
+  padding: 4rem 2rem 2rem;
+}
+
+.profile__label {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 21px;
+  display: flex;
+  align-items: center;
+  color: #abb4bd;
+}
+
+.profile__input {
+  border: 1px solid #8cb2fc;
+  background-color: #ecf2fc;
+  box-sizing: border-box;
+  border-radius: 4px;
+  font-size: 16px;
+  line-height: 24px;
+  color: #333333;
+  height: 48px;
+  width: 100%;
+  padding: 10px;
+}
+
