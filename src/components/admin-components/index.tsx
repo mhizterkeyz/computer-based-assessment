@@ -3,7 +3,7 @@ import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import { connect } from "react-redux";
 
 import Login from "./login/Login";
-import Assessment from "./assessment/Assessment";
+import RunningAssessment from "./running-assessment/RunningAssessment";
 import AssessmentHistory from "./assessment-history/AssessmentHistory";
 import AddAssessment from "./add-assessment/AddAssessment";
 import { VerifyAdministrator } from "../../redux/actions/AdministratorActions";
@@ -45,7 +45,10 @@ const Index = ({ administrator, VerifyAdministrator }: any) => {
     <Router>
       <Header />
       <Switch>
-        <Route path={"/admin/asssesment"} component={Assessment} />
+        <Route
+          path={"/admin/running-asssesment"}
+          component={RunningAssessment}
+        />
         <Route path={"/admin/history"} component={AssessmentHistory} />
         <Route path={"/admin/settings"} component={SettingsPage} />
         <Route component={AddAssessment} />

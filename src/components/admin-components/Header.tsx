@@ -11,7 +11,7 @@ const navItems = [
   },
   {
     name: "Running Assessment",
-    url: "/admin/asssesment",
+    url: "/admin/running-asssesment",
   },
   {
     name: "Add Assessment",

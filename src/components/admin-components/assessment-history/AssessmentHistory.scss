@@ -1,0 +1,14 @@
+.assessment-history {
+  width: 80%;
+  margin: 0 auto;
+
+  .dta-head {
+    grid-template-columns: 1fr 1fr .3fr;
+    font-weight: 600;
+  }
+
+  .dta-body {
+    grid-template-columns: 1fr 1fr .3fr;
+    // font-weight: 600;
+  }
+}

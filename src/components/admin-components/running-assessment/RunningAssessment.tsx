@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import "./Assessment.scss";
+import "./RunningAssessment.scss";
 import display_img from "../../../image/Rectangle-19.png";
 import { Link } from "react-router-dom";
 import { loadUpExams } from "../../../redux/actions/AdministratorActions";
 import { connect } from "react-redux";
 import Preloader from "../../Preloader";
 
-const Assessment = (props: any) => {
+const RunningAssessment = (props: any) => {
   const [student, setStudent] = useState({ show: false, matric: "13MS1027" });
 
   useEffect(() => {
@@ -274,4 +274,4 @@ const mapDispatchToProps = {
   loadUpExams,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Assessment);
+export default connect(mapStateToProps, mapDispatchToProps)(RunningAssessment);
