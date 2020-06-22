@@ -1,53 +1,108 @@
-import React from 'react';
-import { useHistory } from 'react-router-dom';
-import './InstructionPage.scss';
+import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
+import "./InstructionPage.scss";
+
+import { getInstructions } from "../../api/studentApi";
 
 const InstructionPage = () => {
+  const [exam, setExam] = useState({
+    noAssessment: true,
+    timeAllowed: 0,
+    instruction: "",
+    course: "",
+    courseTitle: "",
+    inProgress: false,
+  });
   const history = useHistory();
+  useEffect(() => {
+    (async () => {
+      try {
+        const req = await getInstructions();
+        if (!(req.status >= 400)) {
+          setExam({
+            noAssessment: false,
+            ...req.data,
+            courseTitle: req.data.title,
+            instruction: req.data.instructions,
+          });
+          return;
+        }
+        if (req.status === 404) return;
+        throw new Error("An unexpected error has occurred");
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, []);
 
   return (
     <section className="m-auto instruction">
+      <h3 className={`mt-5 ${exam.noAssessment ? "d-none" : ""}`}>
+        Course -{" "}
+        <span>
+          {exam.courseTitle} ({exam.course})
+        </span>{" "}
+        <span className={`text-danger h6 ${exam.inProgress ? "" : "d-none"}`}>
+          Already started
+        </span>
+      </h3>
 
-      <h3 className="mt-5">Course - <span>Nigeria People and Culture (GST 103)</span></h3>
-      
       <div className="d-flex flex-column mb-5 instruction">
-        <div className="d-flex justify-content-between">
+        <div
+          className={`justify-content-between ${
+            exam.noAssessment ? "d-none" : "d-flex"
+          }`}
+        >
           <h4>Instruction</h4>
           <div className="timer align-items-end">
-            <h4>Time:  <span>45:00 Minutes</span></h4>
-           
+            <h4>
+              Time: <span>{exam.timeAllowed} Minutes</span>
+            </h4>
           </div>
         </div>
 
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent efficitur, turpis quis condimentum
-        convallis, nibh urna viverra neque, ac tristique odio diam sit amet libero. Donec pretium ac magna ut
-        sagittis. Sed euismod, velit et interdum porttitor, ex ex dapibus augue, eget interdum nisi orci vitae lorem.
-      Morbi vel tellus luctus, faucibus justo ut, tristique lacus.</p>
-
-        <span>
-          Course:
-        <span>GST 101</span>
-        </span>
-
-        <span>
-          Course Title:
-        <span>Nigerian People and Culture.</span>
-        </span>
-        <span >
-          Exam Duration:
-        <span>45 minutes</span>
-        </span>
-
-        <div className="text-right">
-          <button
-            className="btn"
-            onClick={() => {
-              history.push(`/exam/question-${1}`);
+        {exam.noAssessment ? (
+          <div
+            style={{
+              display: "flex",
+              height: 400,
+              alignItems: "center",
+              justifyContent: "center",
+              fontWeight: 900,
             }}
           >
-            Start
-        </button>
-        </div>
+            You have no active exams, please exit the hall.
+          </div>
+        ) : (
+          <>
+            <p>{exam.instruction}</p>
+
+            <span>
+              Course:
+              <span>{exam.course}</span>
+            </span>
+
+            <span>
+              Course Title:
+              <span>{exam.courseTitle}</span>
+            </span>
+            <span>
+              Exam Duration:
+              <span>{exam.timeAllowed} minutes</span>
+            </span>
+
+            <div className="text-right">
+              <button
+                className="btn"
+                onClick={() => {
+                  history.push(`/exam/question-${1}`);
+                }}
+              >
+                {exam.inProgress ? "Resume assessment" : "Start"}
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </section>
   );
