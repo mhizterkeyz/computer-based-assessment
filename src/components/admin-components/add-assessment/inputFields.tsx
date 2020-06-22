@@ -1,7 +1,7 @@
 import React from "react";
 
 export const durationField = (props: any) => (
-  <div className="align-items-center col-6 grid-group">
+  <div className="align-items-center col-7 grid-group">
     <label htmlFor="duration">Duration:</label>
 
     <div>

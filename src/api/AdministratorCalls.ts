@@ -80,12 +80,10 @@ export const getExams = async () => {
 
 export const submitExam = async (data: any) => {
   try {
-    debugger;
     const req = await api
       .body(data)
       .headers({ Authorization: "Bearer " + localStorage["jwt"] })
       .post(`${apiUrl}/exams`);
-    console.log(req.headers);
     const { statusText, status } = req;
     const res = await req.json();
     parseResponseError({ res, status, statusText });
@@ -93,4 +91,30 @@ export const submitExam = async (data: any) => {
   } catch (error) {
     throw error;
   }
+};
+
+export const getBioData = async (base64: string) => {
+  const req = await api.body({ base64 }).post(`${apiUrl}/spreadsheet/biodata`);
+  const { statusText, status } = req;
+  const res = await req.json();
+  parseResponseError({ res, status, statusText });
+  return res.data;
+};
+
+export const getQuestions = async (base64: string) => {
+  const req = await api
+    .body({ base64 })
+    .post(`${apiUrl}/spreadsheet/examquestion`);
+  const { statusText, status } = req;
+  const res = await req.json();
+  parseResponseError({ res, status, statusText });
+  return res.data;
+};
+
+export const uploadImage = async (base64: string) => {
+  const req = await api.body({ base64 }).post(`${apiUrl}/image/upload`);
+  const { statusText, status } = req;
+  const res = await req.json();
+  parseResponseError({ res, status, statusText });
+  return res.data;
 };
