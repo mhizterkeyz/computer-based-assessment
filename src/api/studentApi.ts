@@ -68,7 +68,9 @@ export const verifyStudent = async () => {
 
 export const getExams = async () => {
   try {
-    const req = await api.post(`${api_url}/user/exams`);
+    const req = await api
+      .headers({ Authorization: "Bearer " + localStorage["jwt"] })
+      .post(`${api_url}/user/exams`);
     // const { statusText, status } = req;
     const res = await req.json();
     debugger;
@@ -76,7 +78,7 @@ export const getExams = async () => {
       const error = await res.text();
       throw new Error(error);
     }
-    
+
     return res.data;
   } catch (error) {
     handleError(error);

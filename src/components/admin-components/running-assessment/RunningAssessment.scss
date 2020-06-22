@@ -96,15 +96,6 @@ div.dash-detail {
     border-radius: 15px;
   }
 
-  form {
-    input {
-      background: #ffffff;
-      border: 1px solid #c4c4c4;
-      box-sizing: border-box;
-      border-radius: 21px;
-      padding: 6px 19px;
-    }
-  }
 }
 
 .pagination {
@@ -336,4 +327,12 @@ div.student-section {
   font-weight: bold;
   font-size: 1.5rem;
   color: #7a7a7a;
+}
+
+input[type="search"] {
+  background: #ffffff;
+  border: 1px solid #c4c4c4;
+  box-sizing: border-box;
+  border-radius: 21px;
+  padding: 6px 19px;
 }

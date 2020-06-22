@@ -14,7 +14,6 @@ export function loadStudentExamination() {
   return async function (dispatch: any) {
     try {
       dispatch(beginApiCall());
-      debugger;
       const examination = await studentApi.getExams();
       return dispatch(loadExamSuccess(examination));
     } catch (error) {
