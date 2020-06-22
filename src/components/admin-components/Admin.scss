@@ -32,6 +32,10 @@ button.logout {
   width: 90;
   margin-left: auto;
   margin-right: 5%;
+
+  i {
+    font-size: 20px;
+  }
 }
 
 section.settings {
@@ -136,4 +140,3 @@ button.settings-btn {
   width: 100%;
   padding: 10px;
 }
-

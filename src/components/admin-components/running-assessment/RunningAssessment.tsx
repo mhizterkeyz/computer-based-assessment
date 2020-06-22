@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./RunningAssessment.scss";
+import "../Assessment.scss";
 import display_img from "../../../image/Rectangle-19.png";
 import { Link } from "react-router-dom";
 import { loadUpExams } from "../../../redux/actions/AdministratorActions";
@@ -118,8 +118,8 @@ const RunningAssessment = (props: any) => {
                       <form>
                         <input
                           type="search"
-                          placeholder="Search Student"
-                          className=""
+                          placeholder="&#xe902; Search Student"
+                          style={{ fontFamily: "Poppins, icomoon" }}
                         />
                       </form>
                       <div>

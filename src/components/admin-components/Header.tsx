@@ -1,6 +1,5 @@
 import React from "react";
 import logo from "../../svg/logo.svg";
-import power_icon from "../../svg/settings_power_24px_outlined.svg";
 import "./Admin.scss";
 import { NavLink } from "react-router-dom";
 
@@ -52,14 +51,14 @@ const Header = () => {
       </header>
 
       <button
-        className="d-flex btn btn-primary text-right mt-3 logout"
+        className="d-flex align-items-center btn btn-primary text-right mt-3 logout"
         onClick={() => {
           delete localStorage["jwt"];
           delete localStorage["route"];
           window.location.reload();
         }}
       >
-        <img src={power_icon} alt="power icon" /> Logout
+        <i className="icon-settings_power_24px_outlined" /> Logout
       </button>
     </>
   );
