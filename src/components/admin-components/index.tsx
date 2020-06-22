@@ -45,15 +45,12 @@ const Index = ({ administrator, VerifyAdministrator }: any) => {
     <Router>
       <Header />
       <Switch>
-        <Route path={"/admin/running-asssesment"} component={RunningAssessment} />
         <Route
-          path={"/admin/history"}
-          component={AssessmentHistory}
+          path={"/admin/running-asssesment"}
+          component={RunningAssessment}
         />
-        <Route
-          path={"/admin/settings"}
-          component={SettingsPage}
-        />
+        <Route path={"/admin/history"} component={AssessmentHistory} />
+        <Route path={"/admin/settings"} component={SettingsPage} />
         <Route component={AddAssessment} />
       </Switch>
     </Router>
