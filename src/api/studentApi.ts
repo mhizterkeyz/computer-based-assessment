@@ -1,22 +1,22 @@
 import { handleError } from "./apiUtils";
 import { api_url, app as api } from "./calls";
 
-const parseResponseError = ({ res, status, statusText }: any) => {
-  if (status >= 400) {
-    const message =
-      res.message +
-      "\n" +
-      Object.values(res.data || {}).reduce((acc: any, cur: any) => {
-        if (typeof cur === "object") {
-          return acc + "\n" + JSON.stringify(cur);
-        }
-        return acc + "\n" + cur.toString();
-      }, "");
-    const err = new Error(message);
-    err.name = statusText.replace(" ", "_");
-    throw err;
-  }
-};
+// const parseResponseError = ({ res, status, statusText }: any) => {
+//   if (status >= 400) {
+//     const message =
+//       res.message +
+//       "\n" +
+//       Object.values(res.data || {}).reduce((acc: any, cur: any) => {
+//         if (typeof cur === "object") {
+//           return acc + "\n" + JSON.stringify(cur);
+//         }
+//         return acc + "\n" + cur.toString();
+//       }, "");
+//     const err = new Error(message);
+//     err.name = statusText.replace(" ", "_");
+//     throw err;
+//   }
+// };
 
 export const login = async ({ username, password }: any) => {
   try {
@@ -73,7 +73,6 @@ export const getExams = async () => {
       .post(`${api_url}/user/exams`);
     // const { statusText, status } = req;
     const res = await req.json();
-    debugger;
     if (res.status === 400) {
       const error = await res.text();
       throw new Error(error);
@@ -83,4 +82,17 @@ export const getExams = async () => {
   } catch (error) {
     handleError(error);
   }
+};
+
+export const getInstructions = async () => {
+  const req = await api
+    .headers({ Authorization: "Bearer " + localStorage["jwt"] })
+    .get(`${api_url}/user/exams`);
+  const res = await req.json();
+  if (req.status >= 500) {
+    const error = new Error(res.message);
+    error.name = req.statusText;
+    throw error;
+  }
+  return res;
 };
