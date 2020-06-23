@@ -95,15 +95,37 @@ export const UpdateProfileModalWindow = ({
 
 export const AddAdminModalWindow = ({
   handleModalClose,
-  handleInputs,
-  handleUpdate,
+  createAdministrator,
   errors = {},
 }: any) => {
-  // const history = useHistory();
+  const history = useHistory();
+  const [input, setInput] = useState({});
+
+  const handleInputs = (ev: any) => {
+    const { name, value } = ev.target;
+    setInput({ ...input, [name]: value });
+  };
   return (
     <div className="text-center profile">
       <h3>Create New Admin </h3>
-      <form onSubmit={handleUpdate}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          (async () => {
+            try {
+              await createAdministrator(input);
+              toast.configure();
+              toast.success("Admin Successfully Created");
+              setTimeout(() => {
+                window.location.reload();
+              }, 500);
+            } catch (error) {
+              toast.configure();
+              toast.error(error.message);
+            }
+          })();
+        }}
+      >
         {errors.onSaveError && (
           <div className="alert alert-danger" role="alert">
             {errors.onSaveError}
@@ -185,6 +207,7 @@ export const GeneratePinModalWindow = ({
                 history.push("/admin/print-pin");
               }, 500);
             } catch (error) {
+              toast.configure();
               toast.error(error.message);
             }
           })();

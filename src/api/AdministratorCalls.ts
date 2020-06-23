@@ -119,7 +119,6 @@ export const uploadImage = async (base64: string) => {
   return res.data;
 };
 
-
 export const createPin = async (count: any) => {
   try {
     const req = await api
@@ -129,7 +128,7 @@ export const createPin = async (count: any) => {
     const { statusText, status } = req;
     const res = await req.json();
     parseResponseError({ res, status, statusText });
-    return  res.data;
+    return res.data;
   } catch (error) {
     throw error;
   }
@@ -145,6 +144,50 @@ export const getPin = async () => {
       (acc: any, cur: any) => ({ ...acc, [cur._id]: cur }),
       {}
     );
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getAdministrators = async () => {
+  try {
+    const req = await api.get(`${apiUrl}`);
+    const { statusText, status } = req;
+    const res = await req.json();
+    parseResponseError({ res, status, statusText });
+    return res.data.reduce(
+      (acc: any, cur: any) => ({ ...acc, [cur._id]: cur }),
+      {}
+    );
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const createAdministrators = async (newAdministrator: any) => {
+  try {
+    const req = await api
+      .body(newAdministrator)
+      .headers({ Authorization: "Bearer " + localStorage["jwt"] })
+      .post(apiUrl);
+    const { statusText, status } = req;
+    const res = await req.json();
+    parseResponseError({ res, status, statusText });
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteAdministrator = async (admin_id: string) => {
+  try {
+    const req = await api
+      .headers({ Authorization: "Bearer " + localStorage["jwt"] })
+      .delete(`${apiUrl}/${admin_id}`);
+    const { statusText, status } = req;
+    const res = await req.json();
+    parseResponseError({ res, status, statusText });
+    return res.data;
   } catch (error) {
     throw error;
   }

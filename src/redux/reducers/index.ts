@@ -5,6 +5,7 @@ import administrator from "./administratorReducer";
 import exams from "./ExamsReducer";
 import studentExamination from "./studentExamReducer";
 import pin from "./pinReducer";
+import otherAdministrator from "./otherAdministratorReducer";
 
 export const rootReducer = combineReducers({
   student,
@@ -12,7 +13,8 @@ export const rootReducer = combineReducers({
   apiCallsInProgress,
   exams,
   studentExamination,
-  pin
+  pin,
+  otherAdministrator
 });
 
 // export default rootReducer;
