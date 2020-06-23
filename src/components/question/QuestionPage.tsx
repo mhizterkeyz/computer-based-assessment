@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useHistory, Link } from "react-router-dom";
 import "./QuestionPage.scss";
 import display_img from "../../image/Rectangle-19.png";
 import timer_icon from "../../svg/access_alarms_24px_outlined.svg";
 import Modal from "../Modal";
 import { loadStudentExamination } from "../../redux/actions/examAction";
+import { answerExam, submitExam } from "../../api/studentApi";
 import { connect } from "react-redux";
 import Preloader from "../Preloader";
+import StudentCred from "./StudentCred";
 
 interface ConfirmSubmitProps {
   handleModalClose: () => void;
@@ -29,7 +31,12 @@ const ConfirmSubmit = ({ handleModalClose }: ConfirmSubmitProps) => {
 
         <button
           className="btn ml-2"
-          onClick={() => {
+          onClick={async () => {
+            try {
+              await submitExam();
+            } catch (error) {
+              console.log(error.message);
+            }
             history.push("/exam/submit");
           }}
         >
@@ -41,74 +48,83 @@ const ConfirmSubmit = ({ handleModalClose }: ConfirmSubmitProps) => {
 };
 
 const QuestionPage = (props: any) => {
+  const [counter, setCounter] = useState({
+    minutes: 0,
+    seconds: 0,
+    firstUpdateMade: false,
+  });
   const [modalData, setModalData] = useState({
     show: false,
     display: <></>,
   });
-
-  useEffect(() => {
-    if (Object.keys(props.studentExamination).length < 1) {
-      (async () => {
-        try {
-          await props.loadStudentExamination();
-        } catch (error) {
-          console.log(error);
-        }
-      })();
-    }
-
-    if (Object.keys(props.studentExamination).length >= 1) {
-      setCounter({ ...counter, minutes: props.studentExamination.timeLeft });
-    }
-  }, [props.studentExamination]);
-
+  const [examSet, setExamSet] = useState(false);
   const [exam, setExam] = useState({
     questions: {
       "question-1": {
         question_no: "question-1",
+        questionId: "jsam",
         _id: "question-1",
         type: true, //true: multichoice, false: freeanswer
-        question:
-          "Since mongo park discovered the confluence, who discovered mongo park?",
+        question: "",
         options: {
-          a: "David Mark",
-          b: "Johna Lukas",
-          c: "Stephen Hawkins",
-          d: "James Stew",
-        },
-      },
-      "question-2": {
-        question_no: "question-2",
-        _id: "question-2",
-        type: true, //true: multichoice, false: freeanswer
-        question: "The rain will soon fall, ______________ ?",
-        options: {
-          a: "won't it",
-          b: "isn't it",
-          c: "willn't it",
-          d: "NOTA",
-        },
-      },
-      "question-3": {
-        question_no: "question-3",
-        _id: "question-3",
-        type: true, //true: multichoice, false: freeanswer
-        question: "If you talk to a lady in Wuhan, have you wooed her?",
-        options: {
-          a: "Yes",
-          b: "No",
-          c: "NOTA",
-          d: "IDK",
+          a: "",
+          b: "",
+          c: "",
+          d: "",
         },
       },
     },
     answered: {},
   });
+  const { studentExamination, loadStudentExamination } = props;
 
-  const [counter, setCounter] = useState({
-    minutes: 0,
-    seconds: 0,
-  });
+  useEffect(() => {
+    if (Object.keys(studentExamination).length < 1) {
+      (async () => {
+        try {
+          await loadStudentExamination();
+        } catch (error) {
+          console.log(error);
+        }
+      })();
+    }
+    if (Object.keys(studentExamination).length > 1 && !examSet) {
+      const questions = studentExamination.questions.reduce(
+        (acc: any, cur: any, i: any) => ({
+          ...acc,
+          [`question-${i + 1}`]: { ...cur, question_no: `question-${i + 1}` },
+        }),
+        {}
+      );
+      const answered = studentExamination.answered.reduce(
+        (acc: any, cur: any) => ({
+          ...acc,
+          [cur.questionId]: {
+            ...cur,
+            value: cur.answer,
+            _id: cur.questionId,
+          },
+        }),
+        {}
+      );
+      setExam({ questions, answered });
+      setExamSet(true);
+    }
+    if (
+      Object.keys(studentExamination).length > 1 &&
+      !counter.firstUpdateMade
+    ) {
+      setCounter({
+        ...counter,
+        minutes: studentExamination.timeLeft,
+        firstUpdateMade: true,
+      });
+    }
+  }, [counter, studentExamination, loadStudentExamination, examSet]);
+
+  if (studentExamination.hasOwnProperty("examNotFound")) {
+    props.history.push("/exam/submit");
+  }
 
   const { minutes, seconds } = counter;
 
@@ -116,6 +132,7 @@ const QuestionPage = (props: any) => {
     const myInterval = setInterval(() => {
       if (seconds > 0) {
         setCounter({
+          ...counter,
           minutes: minutes,
           seconds: seconds - 1,
         });
@@ -126,6 +143,7 @@ const QuestionPage = (props: any) => {
           clearInterval(myInterval);
         } else {
           setCounter({
+            ...counter,
             minutes: minutes - 1,
             seconds: 59,
           });
@@ -134,17 +152,17 @@ const QuestionPage = (props: any) => {
     }, 1000);
 
     return () => clearInterval(myInterval);
-  }, [minutes, seconds]);
+  }, [minutes, seconds, counter]);
 
   const { question, prev, next }: any = Object.values(exam.questions).reduce(
     (acc, cur, ind, arr) => {
       const prev =
         ind - 1 < 0
           ? arr[arr.length - 1].question_no || "/exam"
-          : arr[ind - 1]._id || "/exam";
+          : arr[ind - 1].question_no || "/exam";
       const next =
         ind + 1 >= arr.length
-          ? arr[0]._id || "/exam"
+          ? arr[0].question_no || "/exam"
           : arr[ind + 1].question_no || "/exam";
       if (cur.question_no === props.match.params.question)
         return { question: cur, prev, next };
@@ -155,15 +173,30 @@ const QuestionPage = (props: any) => {
 
   const handleModalClose = () => setModalData({ ...modalData, show: false });
 
-  const handleChoose = (ev: any) => {
+  const handleChoose = async (ev: any) => {
     const { value } = ev.target;
-    setExam({
-      ...exam,
-      answered: {
-        ...exam.answered,
-        [question._id]: { value, _id: question._id },
+    let answered = {
+      ...exam.answered,
+      [question.questionId]: {
+        value,
+        _id: question._id,
+        answer: value,
+        questionId: question.questionId,
       },
-    });
+    };
+    setExam({ ...exam, answered });
+    try {
+      const req = await answerExam(answered);
+      if (req.status === 200) {
+        return;
+      }
+      if (req.status === 404) {
+        return props.history.push("/exam/submit");
+      }
+      throw new Error("an unexpected error has occurred");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -172,48 +205,17 @@ const QuestionPage = (props: any) => {
         {modalData.display}
       </Modal>
       <main>
-        <section className="col-2 mr-3 student-credentials">
-          {props.loading ? (
-            <Preloader />
-          ) : (
-            <>
-              <div className="text-center">
-                <span className="image-cropper">
-                  <img src={display_img} alt="student" />
-                </span>
-                <h2>Alikali Ojonugwa Justice</h2>
-              </div>
-
-              <hr />
-
-              <div className="details">
-                <div>
-                  <h3>Matric. no:</h3>
-                  <h4>13MS1023</h4>
-                </div>
-
-                <div>
-                  <h3>Department</h3>
-                  <h4>Computer Science</h4>
-                </div>
-                <div>
-                  <h3>Faculty</h3>
-                  <h4>Natural Science</h4>
-                </div>
-              </div>
-
-              <div
-                className="d-flex justify-content-center align-items-center mt-3"
-                style={minutes <= 9 ? { color: "red" } : { color: "" }}
-              >
-                <img src={timer_icon} alt="timer icon" className="mr-2" />
-                <h5>
-                  {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
-                </h5>
-              </div>
-            </>
-          )}
-        </section>
+        <StudentCred
+          {...{
+            Preloader,
+            minutes,
+            display_img,
+            loading: props.loading,
+            timer_icon,
+            seconds,
+          }}
+          {...props.student}
+        />
 
         <section className="col-8 question">
           {props.loading ? (
@@ -240,7 +242,7 @@ const QuestionPage = (props: any) => {
                   {question.options &&
                     Object.keys(question.options).map((opt) => {
                       const val: any = Object.values(exam.answered).find(
-                        (elem: any) => elem._id === question._id
+                        (elem: any) => elem.questionId === question.questionId
                       );
                       return (
                         <div key={`${question._id}_opt_${opt}`}>
@@ -250,7 +252,7 @@ const QuestionPage = (props: any) => {
                               type="radio"
                               checked={val && val.value === opt}
                               name="answer"
-                              value={opt}
+                              defaultValue={opt}
                               className="ml-3 mr-2"
                               onChange={handleChoose}
                             />
@@ -297,12 +299,14 @@ const QuestionPage = (props: any) => {
             <></>
           ) : (
             <div className="mt-3 mb-5 question-btn">
-              {Object.keys(exam.questions).map((elem, key) => (
+              {Object.values(exam.questions).map((elem, key) => (
                 <Link
                   className={`btn ${
-                    exam.answered.hasOwnProperty(elem) ? "answered" : ""
+                    exam.answered.hasOwnProperty(elem.questionId)
+                      ? "answered"
+                      : ""
                   }`}
-                  to={`/exam/${elem}`}
+                  to={`/exam/${elem.question_no}`}
                   key={key}
                 >
                   <span>{key + 1}</span>
@@ -319,9 +323,10 @@ const QuestionPage = (props: any) => {
 function mapStateToProps(state: any) {
   return {
     studentExamination: state.studentExamination,
-    loading: state.apiCallsInProgress > 0,
+    student: state.student,
+    loading: false, //  state.apiCallsInProgress > 0,
   };
-};
+}
 
 const mapDispatchToProps = {
   loadStudentExamination,

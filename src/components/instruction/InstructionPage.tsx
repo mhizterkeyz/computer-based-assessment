@@ -95,7 +95,7 @@ const InstructionPage = () => {
               <button
                 className="btn"
                 onClick={() => {
-                  history.push(`/exam/question-${1}`);
+                  history.push(`/exam`);
                 }}
               >
                 {exam.inProgress ? "Resume assessment" : "Start"}
