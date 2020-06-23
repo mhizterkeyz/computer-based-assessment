@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory, Link } from "react-router-dom";
 import "./QuestionPage.scss";
 import display_img from "../../image/Rectangle-19.png";
