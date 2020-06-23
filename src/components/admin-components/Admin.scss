@@ -89,6 +89,10 @@ div.admin-list {
       background: #edf5fc;
     }
   }
+  &__no-admin {
+    font-weight: bold;
+    color: #cccccc;
+  }
 }
 
 button.button1 {

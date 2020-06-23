@@ -32,6 +32,20 @@ export const CreatePinSuccess = (pin: any) => ({
   pin,
 });
 
+export const getAdministratorsSuccess = (admin: any) => ({
+  type: types.GET_ADMINISTRATOR_SUCCESS,
+  admin,
+});
+
+export const createAdministratorsSuccess = (admin: any) => ({
+  type: types.CREATE_ADMINISTRATOR_SUCCESS,
+  admin,
+});
+
+export function deleteAdministratorOptimistic(admin_id:string) {
+  return { type: types.DELETE_ADMINISTRATOR_OPTIMISTIC, admin_id}
+};
+
 export function SignInAdmin({ username, password }: any) {
   return async (dispatch: any) => {
     try {
@@ -110,5 +124,39 @@ export const createPin = (count: any) => {
       dispatch(apiCallError());
       throw error;
     }
+  };
+};
+
+
+export const getAdministrators = () => {
+  return async (dispatch: any) => {
+    try {
+      dispatch(beginApiCall());
+      const admin = await Api.getAdministrators();
+      return dispatch(getAdministratorsSuccess(admin));
+    } catch (error) {
+      dispatch(apiCallError());
+      throw error;
+    }
+  };
+};
+
+export const createAdministrator = (newAdministrator:any) => {
+  return async (dispatch: any) => {
+    try {
+      dispatch(beginApiCall());
+      const admin = await Api.createAdministrators(newAdministrator);
+      return dispatch(createAdministratorsSuccess(admin));
+    } catch (error) {
+      dispatch(apiCallError());
+      throw error;
+    }
+  };
+};
+
+export function deleteAdministrator(admin_id:string) {
+  return function (dispatch:any) {
+    dispatch(deleteAdministratorOptimistic(admin_id));
+    return Api.deleteAdministrator(admin_id);
   };
 };
