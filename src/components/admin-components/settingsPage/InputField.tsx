@@ -25,7 +25,7 @@ export const NumberField = (props: any) => (
       type="number"
       className="profile__input"
       name={props.name}
-      // onChange={props.handleInputs}
+      onChange={props.handleInputs}
     />
   </div>
 );

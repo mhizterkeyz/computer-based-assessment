@@ -5,7 +5,7 @@ import { NavLink } from "react-router-dom";
 
 const navItems = [
   {
-    name: "Assessment History",
+    name: "Assessment List",
     url: "/admin/history",
   },
   {
@@ -14,7 +14,7 @@ const navItems = [
   },
   {
     name: "Add Assessment",
-    url: "/admin/add-asssesment",
+    url: "/admin/add-assessment",
   },
   {
     name: "Settings",
@@ -39,7 +39,7 @@ const Header = () => {
         <img src={logo} alt="site logo" />
 
         <nav>
-          <ul className="d-flex">
+          <ul className="d-flex d-print-none">
             {navItems.map((item, index) => (
               <Navigation
                 {...item}
@@ -51,7 +51,7 @@ const Header = () => {
       </header>
 
       <button
-        className="d-flex align-items-center btn btn-primary text-right mt-3 logout"
+        className="d-flex align-items-center btn btn-primary text-right mt-3 d-print-none logout"
         onClick={() => {
           delete localStorage["jwt"];
           delete localStorage["route"];

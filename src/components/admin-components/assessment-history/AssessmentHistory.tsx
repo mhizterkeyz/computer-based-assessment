@@ -44,8 +44,8 @@ const AssessmentHistory = (props: {
               <form className="text-right">
                 <input
                   type="search"
-                  placeholder="Search Examination"
-                  className=""
+                  placeholder="&#xe902; Search Examination"
+                  style={{ fontFamily: "Poppins, icomoon" }}
                 />
               </form>
               <div className="dta-head">

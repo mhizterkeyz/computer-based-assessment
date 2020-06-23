@@ -9,6 +9,7 @@ import AddAssessment from "./add-assessment/AddAssessment";
 import { VerifyAdministrator } from "../../redux/actions/AdministratorActions";
 import Header from "./Header";
 import SettingsPage from "./settingsPage/SettingsPage";
+import PrintPin from "./PrintPinPage";
 
 const Index = ({ administrator, VerifyAdministrator }: any) => {
   useEffect(() => {
@@ -49,9 +50,10 @@ const Index = ({ administrator, VerifyAdministrator }: any) => {
           path={"/admin/running-asssesment"}
           component={RunningAssessment}
         />
-        <Route path={"/admin/history"} component={AssessmentHistory} />
+        <Route path={"/admin/add-assessment"} component={AddAssessment} />
         <Route path={"/admin/settings"} component={SettingsPage} />
-        <Route component={AddAssessment} />
+        <Route path={"/admin/print-pin"} component={PrintPin} />
+        <Route component={AssessmentHistory} />
       </Switch>
     </Router>
   );

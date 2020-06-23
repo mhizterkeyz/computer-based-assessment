@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   TextField,
   NumberField,
   EmailField,
   PasswordField,
 } from "./InputField";
+import { useHistory } from "react-router-dom";
 
 export const UpdateProfileModalWindow = ({
   handleModalClose,
@@ -120,7 +123,12 @@ export const AddAdminModalWindow = ({
           handleInputs={handleInputs}
         />
 
-        <EmailField name="email" label="Email" placeholder="Enter Email here" handleInputs={handleInputs} />
+        <EmailField
+          name="email"
+          label="Email"
+          placeholder="Enter Email here"
+          handleInputs={handleInputs}
+        />
 
         <PasswordField
           class=""
@@ -150,30 +158,50 @@ export const AddAdminModalWindow = ({
   );
 };
 
-export const GeneratePinModalWindow = ({ handleModalClose }: any) => {
-  // const history = useHistory();
+export const GeneratePinModalWindow = ({
+  handleModalClose,
+  createPin,
+}: any) => {
+  const history = useHistory();
+  const [input, setInput] = useState({ count: "" });
+
+  const handleInputs = (ev: any) => {
+    const { name, value } = ev.target;
+    setInput({ ...input, [name]: value });
+  };
   return (
     <div className="text-center profile">
       <h3>Specify Number of PIN</h3>
       <form
         onSubmit={(e) => {
           e.preventDefault();
+          (async () => {
+            try {
+              const count = parseInt(input.count);
+              await createPin({ count });
+              toast.configure();
+              toast.success("Pin Successfully Created");
+              setTimeout(() => {
+                history.push("/admin/print-pin");
+              }, 500);
+            } catch (error) {
+              toast.error(error.message);
+            }
+          })();
         }}
       >
-        <NumberField label="How many PIN?" name="pin" />
+        <NumberField
+          label="How many PIN?"
+          name="count"
+          handleInputs={handleInputs}
+        />
 
         <div className="">
           <button className="btn btn-primary" onClick={handleModalClose}>
             Cancel
           </button>
 
-          <button
-            type="submit"
-            className="btn btn-primary ml-2"
-            onClick={() => {
-              // history.push("/exam/submit");
-            }}
-          >
+          <button type="submit" className="btn btn-primary ml-2">
             Generate
           </button>
         </div>

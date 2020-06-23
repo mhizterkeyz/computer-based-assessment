@@ -118,3 +118,34 @@ export const uploadImage = async (base64: string) => {
   parseResponseError({ res, status, statusText });
   return res.data;
 };
+
+
+export const createPin = async (count: any) => {
+  try {
+    const req = await api
+      .body(count)
+      .headers({ Authorization: "Bearer " + localStorage["jwt"] })
+      .post(`${apiUrl}/pins`);
+    const { statusText, status } = req;
+    const res = await req.json();
+    parseResponseError({ res, status, statusText });
+    return  res.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getPin = async () => {
+  try {
+    const req = await api.get(`${apiUrl}/pins`);
+    const { statusText, status } = req;
+    const res = await req.json();
+    parseResponseError({ res, status, statusText });
+    return res.data.reduce(
+      (acc: any, cur: any) => ({ ...acc, [cur._id]: cur }),
+      {}
+    );
+  } catch (error) {
+    throw error;
+  }
+};

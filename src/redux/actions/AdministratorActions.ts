@@ -22,6 +22,16 @@ export const createExamSuccess = (exams: any) => ({
   exams,
 });
 
+export const getPinSuccess = (pin: any) => ({
+  type: types.GET_PIN_SUCCESS,
+  pin,
+});
+
+export const CreatePinSuccess = (pin: any) => ({
+  type: types.GET_PIN_SUCCESS,
+  pin,
+});
+
 export function SignInAdmin({ username, password }: any) {
   return async (dispatch: any) => {
     try {
@@ -70,6 +80,32 @@ export const createExam = (data: any) => {
       dispatch(beginApiCall());
       const exam = await Api.submitExam(data);
       return dispatch(createExamSuccess(exam));
+    } catch (error) {
+      dispatch(apiCallError());
+      throw error;
+    }
+  };
+};
+
+export const loadPin = () => {
+  return async (dispatch: any) => {
+    try {
+      dispatch(beginApiCall());
+      const pin = await Api.getPin();
+      return dispatch(getPinSuccess(pin));
+    } catch (error) {
+      dispatch(apiCallError());
+      throw error;
+    }
+  };
+};
+
+export const createPin = (count: any) => {
+  return async (dispatch: any) => {
+    try {
+      dispatch(beginApiCall());
+      const pin = await Api.createPin(count);
+      return dispatch(CreatePinSuccess(pin));
     } catch (error) {
       dispatch(apiCallError());
       throw error;

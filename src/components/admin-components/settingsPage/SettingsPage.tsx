@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { connect } from "react-redux";
 import delete_icon from "../../../svg/delete_sweep_24px_outlined.svg";
 import Modal from "../../Modal";
+import { createPin } from "../../../redux/actions/AdministratorActions";
 import {
   UpdateProfileModalWindow,
   GeneratePinModalWindow,
@@ -41,13 +42,14 @@ const SettingsPage = (props: any) => {
 
   const [profile, setProfile] = useState({
     ...props.administrator,
-    password: "ndndndn",
+    password: "",
     cpassword: "",
   });
 
+
   const [errors, setErrors] = useState({});
 
-  const handleInputs = (ev: any) => {
+  const handleProfileInputs = (ev: any) => {
     const { name, value } = ev.target;
     setProfile((prevProfile: any) => ({ ...prevProfile, [name]: value }));
   };
@@ -90,7 +92,7 @@ const SettingsPage = (props: any) => {
           profile={profile}
           handleModalClose={handleModalClose}
           errors={errors}
-          handleInputs={handleInputs}
+          handleInputs={handleProfileInputs}
           handleUpdate={handleUpdate}
         />
       ),
@@ -104,7 +106,7 @@ const SettingsPage = (props: any) => {
         <AddAdminModalWindow
           handleModalClose={handleModalClose}
           errors={errors}
-          handleInputs={handleInputs}
+          handleInputs={handleProfileInputs}
           handleUpdate={handleUpdate}
         />
       ),
@@ -114,7 +116,12 @@ const SettingsPage = (props: any) => {
   const onClickShowPinModal = () => {
     setModalData({
       show: true,
-      display: <GeneratePinModalWindow handleModalClose={handleModalClose} />,
+      display: (
+        <GeneratePinModalWindow
+          handleModalClose={handleModalClose}
+          createPin={props.createPin}
+        />
+      ),
     });
   };
 
@@ -169,8 +176,8 @@ function mapStateToProps(state: any) {
   };
 }
 
-// const mapDispatchToProps = {
-//   updateAdministrator
-// }
+const mapDispatchToProps = {
+  createPin,
+};
 
-export default connect(mapStateToProps)(SettingsPage);
+export default connect(mapStateToProps, mapDispatchToProps)(SettingsPage);
