@@ -56,6 +56,7 @@ function App({
           <Route path="/admin" component={Administrator} />
           <Route to="/student-login" render={() => <StudentLoginPage />} />
         </Switch>
+        <ToastContainer autoClose={3000} hideProgressBar={true} />
       </Router>
     );
   }

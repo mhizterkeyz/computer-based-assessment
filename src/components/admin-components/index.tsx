@@ -40,7 +40,12 @@ const Index = ({ administrator, VerifyAdministrator }: any) => {
     !administrator.hasOwnProperty("username") ||
     administrator.username === ""
   ) {
-    return <Route component={Login} />;
+    return (
+      <>
+        <Route component={Login} />
+        <ToastContainer autoClose={3000} hideProgressBar={true} />
+      </>
+    );
   }
 
   return (
