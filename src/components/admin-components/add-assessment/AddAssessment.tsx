@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./AddAssessment.scss";
 // import Header from "../Header";
 import { Switch, Route } from "react-router-dom";
 import AddQuestion from "../question/AddQuestion";
 import { toBase64 } from "./Functionality";
 import { connect } from "react-redux";
-import { createExam } from "../../../redux/actions/AdministratorActions";
+import {
+  createExam,
+  loadUpExams,
+} from "../../../redux/actions/AdministratorActions";
 
 import * as Fields from "./inputFields";
 import BioData from "./BioData";
@@ -23,6 +26,7 @@ const AddAssessment = (props: any) => {
         matric: "",
         name: "",
         department: "",
+        level: 100,
         ca: 0,
       },
     ],
@@ -50,6 +54,19 @@ const AddAssessment = (props: any) => {
     dur2: 0,
   });
 
+  useEffect(() => {
+    if (Object.keys(props.exams).length < 1) {
+      (async () => {
+        try {
+          await props.loadUpExams();
+        } catch (error) {
+          console.log(error.message);
+        }
+      })();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleInputs = (ev: any) => {
     const { name, value } = ev.target;
     setInputs({ ...inputs, [name]: value });
@@ -61,13 +78,21 @@ const AddAssessment = (props: any) => {
     setInputs({ ...inputs, bioData: [newData, ...arr] });
   };
   const addRow = (
-    arr: [{ matric: string; name: string; department: string; ca: number }]
+    arr: [
+      {
+        matric: string;
+        name: string;
+        department: string;
+        level: number;
+        ca: number;
+      }
+    ]
   ) => {
     if (!Array.isArray(arr)) {
       setInputs({
         ...inputs,
         bioData: [
-          { matric: "", name: "", department: "", ca: 0 },
+          { matric: "", name: "", department: "", level: 100, ca: 0 },
           ...inputs.bioData,
         ],
       });
@@ -107,6 +132,7 @@ const AddAssessment = (props: any) => {
             matric: "",
             name: "",
             department: "",
+            level: 100,
             ca: 0,
           },
         ],
@@ -158,7 +184,13 @@ const AddAssessment = (props: any) => {
                           <td>{index + 1}.</td>
                           <td>{exam.course}</td>
                           <td>{exam.title}</td>
-                          <td>{exam.status ? "Pending" : "Done"}</td>
+                          <td>
+                            {exam.status === 0
+                              ? "Pending"
+                              : exam.status === 1
+                              ? "in progress"
+                              : "Done"}
+                          </td>
                         </tr>
                       );
                     })}
@@ -469,6 +501,7 @@ const mapStateToProps = (state: any) => ({
 
 const mapDispatchToProps = {
   createExam,
+  loadUpExams,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddAssessment);

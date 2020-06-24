@@ -74,6 +74,18 @@ const BioData = (props: any) => {
                 <div className="col-2">
                   <input
                     type="number"
+                    min="100"
+                    onChange={(ev: any) => {
+                      handleBioData(i, ev.target.name, ev.target.value);
+                    }}
+                    value={elem.level}
+                    name="level"
+                    placeholder="Level"
+                  />
+                </div>
+                <div className="col-2">
+                  <input
+                    type="number"
                     max="30"
                     min="0"
                     onChange={(ev: any) => {
