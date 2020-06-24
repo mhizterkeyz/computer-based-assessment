@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import "./InstructionPage.scss";
 
 import { getInstructions } from "../../api/studentApi";
+import { toast } from "react-toastify";
 
 const InstructionPage = () => {
   const [exam, setExam] = useState({
@@ -30,7 +31,7 @@ const InstructionPage = () => {
         if (req.status === 404) return;
         throw new Error("An unexpected error has occurred");
       } catch (error) {
-        console.log(error);
+        toast.error(`Error: ${error.message}`);
       }
     })();
   }, []);

@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import assesment_SVG from "../../../svg/undraw_exams_g4ow 1.svg";
 import Header from "../../Header";
 import { SignInAdmin } from "../../../redux/actions/AdministratorActions";
+import { toast } from "react-toastify";
 
 const Login = (props: any) => {
   const [inputs, setInputs] = useState({
@@ -12,8 +13,8 @@ const Login = (props: any) => {
   });
 
   if (window.location.pathname !== "/admin") {
-    props.history.push("/admin")
-  };
+    props.history.push("/admin");
+  }
 
   const handleInputs = (ev: any) => {
     const { name, value } = ev.target;
@@ -26,10 +27,10 @@ const Login = (props: any) => {
       await props.SignInAdmin(inputs);
     } catch (error) {
       if (error.name === "Unauthorized") {
-        console.log("signin failure ");
+        toast.error(`Error: ${error.message}`);
         return setInputs({ ...inputs, invalid: true });
       }
-      console.log("Network error " + error.message);
+      toast.error(`Network error: ${error.message}`);
     }
   };
 

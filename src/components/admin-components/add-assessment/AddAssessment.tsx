@@ -1,14 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./AddAssessment.scss";
 // import Header from "../Header";
 import { Switch, Route } from "react-router-dom";
 import AddQuestion from "../question/AddQuestion";
 import { toBase64 } from "./Functionality";
 import { connect } from "react-redux";
-import {
-  createExam,
-  loadUpExams,
-} from "../../../redux/actions/AdministratorActions";
+import { toast } from "react-toastify";
+import { createExam } from "../../../redux/actions/AdministratorActions";
 
 import * as Fields from "./inputFields";
 import BioData from "./BioData";
@@ -53,19 +51,6 @@ const AddAssessment = (props: any) => {
     dur1: 45,
     dur2: 0,
   });
-
-  useEffect(() => {
-    if (Object.keys(props.exams).length < 1) {
-      (async () => {
-        try {
-          await props.loadUpExams();
-        } catch (error) {
-          console.log(error.message);
-        }
-      })();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const handleInputs = (ev: any) => {
     const { name, value } = ev.target;
@@ -154,11 +139,12 @@ const AddAssessment = (props: any) => {
         },
         instructions: "",
       });
+      toast.success("Exam added successfully!");
+      props.history.push("history");
     } catch (error) {
-      console.log(error.message);
+      toast.error(`Try that again: ${error.message}`);
     }
   };
-
   return (
     <>
       <Switch>
@@ -167,35 +153,6 @@ const AddAssessment = (props: any) => {
           render={() => {
             return (
               <section className="add-assessment">
-                <h6>Exams</h6>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Course</th>
-                      <th>Title</th>
-                      <th>status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Object.values(props.exams).map((exam: any, index) => {
-                      return (
-                        <tr key={exam._id}>
-                          <td>{index + 1}.</td>
-                          <td>{exam.course}</td>
-                          <td>{exam.title}</td>
-                          <td>
-                            {exam.status === 0
-                              ? "Pending"
-                              : exam.status === 1
-                              ? "in progress"
-                              : "Done"}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
                 <h3>Add Assessment</h3>
 
                 <form onSubmit={handleSubmit}>
@@ -495,13 +452,10 @@ const AddAssessment = (props: any) => {
   );
 };
 
-const mapStateToProps = (state: any) => ({
-  exams: state.exams,
-});
+const mapStateToProps = (state: any) => ({});
 
 const mapDispatchToProps = {
   createExam,
-  loadUpExams,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddAssessment);

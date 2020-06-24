@@ -7,6 +7,7 @@ import { loadUpExams } from "../../../redux/actions/AdministratorActions";
 import Preloader from "../../Preloader";
 import Examination from "./Examination";
 import Assessment from "../Assessment";
+import { toast } from "react-toastify";
 
 const AssessmentHistory = (props: {
   exams: any;
@@ -14,18 +15,19 @@ const AssessmentHistory = (props: {
   loadUpExams: () => Promise<any>;
 }) => {
   const [assessment, setAssessment] = useState({ show: false, exam: "" });
+  const { exams, loadUpExams } = props;
 
   useEffect(() => {
-    if (Object.keys(props.exams).length < 1) {
+    if (Object.keys(exams).length < 1) {
       (async () => {
         try {
-          await props.loadUpExams();
+          await loadUpExams();
         } catch (error) {
-          console.log(error);
+          toast.error(`Error: ${error.message}`);
         }
       })();
     }
-  }, [props.exams]);
+  }, [exams, loadUpExams]);
 
   const onClickShowExamination = (show: boolean, exam: any) => {
     setAssessment({ ...assessment, show: show, exam: exam });

@@ -9,6 +9,8 @@ import QuestionPage from "./components/question/QuestionPage";
 import CredentialsPage from "./components/credentials/CredentialsPage";
 import SubmitPage from "./components/submit/SubmitPage";
 import Administrator from "./components/admin-components";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import Header from "./components/Header";
 import { student as studentInterface } from "./components/model/student";
@@ -81,6 +83,7 @@ function App({
           )}
         />
       </Switch>
+      <ToastContainer hideProgressBar={true} autoClose={3000} />
     </Router>
   );
 }
