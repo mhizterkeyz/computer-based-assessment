@@ -9,6 +9,7 @@ import {
 } from "../../redux/actions/AdministratorActions";
 import { StudentList, StudentInfo } from "./AssessmentStudentList";
 import { toast } from "react-toastify";
+import Modal from "../Modal";
 
 const Assessment = ({
   exam: examination,
@@ -28,6 +29,11 @@ const Assessment = ({
     course: "",
     title: "",
     _id: "",
+  });
+
+  const [modalData, setModalData] = useState({
+    show: false,
+    display: <></>,
   });
   useEffect(() => {
     setExam({ ...exam, ...examination });
@@ -76,8 +82,6 @@ const Assessment = ({
     return dta.status === 2;
   });
 
-  console.log(exam);
-
   const handleViewResult = () => {
     if (exam.status === 0) {
       toast.configure();
@@ -120,14 +124,49 @@ const Assessment = ({
       await updateExamStatus(exam._id, { status: 2 });
       setExam({ ...exam, status: 2 });
       toast.success("Assessment Closed");
+      setModalData({ ...modalData, show: false });
     } catch (error) {
       toast.configure();
       toast.error(error.message);
     }
   };
 
+  const handleModalClose = () => setModalData({ ...modalData, show: false });
+
+  const onClickConfirmCloseAssessment = () => {
+    setModalData({
+      show: true,
+      display: (
+        <div className="text-center confirm-modal">
+          <h2>Do you want to Close Assessment?</h2>
+          <p>
+            Closing the Assessment will end all Examination <br />
+            Continue by clicking on Close.
+          </p>
+
+          <div className="">
+            <button className="btn" onClick={handleModalClose}>
+              Don't Close
+            </button>
+
+            <button
+              className="btn ml-2"
+              onClick={handleCloseAssessment}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      ),
+    });
+  };
+
   return (
     <>
+      <Modal show={modalData.show} handleClose={handleModalClose}>
+        {modalData.display}
+      </Modal>
+
       <h2 className="text-center">
         <span style={{ textTransform: "uppercase" }}>{exam.course}</span> -{" "}
         <span style={{ textTransform: "capitalize" }}>{exam.title}</span> <br />{" "}
@@ -209,7 +248,7 @@ const Assessment = ({
               <button
                 className="btn btn-danger"
                 disabled={exam.status === 0 || exam.status === 2}
-                onClick={handleCloseAssessment}
+                onClick={onClickConfirmCloseAssessment}
               >
                 Close Assessment
               </button>
