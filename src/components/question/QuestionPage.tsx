@@ -9,6 +9,7 @@ import { answerExam, submitExam } from "../../api/studentApi";
 import { connect } from "react-redux";
 import Preloader from "../Preloader";
 import StudentCred from "./StudentCred";
+import { toast } from "react-toastify";
 
 interface ConfirmSubmitProps {
   handleModalClose: () => void;
@@ -35,7 +36,11 @@ const ConfirmSubmit = ({ handleModalClose }: ConfirmSubmitProps) => {
             try {
               await submitExam();
             } catch (error) {
-              console.log(error.message);
+              /**
+               * Failed to submit exam, but do nothing
+               * as it will be submitted automatically
+               * in a minutes after your time expires.
+               */
             }
             history.push("/exam/submit");
           }}
@@ -84,7 +89,7 @@ const QuestionPage = (props: any) => {
         try {
           await loadStudentExamination();
         } catch (error) {
-          console.log(error);
+          toast.error(`Error: ${error.message}`);
         }
       })();
     }
@@ -195,7 +200,7 @@ const QuestionPage = (props: any) => {
       }
       throw new Error("an unexpected error has occurred");
     } catch (error) {
-      console.log(error);
+      toast.error(`Error: ${error.message}`);
     }
   };
 

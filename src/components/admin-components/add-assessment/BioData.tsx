@@ -1,5 +1,6 @@
 import React from "react";
 import { getBioData } from "../../../api/AdministratorCalls";
+import { toast } from "react-toastify";
 
 const BioData = (props: any) => {
   const { handleBioData, bioData, addRow, removeRow, toBase64 } = props;
@@ -10,7 +11,7 @@ const BioData = (props: any) => {
       const obj = await getBioData(file);
       addRow(obj);
     } catch (error) {
-      console.log(error);
+      toast.error(`Error: ${error.message}`);
     }
   };
 

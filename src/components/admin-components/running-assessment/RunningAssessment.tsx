@@ -6,21 +6,23 @@ import { loadUpExams } from "../../../redux/actions/AdministratorActions";
 import { connect } from "react-redux";
 import Preloader from "../../Preloader";
 import Assessment from "../Assessment";
+import { toast } from "react-toastify";
 
 const RunningAssessment = (props: any) => {
   const [student, setStudent] = useState({ show: false, matric: "13MS1027" });
+  const { exams, loadUpExams } = props;
 
   useEffect(() => {
-    if (Object.keys(props.exams).length < 1) {
+    if (Object.keys(exams).length < 1) {
       (async () => {
         try {
-          await props.loadUpExams();
+          await loadUpExams();
         } catch (error) {
-          console.log(error);
+          toast.error(`Error: ${error.message}`);
         }
       })();
     }
-  }, [props.exams]);
+  }, [exams, loadUpExams]);
 
   let runningExam: any;
   if (!props.loading) {

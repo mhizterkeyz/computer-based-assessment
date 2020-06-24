@@ -5,6 +5,7 @@ import Header from "../Header";
 import { connect } from "react-redux";
 import { loadStudent } from "../../redux/actions/studentAction";
 import { useHistory } from "react-router-dom";
+import { toast } from "react-toastify";
 // import Header from '../Header';
 // import Footer from '../Footer';
 
@@ -47,7 +48,7 @@ const StudentLoginPage = (props: any) => {
       setBusy(true);
       await props.loadStudent(inputs);
     } catch (error) {
-      console.log("student failed to authenticate " + error);
+      toast.error(`Error: ${error.message}`);
       setBusy(false);
     }
   };

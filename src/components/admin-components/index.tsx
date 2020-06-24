@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import { connect } from "react-redux";
+import { ToastContainer } from "react-toastify";
 
 import Login from "./login/Login";
 import RunningAssessment from "./running-assessment/RunningAssessment";
@@ -55,6 +56,7 @@ const Index = ({ administrator, VerifyAdministrator }: any) => {
         <Route path={"/admin/print-pin"} component={PrintPin} />
         <Route component={AssessmentHistory} />
       </Switch>
+      <ToastContainer autoClose={3000} hideProgressBar={true} />
     </Router>
   );
 };

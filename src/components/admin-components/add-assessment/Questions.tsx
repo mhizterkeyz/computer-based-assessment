@@ -1,5 +1,6 @@
 import React from "react";
 import { uploadImage, getQuestions } from "../../../api/AdministratorCalls";
+import { toast } from "react-toastify";
 
 const Questions = (props: any) => {
   const {
@@ -24,7 +25,7 @@ const Questions = (props: any) => {
       const img = await uploadImage(file);
       handleImages(img);
     } catch (error) {
-      console.log(error);
+      toast.error(`Error: ${error.message}`);
     }
     ev.target.value = "";
   };
@@ -35,7 +36,7 @@ const Questions = (props: any) => {
       const img = await getQuestions(file);
       addRow(img);
     } catch (error) {
-      console.log(error);
+      toast.error(`Error: ${error.message}`);
     }
   };
   return (
