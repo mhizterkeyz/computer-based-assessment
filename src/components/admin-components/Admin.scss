@@ -169,12 +169,36 @@ button.settings-btn {
   }
 }
 
+.assessment-result {
+  width: 90%;
+  margin: 0 auto;
+
+  &__title {
+    margin: 0;
+  }
+
+  &__result-table {
+    width: 100%;
+    border: 1px solid #c4c4c4;
+    tr,
+    th,
+    td {
+      border: 1px solid #c4c4c4;
+    }
+
+    th,
+    td {
+      padding: 0.8rem;
+    }
+  }
+}
+
 @media print {
   .d-print-none {
     display: none !important;
   }
 
-  .assessment-pin {
+  .assessment-pin, .assessment-result {
     width: 100%;
     &__value {
       font-weight: 600;
@@ -183,5 +207,8 @@ button.settings-btn {
       color: #333333;
       padding: 1rem;
     }
+  }
+  @page {
+    size: landscape;
   }
 }

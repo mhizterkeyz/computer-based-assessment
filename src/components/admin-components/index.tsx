@@ -11,6 +11,7 @@ import { VerifyAdministrator } from "../../redux/actions/AdministratorActions";
 import Header from "./Header";
 import SettingsPage from "./settingsPage/SettingsPage";
 import PrintPin from "./PrintPinPage";
+import PrintResult from "./PrintResultPage";
 
 const Index = ({ administrator, VerifyAdministrator }: any) => {
   useEffect(() => {
@@ -59,6 +60,7 @@ const Index = ({ administrator, VerifyAdministrator }: any) => {
         <Route path={"/admin/add-assessment"} component={AddAssessment} />
         <Route path={"/admin/settings"} component={SettingsPage} />
         <Route path={"/admin/print-pin"} component={PrintPin} />
+        <Route path={"/admin/print-result"} component={PrintResult} />
         <Route component={AssessmentHistory} />
       </Switch>
       <ToastContainer autoClose={3000} hideProgressBar={true} />

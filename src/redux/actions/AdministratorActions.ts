@@ -17,6 +17,11 @@ export const getExamsSuccess = (exams: any) => ({
   exams,
 });
 
+export const updateExamStatusSuccess = (exams: any) => ({
+  type: types.UPDATE_EXAMS_SUCCESS,
+  exams,
+});
+
 export const createExamSuccess = (exams: any) => ({
   type: types.CREATE_EXAM_SUCCESS,
   exams,
@@ -42,9 +47,15 @@ export const createAdministratorsSuccess = (admin: any) => ({
   admin,
 });
 
-export function deleteAdministratorOptimistic(admin_id:string) {
-  return { type: types.DELETE_ADMINISTRATOR_OPTIMISTIC, admin_id}
-};
+export const deleteAdministratorOptimistic = (admin_id: string) => ({
+  type: types.DELETE_ADMINISTRATOR_OPTIMISTIC,
+  admin_id,
+});
+
+export const getResultSuccess = (result: any) => ({
+  type: types.GET_RESULTS_SUCCESS,
+  result,
+});
 
 export function SignInAdmin({ username, password }: any) {
   return async (dispatch: any) => {
@@ -88,12 +99,39 @@ export const loadUpExams = () => {
   };
 };
 
+export const updateExamStatus = (exam_id:string, exam_status:any) => {
+  return async (dispatch: any) => {
+    try {
+      // dispatch(beginApiCall());
+      debugger;
+      const exam = await Api.updateExamstatus(exam_id, exam_status);
+      return dispatch(updateExamStatusSuccess(exam));
+    } catch (error) {
+      // dispatch(apiCallError());
+      throw error;
+    }
+  };
+};
+
 export const createExam = (data: any) => {
   return async (dispatch: any) => {
     try {
       dispatch(beginApiCall());
       const exam = await Api.submitExam(data);
       return dispatch(createExamSuccess(exam));
+    } catch (error) {
+      dispatch(apiCallError());
+      throw error;
+    }
+  };
+};
+
+export const loadUpResults = (exam_id: string) => {
+  return async (dispatch: any) => {
+    try {
+      dispatch(beginApiCall());
+      const results = await Api.getResults(exam_id);
+      return dispatch(getResultSuccess(results));
     } catch (error) {
       dispatch(apiCallError());
       throw error;
@@ -127,7 +165,6 @@ export const createPin = (count: any) => {
   };
 };
 
-
 export const getAdministrators = () => {
   return async (dispatch: any) => {
     try {
@@ -141,7 +178,7 @@ export const getAdministrators = () => {
   };
 };
 
-export const createAdministrator = (newAdministrator:any) => {
+export const createAdministrator = (newAdministrator: any) => {
   return async (dispatch: any) => {
     try {
       dispatch(beginApiCall());
@@ -154,9 +191,9 @@ export const createAdministrator = (newAdministrator:any) => {
   };
 };
 
-export function deleteAdministrator(admin_id:string) {
-  return function (dispatch:any) {
+export function deleteAdministrator(admin_id: string) {
+  return function (dispatch: any) {
     dispatch(deleteAdministratorOptimistic(admin_id));
     return Api.deleteAdministrator(admin_id);
   };
-};
+}

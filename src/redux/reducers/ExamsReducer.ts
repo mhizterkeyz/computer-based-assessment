@@ -9,6 +9,8 @@ export default function (
     case types.GET_EXAMS_SUCCESS:
     case types.CREATE_EXAM_SUCCESS:
       return { ...state, ...action.exams };
+      case types.UPDATE_EXAMS_SUCCESS:
+        
     default:
       return state;
   }

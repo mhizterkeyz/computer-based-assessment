@@ -184,7 +184,7 @@ const SettingsPage = (props: any) => {
             </button>
           </div>
           {nonRootAdmin.length === 0 ? (
-            <div className="pt-3 admin-list__no-admin">There are no other administrator</div>
+            <div className="pt-3 admin-list__no-admin">There are no other administrators</div>
           ) : (
             <>
               {Object.values(nonRootAdmin).map((admin, index) => {
