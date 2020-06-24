@@ -20,18 +20,14 @@ const parseResponseError = ({ res, status, statusText }: any) => {
 };
 
 export const loginAdministrator = async ({ username, password }: any) => {
-  try {
-    const req = await api.body({ username, password }).post(`${apiUrl}/signin`);
-    const { statusText, status } = req;
-    const res = await req.json();
-    parseResponseError({ res, status, statusText });
-    localStorage["jwt"] = res.data.accessToken;
-    localStorage["route"] = "administrator";
-    api.headers({ Authorization: "Bearer " + localStorage["jwt"] });
-    return res.data;
-  } catch (error) {
-    throw error;
-  }
+  const req = await api.body({ username, password }).post(`${apiUrl}/signin`);
+  const { statusText, status } = req;
+  const res = await req.json();
+  parseResponseError({ res, status, statusText });
+  localStorage["jwt"] = res.data.accessToken;
+  localStorage["route"] = "administrator";
+  api.headers({ Authorization: "Bearer " + localStorage["jwt"] });
+  return res.data;
 };
 
 export const verifyAdministrator = async () => {
@@ -78,7 +74,7 @@ export const getExams = async () => {
   }
 };
 
-export const updateExamstatus = async (exam_id:string, exam_status:any) => {
+export const updateExamstatus = async (exam_id: string, exam_status: any) => {
   try {
     const req = await api.body(exam_status).put(`${apiUrl}/exams/${exam_id}`);
     const { statusText, status } = req;
@@ -211,7 +207,7 @@ export const getResults = async (exam_id: string) => {
     const { statusText, status } = req;
     const res = await req.json();
     parseResponseError({ res, status, statusText });
-    return res.data
+    return res.data;
   } catch (error) {
     throw error;
   }

@@ -11,6 +11,7 @@ const Login = (props: any) => {
     password: "",
     invalid: false,
   });
+  const [busy, setBusy] = useState(false);
 
   if (window.location.pathname !== "/admin") {
     props.history.push("/admin");
@@ -24,13 +25,16 @@ const Login = (props: any) => {
   const handleSubmit = async (ev: any) => {
     ev.preventDefault();
     try {
-      await props.SignInAdmin(inputs);
+      setBusy(true);
+      (await props.SignInAdmin(inputs)) && setBusy(false);
     } catch (error) {
       if (error.name === "Unauthorized") {
         toast.error(`Error: ${error.message}`);
+        setBusy(false);
         return setInputs({ ...inputs, invalid: true });
       }
       toast.error(`Network error: ${error.message}`);
+      setBusy(false);
     }
   };
 
@@ -70,7 +74,7 @@ const Login = (props: any) => {
 
             <input
               type="submit"
-              disabled={props.busy}
+              disabled={busy}
               value="Login"
               className="btn"
             />
@@ -81,9 +85,7 @@ const Login = (props: any) => {
   );
 };
 
-const mapStateToProps = (state: any) => ({
-  busy: state.apiCallsInProgress > 0,
-});
+const mapStateToProps = (state: any) => ({});
 
 const mapDispatchToProps = {
   SignInAdmin,
