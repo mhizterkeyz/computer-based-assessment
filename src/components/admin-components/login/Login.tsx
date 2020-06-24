@@ -31,7 +31,7 @@ const Login = (props: any) => {
       if (error.name === "Unauthorized") {
         toast.error(`Error: ${error.message}`);
         setBusy(false);
-        return setInputs({ ...inputs, invalid: true });
+        return setInputs({ ...inputs, password: "", invalid: true });
       }
       toast.error(`Network error: ${error.message}`);
       setBusy(false);

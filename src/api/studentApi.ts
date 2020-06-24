@@ -20,20 +20,16 @@ const parseResponseError = ({ res, status, statusText }: any) => {
 
 export const login = async ({ username, password }: any) => {
   try {
-    const response = await api
+    const req = await api
       .body({ username, password })
       .post(api_url + "/user/signin");
-    // const student = handleResponse(response);
-    if (response.status === 400) {
-      const error = await response.text();
-      throw new Error(error);
-    }
-
-    const student = await response.json();
-    localStorage.setItem("jwt", student.data.accessToken);
-    localStorage.setItem("route", "student");
-
-    return student.data;
+    const { statusText, status } = req;
+    const res = await req.json();
+    parseResponseError({ res, status, statusText });
+    localStorage["jwt"] = res.data.accessToken;
+    localStorage["route"] = "administrator";
+    api.headers({ Authorization: "Bearer " + localStorage["jwt"] });
+    return res.data;
   } catch (error) {
     handleError(error);
   }

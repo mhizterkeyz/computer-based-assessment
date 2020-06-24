@@ -46,9 +46,14 @@ const StudentLoginPage = (props: any) => {
 
     try {
       setBusy(true);
-      await props.loadStudent(inputs);
+      (await props.loadStudent(inputs)) && setBusy(false);
     } catch (error) {
-      toast.error(`Error: ${error.message}`);
+      if (error.name === "Unauthorized") {
+        toast.error(`Error: ${error.message}`);
+        setBusy(false);
+        return setInputs({ ...inputs, password: "", invalid: true });
+      }
+      toast.error(`Network Error: ${error.message}`);
       setBusy(false);
     }
   };
