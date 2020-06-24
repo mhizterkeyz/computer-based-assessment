@@ -6,6 +6,7 @@ import exams from "./ExamsReducer";
 import studentExamination from "./studentExamReducer";
 import pin from "./pinReducer";
 import otherAdministrator from "./otherAdministratorReducer";
+import results from "./resultReducer";
 
 export const rootReducer = combineReducers({
   student,
@@ -14,6 +15,7 @@ export const rootReducer = combineReducers({
   exams,
   studentExamination,
   pin,
+  results,
   otherAdministrator
 });
 

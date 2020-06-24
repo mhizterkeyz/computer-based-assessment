@@ -5,5 +5,6 @@ export default {
   otherAdministrator: {},
   exams: {},
   studentExamination: {},
-  pins: {}
+  pins: {},
+  results: {}
 };

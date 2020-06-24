@@ -78,6 +78,18 @@ export const getExams = async () => {
   }
 };
 
+export const updateExamstatus = async (exam_id:string, exam_status:any) => {
+  try {
+    const req = await api.body(exam_status).put(`${apiUrl}/exams/${exam_id}`);
+    const { statusText, status } = req;
+    const res = await req.json();
+    parseResponseError({ res, status, statusText });
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const submitExam = async (data: any) => {
   try {
     const req = await api
@@ -188,6 +200,18 @@ export const deleteAdministrator = async (admin_id: string) => {
     const res = await req.json();
     parseResponseError({ res, status, statusText });
     return res.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getResults = async (exam_id: string) => {
+  try {
+    const req = await api.get(`${apiUrl}/exams/${exam_id}/results`);
+    const { statusText, status } = req;
+    const res = await req.json();
+    parseResponseError({ res, status, statusText });
+    return res.data
   } catch (error) {
     throw error;
   }

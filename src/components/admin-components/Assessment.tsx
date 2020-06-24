@@ -1,18 +1,37 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 import "./Assessment.scss";
-import { loadUpExams } from "../../redux/actions/AdministratorActions";
+import {
+  loadUpResults,
+  updateExamStatus,
+} from "../../redux/actions/AdministratorActions";
 import { StudentList, StudentInfo } from "./AssessmentStudentList";
+import { toast } from "react-toastify";
 
-const Assessment = ({ exam }: { exam: any }) => {
+const Assessment = ({
+  exam: examination,
+  loadUpResults,
+  updateExamStatus,
+}: any) => {
   const [student, setStudent] = useState({
     show: false,
     user: "",
     department: "",
     faculty: "",
   });
+
+  const [exam, setExam] = useState({
+    status: 0,
+    bioData: [],
+    course: "",
+    title: "",
+    _id: "",
+  });
+  useEffect(() => {
+    setExam({ ...exam, ...examination });
+  }, []);
 
   useEffect(() => {
     if (student.show) {
@@ -28,6 +47,7 @@ const Assessment = ({ exam }: { exam: any }) => {
     setStudent({ show: true, user, department, faculty });
   };
 
+  const history = useHistory();
   let status = {
     class: "",
     name: "",
@@ -56,7 +76,55 @@ const Assessment = ({ exam }: { exam: any }) => {
     return dta.status === 2;
   });
 
-  console.log(exam.bioData);
+  console.log(exam);
+
+  const handleViewResult = () => {
+    if (exam.status === 0) {
+      toast.configure();
+      toast.warning("No available result yet, Start Assessment first");
+      return;
+    }
+
+    if (exam.status === 1) {
+      toast.configure();
+      toast.warning("You have to close this Assessment first");
+      return;
+    }
+
+    (async () => {
+      try {
+        await loadUpResults(exam._id);
+        history.push("/admin/print-result");
+      } catch (error) {
+        toast.configure();
+        toast.error(error.message);
+      }
+    })();
+  };
+
+  const handleStartAssessment = async () => {
+    try {
+      toast.configure();
+      await updateExamStatus(exam._id, { status: 1 });
+      setExam({ ...exam, status: 1 });
+      toast.success("Assessment started");
+    } catch (error) {
+      toast.configure();
+      toast.error(error.message);
+    }
+  };
+
+  const handleCloseAssessment = async () => {
+    try {
+      toast.configure();
+      await updateExamStatus(exam._id, { status: 2 });
+      setExam({ ...exam, status: 2 });
+      toast.success("Assessment Closed");
+    } catch (error) {
+      toast.configure();
+      toast.error(error.message);
+    }
+  };
 
   return (
     <>
@@ -126,15 +194,22 @@ const Assessment = ({ exam }: { exam: any }) => {
               <button
                 className="mr-3 btn btn-primary"
                 disabled={exam.status !== 0}
+                onClick={handleStartAssessment}
               >
                 Start Assesment
               </button>
-              <button className="mr-3 btn btn-success">
+              <button
+                className="mr-3 btn btn-success"
+                onClick={handleViewResult}
+
+                // disabled={exam.status < 2}
+              >
                 View Assesment Result
               </button>
               <button
                 className="btn btn-danger"
-                disabled={exam.status === 0 || exam.status === 3}
+                disabled={exam.status === 0 || exam.status === 2}
+                onClick={handleCloseAssessment}
               >
                 Close Assessment
               </button>
@@ -184,15 +259,9 @@ const Assessment = ({ exam }: { exam: any }) => {
   );
 };
 
-function mapStateToProps(state: any) {
-  return {
-    exams: state.exams,
-    loading: state.apiCallsInProgress > 0,
-  };
-}
-
 const mapDispatchToProps = {
-  loadUpExams,
+  loadUpResults,
+  updateExamStatus,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Assessment);
+export default connect(null, mapDispatchToProps)(Assessment);
