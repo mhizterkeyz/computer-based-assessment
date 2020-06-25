@@ -12,6 +12,16 @@ const RunningAssessment = (props: any) => {
   const [student, setStudent] = useState({ show: false, matric: "13MS1027" });
   const { exams, loadUpExams } = props;
 
+  //  parsing query string
+  const { page = 1 } = (() =>
+    props.location.search
+      .substring(1)
+      .split("&&")
+      .reduce((acc: any, cur: any) => {
+        cur = cur.split("=");
+        return { ...acc, [cur[0]]: cur[1] };
+      }, {}))();
+
   useEffect(() => {
     if (Object.keys(exams).length < 1) {
       (async () => {
@@ -57,9 +67,16 @@ const RunningAssessment = (props: any) => {
             </div>
           ) : (
             // <div>examinations running </div>
-            runningExam.map((exam: any, index: number) => (
-              <Assessment exam={exam} key={index} />
-            ))
+            runningExam.map((exam: any, index: number) => {
+              return (
+                <Assessment
+                  exam={exam}
+                  examCount={runningExam.length}
+                  current={page}
+                  key={index}
+                />
+              );
+            })
           )}
         </>
       )}
