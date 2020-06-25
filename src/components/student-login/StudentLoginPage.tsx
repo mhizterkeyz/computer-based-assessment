@@ -67,7 +67,7 @@ const StudentLoginPage = (props: any) => {
 
         <div className="col-6">
           <form className="d-flex flex-column col-8" onSubmit={handleSubmit}>
-            <h3>Login to start you exam</h3>
+            <h3>Login to start your exam</h3>
             <label htmlFor="matric-no" className="mt-4">
               {" "}
               Matric Number

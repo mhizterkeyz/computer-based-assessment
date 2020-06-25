@@ -7,7 +7,7 @@ const Header = () => (
       <img src={ksu_logo} alt="logo"  className="mr-3"/>
 
       <div>
-        <h1>Prince Audu abubakar university, Anyigba</h1>
+        <h1>Prince Abubakar Audu university, Anyigba</h1>
         <h2>Computer based assessment</h2>
       </div>
     </div>

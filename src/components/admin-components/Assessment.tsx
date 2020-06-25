@@ -149,10 +149,7 @@ const Assessment = ({
               Don't Close
             </button>
 
-            <button
-              className="btn ml-2"
-              onClick={handleCloseAssessment}
-            >
+            <button className="btn ml-2" onClick={handleCloseAssessment}>
               Close
             </button>
           </div>
