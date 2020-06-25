@@ -14,8 +14,6 @@ import _ from "lodash";
 
 const Assessment = ({
   exam: examination,
-  examCount,
-  current,
   loadUpResults,
   updateExamStatus,
 }: any) => {
