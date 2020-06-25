@@ -3,7 +3,7 @@ import "./AssessmentHistory.scss";
 
 const Examination = ({
   exam,
-  onClickShowExamination
+  onClickShowExamination,
 }: {
   exam: any;
   onClickShowExamination: (show: boolean, exam: any) => void;
@@ -23,19 +23,21 @@ const Examination = ({
     status.class = "status-closed";
     status.name = "closed";
   }
+  let date = new Date(exam.createdAt);
+  let decDate = `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`;
 
   return (
     <div
       className="dta-body"
       onClick={() => {
-        return onClickShowExamination(true, exam)
+        return onClickShowExamination(true, exam);
       }}
     >
       <span className="">
         {exam.course} - {exam.title}
       </span>
       {/* TODO Format Date properly */}
-      <span className="">{exam.createdAt}</span>
+      <span className="">{decDate}</span>
       {/* <span className="">7th June 2020</span> */}
       <span className={status.class}>{status.name}</span>
     </div>

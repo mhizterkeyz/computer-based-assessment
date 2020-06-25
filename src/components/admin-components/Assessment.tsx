@@ -10,6 +10,7 @@ import {
 import { StudentList, StudentInfo } from "./AssessmentStudentList";
 import { toast } from "react-toastify";
 import Modal from "../Modal";
+import _ from "lodash";
 
 const Assessment = ({
   exam: examination,
@@ -22,7 +23,6 @@ const Assessment = ({
     department: "",
     faculty: "",
   });
-
   const [exam, setExam] = useState({
     status: 0,
     bioData: [],
@@ -30,11 +30,13 @@ const Assessment = ({
     title: "",
     _id: "",
   });
-
   const [modalData, setModalData] = useState({
     show: false,
     display: <></>,
   });
+  const [page, setPage] = useState(0);
+  const [search, setSearch] = useState("");
+
   useEffect(() => {
     setExam({ ...exam, ...examination });
   }, []);
@@ -157,7 +159,43 @@ const Assessment = ({
       ),
     });
   };
-
+  let __data = exam.bioData;
+  if (search.length > 0) {
+    __data = __data.filter((elem: any) => {
+      let { status } = elem;
+      status = status === 0 ? "pending" : status === 1 ? "running" : "closed";
+      return (
+        elem.user.name.toLowerCase().indexOf(search.toLowerCase()) !== -1 ||
+        elem.user.matric.toLowerCase().indexOf(search.toLowerCase()) !== -1 ||
+        elem.user.department.department
+          .toLowerCase()
+          .indexOf(search.toLowerCase()) !== -1 ||
+        elem.user.faculty.faculty
+          .toLowerCase()
+          .indexOf(search.toLowerCase()) !== -1 ||
+        status.toLowerCase().indexOf(search.toLowerCase()) !== -1
+      );
+    });
+  }
+  __data = _.orderBy(__data, "status");
+  const biodata = (function biodatas(): any {
+    let data: any = [];
+    let count = page * 10 + 10 > __data.length ? __data.length : page * 10 + 10;
+    for (let i = page * 10; i < count; i++) {
+      data.push(__data[i]);
+    }
+    return data;
+  })();
+  const paginationArray = (() => {
+    const arr = [];
+    for (let i = 0; i <= Math.floor(__data.length / 10); i++) {
+      arr.push(i);
+    }
+    return arr;
+  })();
+  const prev = page - 1 <= 0 ? 0 : page - 1;
+  const next =
+    page + 1 >= __data.length / 10 ? Math.floor(__data.length / 10) : page + 1;
   return (
     <>
       <Modal show={modalData.show} handleClose={handleModalClose}>
@@ -222,6 +260,8 @@ const Assessment = ({
             <form>
               <input
                 type="search"
+                value={search}
+                onChange={(ev: any) => setSearch(ev.target.value)}
                 placeholder="&#xe902; Search Student"
                 style={{ fontFamily: "Poppins, icomoon" }}
               />
@@ -260,32 +300,36 @@ const Assessment = ({
             <span className="">Status</span>
           </div>
 
-          {exam.bioData.map((dta: any, ind: number) => (
+          {biodata.map((dta: any, ind: number) => (
             <StudentList key={ind} {...dta} showStudent={showStudent} />
           ))}
 
           <div className="pagination">
-            <Link to="/admin/asssesment" className="btn link prev-next">
+            <span
+              onClick={() => setPage(prev)}
+              className={`btn link prev-next ${page <= 0 ? "disabled" : ""}`}
+            >
               Prev
-            </Link>
-            <Link to="/admin/asssesment" className="btn link">
-              1
-            </Link>
-            <Link to="/admin/asssesment" className="btn link">
-              2
-            </Link>
-            <Link to="/admin/asssesment" className="btn link active">
-              3
-            </Link>
-            <Link to="/admin/asssesment" className="btn link">
-              4
-            </Link>
-            <Link to="/admin/asssesment" className="btn link">
-              5
-            </Link>
-            <Link to="/admin/asssesment" className="btn link prev-next">
+            </span>
+            {paginationArray.map((elem: number, i: number) => {
+              return (
+                <span
+                  onClick={() => setPage(elem)}
+                  className={`btn link ${elem === page ? "active" : ""}`}
+                  key={`pagination_link_${i}`}
+                >
+                  {elem + 1}
+                </span>
+              );
+            })}
+            <span
+              onClick={() => setPage(next)}
+              className={`btn link prev-next ${
+                page >= Math.floor(__data.length / 10) ? "disabled" : ""
+              }`}
+            >
               Next
-            </Link>
+            </span>
           </div>
         </section>
 

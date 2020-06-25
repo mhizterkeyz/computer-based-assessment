@@ -119,6 +119,22 @@ const QuestionPage = (props: any) => {
       Object.keys(studentExamination).length > 1 &&
       !counter.firstUpdateMade
     ) {
+      //  Quick check to make sure you're supposed to be here...
+      (async () => {
+        try {
+          const req = await answerExam({});
+          if (req.status === 200) {
+            return;
+          }
+          if (req.status === 404) {
+            delete localStorage["jwt"];
+            delete localStorage["route"];
+            return window.location.reload();
+          }
+        } catch (error) {
+          toast.error("Error: " + error.message);
+        }
+      })();
       setCounter({
         ...counter,
         minutes: studentExamination.timeLeft,
@@ -145,6 +161,7 @@ const QuestionPage = (props: any) => {
 
       if (seconds === 0) {
         if (minutes === 0) {
+          props.history.push("/exam/submit");
           clearInterval(myInterval);
         } else {
           setCounter({
@@ -157,7 +174,7 @@ const QuestionPage = (props: any) => {
     }, 1000);
 
     return () => clearInterval(myInterval);
-  }, [minutes, seconds, counter]);
+  }, [minutes, seconds, counter, props.history]);
 
   const { question, prev, next }: any = Object.values(exam.questions).reduce(
     (acc, cur, ind, arr) => {

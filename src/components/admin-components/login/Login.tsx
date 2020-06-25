@@ -26,7 +26,7 @@ const Login = (props: any) => {
     ev.preventDefault();
     try {
       setBusy(true);
-      (await props.SignInAdmin(inputs)) && setBusy(false);
+      await props.SignInAdmin(inputs);
     } catch (error) {
       if (error.name === "Unauthorized") {
         toast.error(`Error: ${error.message}`);

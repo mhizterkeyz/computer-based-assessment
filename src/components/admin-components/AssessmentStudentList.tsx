@@ -40,8 +40,6 @@ export const StudentList = ({ user, status, showStudent }: any) => {
 };
 
 export const StudentInfo = ({ user, faculty, department }: any) => {
-  console.log(faculty, department);
-
   return (
     <section className="student-info">
       <span className="status-running">Online</span>

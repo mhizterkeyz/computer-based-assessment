@@ -95,7 +95,6 @@ div.dash-detail {
     padding-bottom: 5px;
     border-radius: 15px;
   }
-
 }
 
 .pagination {
@@ -116,8 +115,8 @@ div.dash-detail {
     margin: 0 6px;
     text-decoration: none;
   }
-  .link:hover,
-  .active {
+  .link:not(.disabled):hover,
+  .active:not(.disabled) {
     color: #fff;
     background: #4180fe;
     border: none;
@@ -176,8 +175,6 @@ div.student-section {
     .dta-body:hover {
       background: #e8f4f9;
     }
-
-    
   }
 
   section.student-info {

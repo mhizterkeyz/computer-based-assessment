@@ -57,9 +57,9 @@ const RunningAssessment = (props: any) => {
             </div>
           ) : (
             // <div>examinations running </div>
-            runningExam.map((exam: any, index: number) => (
-              <Assessment exam={exam} key={index} />
-            ))
+            runningExam.map((exam: any, index: number) => {
+              return <Assessment exam={exam} key={index} />;
+            })
           )}
         </>
       )}
