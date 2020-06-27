@@ -327,7 +327,7 @@ const QuestionPage = (props: any) => {
                     exam.answered.hasOwnProperty(elem.questionId)
                       ? "answered"
                       : ""
-                  }`}
+                  } ${elem.questionId === question.questionId ? "focus" : ""}`}
                   to={`/exam/${elem.question_no}`}
                   key={key}
                 >
