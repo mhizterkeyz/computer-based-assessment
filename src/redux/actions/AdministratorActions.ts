@@ -57,8 +57,13 @@ export const getResultSuccess = (result: any) => ({
   result,
 });
 
-export const getFacultySuccess = (faculty: any) => ({
+export const getFacultySuccess = (faculties: any) => ({
   type: types.GET_FACULTY_SUCCESS,
+  faculties,
+});
+
+export const createFacultySuccess = (faculty: any) => ({
+  type: types.CREATE_FACULTY_SUCCESS,
   faculty,
 });
 
@@ -209,6 +214,19 @@ export const getFaculty = () => {
       dispatch(beginApiCall());
       const faculty = await Api.getFaculty();
       return dispatch(getFacultySuccess(faculty));
+    } catch (error) {
+      dispatch(apiCallError());
+      throw error;
+    }
+  };
+};
+
+export const createFaculty = (faculty:string) => {
+  return async (dispatch: any) => {
+    try {
+      dispatch(beginApiCall());
+      const facultyDta = await Api.createFaculty(faculty);
+      return dispatch(createFacultySuccess(facultyDta));
     } catch (error) {
       dispatch(apiCallError());
       throw error;

@@ -7,5 +7,5 @@ export default {
   studentExamination: {},
   pins: {},
   results: {},
-  faculty: {}
+  faculty: []
 };

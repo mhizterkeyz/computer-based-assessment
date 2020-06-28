@@ -3,11 +3,13 @@ import initialState from "./initialState";
 
 export default function (
   state = initialState.faculty,
-  action: { type: string; faculty: any }
+  action: { type: string; faculties: any; faculty: any }
 ) {
   switch (action.type) {
     case types.GET_FACULTY_SUCCESS:
-      return action.faculty;
+      return action.faculties;
+    case types.CREATE_FACULTY_SUCCESS:
+      return [...state, { ...action.faculty }];
     default:
       return state;
   }

@@ -3,12 +3,15 @@ import "./FacultyPage.scss";
 import delete_icon from "../../../svg/delete_sweep_24px_outlined.svg";
 import Modal from "../../Modal";
 import { AddFacultyWindow, AddDepartmentWindow } from "./ModalWindow";
-import { getFaculty } from "../../../redux/actions/AdministratorActions";
+import {
+  getFaculty,
+  createFaculty,
+} from "../../../redux/actions/AdministratorActions";
 import { connect } from "react-redux";
 import { toast } from "react-toastify";
 import Preloader from "../../Preloader";
 
-const FacultyPage = ({ faculty, loading, getFaculty }: any) => {
+const FacultyPage = ({ faculty, loading, getFaculty, createFaculty }: any) => {
   const [modalData, setModalData] = useState({
     show: false,
     display: <></>,
@@ -55,7 +58,13 @@ const FacultyPage = ({ faculty, loading, getFaculty }: any) => {
   const onClickShowAddFacultyModal = () => {
     setModalData({
       show: true,
-      display: <AddFacultyWindow handleModalClose={handleModalClose} />,
+      display: (
+        <AddFacultyWindow
+          handleModalClose={handleModalClose}
+          createFaculty={createFaculty}
+          faculty={faculty}
+        />
+      ),
     });
   };
 
@@ -65,9 +74,6 @@ const FacultyPage = ({ faculty, loading, getFaculty }: any) => {
       display: <AddDepartmentWindow handleModalClose={handleModalClose} />,
     });
   };
-
-  console.log(faculty);
-
   return (
     <>
       {loading ? (
@@ -87,13 +93,17 @@ const FacultyPage = ({ faculty, loading, getFaculty }: any) => {
                 Add Faculty
               </button>
             </div>
-            {Object.values(faculty).map((faculty: any, index: number) => (
-              <Faculty
-                faculty={faculty}
-                onClickShowAddDepartmentModal={onClickShowAddDepartmentModal}
-                key={index}
-              />
-            ))}
+            {Object.values(faculty)
+              .sort((a: any, b: any) =>
+                a.faculty > b.faculty ? 1 : a.faculty < b.faculty ? -1 : 0
+              )
+              .map((faculty: any, index: number) => (
+                <Faculty
+                  faculty={faculty}
+                  onClickShowAddDepartmentModal={onClickShowAddDepartmentModal}
+                  key={index}
+                />
+              ))}
           </section>
         </>
       )}
@@ -154,6 +164,7 @@ function mapStateToProps(state: any) {
 
 const mapDispatchToProps = {
   getFaculty,
+  createFaculty,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(FacultyPage);
