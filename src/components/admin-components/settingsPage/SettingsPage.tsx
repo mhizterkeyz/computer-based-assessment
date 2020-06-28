@@ -169,13 +169,8 @@ const SettingsPage = (props: any) => {
         />
 
         <div className="admin-list">
-          <h3>View Admin</h3>
-          <div className="d-flex">
-            <div className="dta-head ">
-              <span className="">Name</span>
-              <span className="">Username</span>
-              <span className="">Email</span>
-            </div>
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <h3>View Admin</h3>
             <button
               className="btn btn-primary ml-3 add-admin"
               onClick={onClickShowAddAdminModal}
@@ -183,8 +178,16 @@ const SettingsPage = (props: any) => {
               Add Admin
             </button>
           </div>
+          <div className="dta-head ">
+            <span>Name</span>
+            <span>Username</span>
+            <span>Email</span>
+            <span></span>
+          </div>
           {nonRootAdmin.length === 0 ? (
-            <div className="pt-3 admin-list__no-admin">There are no other administrators</div>
+            <div className="pt-3 admin-list__no-admin">
+              There are no other administrators
+            </div>
           ) : (
             <>
               {Object.values(nonRootAdmin).map((admin, index) => {

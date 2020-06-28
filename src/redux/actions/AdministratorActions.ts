@@ -57,6 +57,11 @@ export const getResultSuccess = (result: any) => ({
   result,
 });
 
+export const getFacultySuccess = (faculty: any) => ({
+  type: types.GET_FACULTY_SUCCESS,
+  faculty,
+});
+
 export function SignInAdmin({ username, password }: any) {
   return async (dispatch: any) => {
     try {
@@ -197,3 +202,16 @@ export function deleteAdministrator(admin_id: string) {
     return Api.deleteAdministrator(admin_id);
   };
 }
+
+export const getFaculty = () => {
+  return async (dispatch: any) => {
+    try {
+      dispatch(beginApiCall());
+      const faculty = await Api.getFaculty();
+      return dispatch(getFacultySuccess(faculty));
+    } catch (error) {
+      dispatch(apiCallError());
+      throw error;
+    }
+  };
+};

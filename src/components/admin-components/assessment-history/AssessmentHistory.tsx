@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
 
 import "./AssessmentHistory.scss";
 import { loadUpExams } from "../../../redux/actions/AdministratorActions";
@@ -13,12 +12,17 @@ import _ from "lodash";
 const AssessmentHistory = (props: {
   exams: any;
   loading: boolean;
+  history: any;
   loadUpExams: () => Promise<any>;
 }) => {
   const [assessment, setAssessment] = useState({ show: false, exam: "" });
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
   let { exams, loadUpExams } = props;
+
+  if (window.location.pathname !== "/admin/history") {
+    props.history.push("/admin/history");
+  }
 
   useEffect(() => {
     if (Object.keys(exams).length < 1) {
@@ -35,6 +39,7 @@ const AssessmentHistory = (props: {
   const onClickShowExamination = (show: boolean, exam: any) => {
     setAssessment({ ...assessment, show: show, exam: exam });
   };
+
   exams = _.orderBy(Object.values(props.exams), "status");
   if (search.length > 0) {
     exams = Object.values(exams).filter((elem: any) => {
@@ -49,6 +54,7 @@ const AssessmentHistory = (props: {
       );
     });
   }
+
   const paginationArray = (() => {
     const arr = [];
     for (let i = 0; i <= Math.floor(Object.keys(exams).length / 10); i++) {
@@ -56,6 +62,7 @@ const AssessmentHistory = (props: {
     }
     return arr;
   })();
+
   const prev = page - 1 <= 0 ? 0 : page - 1;
   const next =
     page + 1 >= Object.keys(exams).length / 10
@@ -72,6 +79,7 @@ const AssessmentHistory = (props: {
     }
     return data;
   })();
+
   return (
     <>
       {props.loading ? (
@@ -84,9 +92,13 @@ const AssessmentHistory = (props: {
             <section className="mt-5 assessment-history">
               <form className="text-right">
                 <input
+                  className="btn"
                   type="search"
                   value={search}
-                  onChange={(ev: any) => setSearch(ev.target.value)}
+                  onChange={(ev: any) => {
+                    ev.preventDefault();
+                    return setSearch(ev.target.value);
+                  }}
                   placeholder="&#xe902; Search Examination"
                   style={{ fontFamily: "Poppins, icomoon" }}
                 />

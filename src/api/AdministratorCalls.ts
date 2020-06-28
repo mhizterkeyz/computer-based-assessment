@@ -1,6 +1,6 @@
 import { app as api } from "./calls";
 
-const apiUrl = "http://localhost:8000/api/v1/administrator";
+const apiUrl = `http://${window.location.hostname}:8000/api/v1/administrator`;
 
 const parseResponseError = ({ res, status, statusText }: any) => {
   if (status >= 400) {
@@ -204,6 +204,18 @@ export const deleteAdministrator = async (admin_id: string) => {
 export const getResults = async (exam_id: string) => {
   try {
     const req = await api.get(`${apiUrl}/exams/${exam_id}/results`);
+    const { statusText, status } = req;
+    const res = await req.json();
+    parseResponseError({ res, status, statusText });
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getFaculty = async () => {
+  try {
+    const req = await api.get(`${apiUrl}/faculty`);
     const { statusText, status } = req;
     const res = await req.json();
     parseResponseError({ res, status, statusText });

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 import "./Assessment.scss";
 import {
@@ -72,15 +72,15 @@ const Assessment = ({
     status.name = "Closed";
   }
 
-  const studentsPendingExam = exam.bioData.filter((dta: any, ind: number) => {
+  const studentsPendingExam = exam.bioData.filter((dta: any) => {
     return dta.status === 0;
   });
 
-  const studentsWritingExam = exam.bioData.filter((dta: any, ind: number) => {
+  const studentsWritingExam = exam.bioData.filter((dta: any) => {
     return dta.status === 1;
   });
 
-  const studentsFinishedExam = exam.bioData.filter((dta: any, ind: number) => {
+  const studentsFinishedExam = exam.bioData.filter((dta: any) => {
     return dta.status === 2;
   });
 
@@ -180,22 +180,22 @@ const Assessment = ({
   __data = _.orderBy(__data, "status");
   const biodata = (function biodatas(): any {
     let data: any = [];
-    let count = page * 10 + 10 > __data.length ? __data.length : page * 10 + 10;
-    for (let i = page * 10; i < count; i++) {
+    let count = page * 5 + 5 > __data.length ? __data.length : page * 5 + 5;
+    for (let i = page * 5; i < count; i++) {
       data.push(__data[i]);
     }
     return data;
   })();
   const paginationArray = (() => {
     const arr = [];
-    for (let i = 0; i <= Math.floor(__data.length / 10); i++) {
+    for (let i = 0; i <= Math.floor(__data.length / 5); i++) {
       arr.push(i);
     }
     return arr;
   })();
   const prev = page - 1 <= 0 ? 0 : page - 1;
   const next =
-    page + 1 >= __data.length / 10 ? Math.floor(__data.length / 10) : page + 1;
+    page + 1 >= __data.length / 5 ? Math.floor(__data.length / 5) : page + 1;
   return (
     <>
       <Modal show={modalData.show} handleClose={handleModalClose}>
@@ -259,9 +259,13 @@ const Assessment = ({
             <button className="btn btn-primary">Add Student</button>
             <form>
               <input
+                className="btn"
                 type="search"
                 value={search}
-                onChange={(ev: any) => setSearch(ev.target.value)}
+                onChange={(ev: any) => {
+                  ev.preventDefault();
+                  return setSearch(ev.target.value);
+                }}
                 placeholder="&#xe902; Search Student"
                 style={{ fontFamily: "Poppins, icomoon" }}
               />

@@ -16,7 +16,7 @@ export const StudentList = ({ user, status, showStudent }: any) => {
     examStatus.name = "Running";
   } else {
     examStatus.class = "status-closed";
-    examStatus.name = "Closed";
+    examStatus.name = "Finished";
   }
 
   return (

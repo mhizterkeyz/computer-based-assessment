@@ -6,7 +6,7 @@ import {
   NumberField,
   EmailField,
   PasswordField,
-} from "./InputField";
+} from "../InputField";
 import { useHistory } from "react-router-dom";
 
 export const UpdateProfileModalWindow = ({

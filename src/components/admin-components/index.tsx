@@ -12,6 +12,7 @@ import Header from "./Header";
 import SettingsPage from "./settingsPage/SettingsPage";
 import PrintPin from "./PrintPinPage";
 import PrintResult from "./PrintResultPage";
+import FacultyPage from "./FacultyPage/FacultyPage";
 
 const Index = ({ administrator, VerifyAdministrator }: any) => {
   useEffect(() => {
@@ -59,6 +60,7 @@ const Index = ({ administrator, VerifyAdministrator }: any) => {
         />
         <Route path={"/admin/add-assessment"} component={AddAssessment} />
         <Route path={"/admin/settings"} component={SettingsPage} />
+        <Route path={"/admin/faculty-depts"} component={FacultyPage} />
         <Route path={"/admin/print-pin"} component={PrintPin} />
         <Route path={"/admin/print-result"} component={PrintResult} />
         <Route component={AssessmentHistory} />
