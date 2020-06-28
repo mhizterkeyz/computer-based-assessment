@@ -60,7 +60,7 @@ const FacultyPage = ({
         }
       });
     }
-  });
+  }, [faculty]);
 
   const handleModalClose = () => setModalData({ ...modalData, show: false });
 
