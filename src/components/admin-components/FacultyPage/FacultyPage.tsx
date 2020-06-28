@@ -60,7 +60,7 @@ const FacultyPage = ({
         }
       });
     }
-  }, [faculty]);
+  }, [faculty, department]);
 
   const handleModalClose = () => setModalData({ ...modalData, show: false });
 
@@ -143,7 +143,7 @@ const Faculty = ({
           <span className="faculty__accordion-info">
             {departments.length > 0
               ? <>{departments.length > 1 ? `${departments.length} departments`: `${departments.length} department`} </>
-              : "No Assigned departments yet"}
+              : "No Assigned department"}
           </span>
        </div>
 

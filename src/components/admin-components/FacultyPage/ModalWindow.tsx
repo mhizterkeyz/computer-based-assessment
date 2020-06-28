@@ -71,7 +71,11 @@ export const AddFacultyWindow = ({
   );
 };
 
-export const AddDepartmentWindow = ({ handleModalClose, faculty, createDepartment }: any) => {
+export const AddDepartmentWindow = ({
+  handleModalClose,
+  faculty,
+  createDepartment,
+}: any) => {
   const [input, setInput] = useState({ department: "" });
 
   const handleInputs = (ev: any) => {
@@ -80,12 +84,8 @@ export const AddDepartmentWindow = ({ handleModalClose, faculty, createDepartmen
   };
   const handleCreateDepartment = async () => {
     if (
-      faculty.departments.filter(
-        (a: any) =>
-          a.department
-            .toLowerCase()
-            .indexOf(input.department.toLowerCase().split(" ")[0]) !== -1
-      ).length > 0
+      faculty.departments.filter((a: any) => a.department === input.department)
+        .length > 0
     ) {
       toast.configure();
       toast.warning(`${input.department} Department Exists`);
@@ -93,21 +93,31 @@ export const AddDepartmentWindow = ({ handleModalClose, faculty, createDepartmen
     }
 
     try {
-      await createDepartment(faculty._id,input.department);
+      await createDepartment(faculty._id, input.department);
       toast.configure();
-      toast.success(`${input.department} Department was Successfully Added`);
+      toast.success(
+        `${input.department} Department was Successfully Added to ${faculty.faculty} Faculty`
+      );
       handleModalClose();
+      /**
+       * Reload hack to update number of departments in a faculty 
+       * Workaround would have been to updtate redux without reloading page
+       * will fix later (or please fix if you find the solution)
+       */
+      setTimeout(() => {
+        window.location.reload();
+      }, 300);
     } catch (error) {
       toast.configure();
       toast.error(error.message);
     }
-  };  
+  };
 
   return (
     <div className="text-center profile">
       <h3>
-        <span style={{ textTransform: "capitalize" }}>{faculty.faculty}:</span> <br />{" "}
-        <span style={{ fontSize: "20px" }}>Add New Department</span>
+        <span style={{ textTransform: "capitalize" }}>{faculty.faculty}:</span>{" "}
+        <br /> <span style={{ fontSize: "20px" }}>Add New Department</span>
       </h3>
       <form
         onSubmit={(e) => {
@@ -125,7 +135,11 @@ export const AddDepartmentWindow = ({ handleModalClose, faculty, createDepartmen
             Cancel
           </button>
 
-          <button type="submit" className="btn btn-primary ml-2" onClick={handleCreateDepartment}>
+          <button
+            type="submit"
+            className="btn btn-primary ml-2"
+            onClick={handleCreateDepartment}
+          >
             Add
           </button>
         </div>
