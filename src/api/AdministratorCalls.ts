@@ -239,3 +239,35 @@ export const createFaculty = async (faculty: string) => {
     throw error;
   }
 };
+
+export const deleteFaculty = async (faculty_id: string) => {
+  try {
+    const req = await api
+      .headers({ Authorization: "Bearer " + localStorage["jwt"] })
+      .delete(`${apiUrl}/faculty${faculty_id}`);
+    const { statusText, status } = req;
+    const res = await req.json();
+    parseResponseError({ res, status, statusText });
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const createDepartment = async (
+  faculty_id: string,
+  department: string
+) => {
+  try {
+    const req = await api
+      .body({ department: department })
+      .headers({ Authorization: "Bearer " + localStorage["jwt"] })
+      .post(`${apiUrl}/faculty/${faculty_id}/departments`);
+    const { statusText, status } = req;
+    const res = await req.json();
+    parseResponseError({ res, status, statusText });
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
+};

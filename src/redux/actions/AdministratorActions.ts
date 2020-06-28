@@ -67,6 +67,15 @@ export const createFacultySuccess = (faculty: any) => ({
   faculty,
 });
 
+export function deleteFacultyOptimistic(faculty: string) {
+  return { type: types.DELETE_FACULTY_OPTIMISTIC, faculty };
+}
+
+export const createDepartmentSuccess = (department: any) => ({
+  type: types.CREATE_DEPARTMENT_SUCCESS,
+  department,
+});
+
 export function SignInAdmin({ username, password }: any) {
   return async (dispatch: any) => {
     try {
@@ -109,7 +118,7 @@ export const loadUpExams = () => {
   };
 };
 
-export const updateExamStatus = (exam_id:string, exam_status:any) => {
+export const updateExamStatus = (exam_id: string, exam_status: any) => {
   return async (dispatch: any) => {
     try {
       // dispatch(beginApiCall());
@@ -221,12 +230,36 @@ export const getFaculty = () => {
   };
 };
 
-export const createFaculty = (faculty:string) => {
+export const createFaculty = (faculty: string) => {
   return async (dispatch: any) => {
     try {
       dispatch(beginApiCall());
       const facultyDta = await Api.createFaculty(faculty);
       return dispatch(createFacultySuccess(facultyDta));
+    } catch (error) {
+      dispatch(apiCallError());
+      throw error;
+    }
+  };
+};
+
+export const deleteFaculty = (faculty_id: string) => {
+  return async (dispatch: any) => {
+    try {
+      dispatch(deleteFacultyOptimistic(faculty_id));
+      return await Api.deleteFaculty(faculty_id);
+    } catch (error) {
+      throw error;
+    }
+  };
+};
+
+export const createDepartment = (faculty_id: string, department: string) => {
+  return async (dispatch: any) => {
+    try {
+      dispatch(beginApiCall());
+      const departmentDta = await Api.createDepartment(faculty_id, department);
+      return dispatch(createDepartmentSuccess(departmentDta));
     } catch (error) {
       dispatch(apiCallError());
       throw error;

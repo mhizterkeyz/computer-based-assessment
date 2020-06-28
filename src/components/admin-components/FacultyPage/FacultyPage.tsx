@@ -6,12 +6,21 @@ import { AddFacultyWindow, AddDepartmentWindow } from "./ModalWindow";
 import {
   getFaculty,
   createFaculty,
+  deleteFaculty,
+  createDepartment,
 } from "../../../redux/actions/AdministratorActions";
 import { connect } from "react-redux";
 import { toast } from "react-toastify";
 import Preloader from "../../Preloader";
 
-const FacultyPage = ({ faculty, loading, getFaculty, createFaculty }: any) => {
+const FacultyPage = ({
+  faculty,
+  department,
+  loading,
+  getFaculty,
+  createFaculty,
+  createDepartment,
+}: any) => {
   const [modalData, setModalData] = useState({
     show: false,
     display: <></>,
@@ -68,10 +77,16 @@ const FacultyPage = ({ faculty, loading, getFaculty, createFaculty }: any) => {
     });
   };
 
-  const onClickShowAddDepartmentModal = () => {
+  const onClickShowAddDepartmentModal = (faculty: string) => {
     setModalData({
       show: true,
-      display: <AddDepartmentWindow handleModalClose={handleModalClose} />,
+      display: (
+        <AddDepartmentWindow
+          handleModalClose={handleModalClose}
+          faculty={faculty}
+          createDepartment={createDepartment}
+        />
+      ),
     });
   };
   return (
@@ -116,18 +131,26 @@ const Faculty = ({
   onClickShowAddDepartmentModal,
 }: {
   faculty: any;
-  onClickShowAddDepartmentModal: () => void;
+  onClickShowAddDepartmentModal: (faculty: string) => void;
 }) => {
   const departments = faculty.departments;
 
   return (
     <>
-      <div className="d-flex justify-content-between align-items-center btn faculty__accordion">
-        {faculty.faculty}
-        <div className="d-flex">
+      <div className="d-flex align-items-center btn faculty__accordion">
+       <div className="d-flex flex-column">
+          {faculty.faculty}{" "}
+          <span className="faculty__accordion-info">
+            {departments.length > 0
+              ? <>{departments.length > 1 ? `${departments.length} departments`: `${departments.length} department`} </>
+              : "No Assigned departments yet"}
+          </span>
+       </div>
+
+        <div className="d-flex ml-auto">
           <button
             className="mr-4 btn btn-light faculty__btn"
-            onClick={onClickShowAddDepartmentModal}
+            onClick={() => onClickShowAddDepartmentModal(faculty)}
           >
             +
           </button>{" "}
@@ -139,17 +162,25 @@ const Faculty = ({
 
       <div className="faculty__department-panel">
         <h3 className="faculty__title">Departments</h3>
-        {departments.map((dept: any, index: number) => (
-          <span
-            className="d-flex align-items-center"
-            key={`department_${index}`}
-          >
-            {dept.department}
-            <button className="btn btn-light ml-auto faculty__btn">
-              <img src={delete_icon} alt="delete icon" />
-            </button>
-          </span>
-        ))}
+        {departments
+          .sort((a: any, b: any) =>
+            a.department > b.department
+              ? 1
+              : a.department < b.department
+              ? -1
+              : 0
+          )
+          .map((dept: any, index: number) => (
+            <span
+              className="d-flex align-items-center"
+              key={`department_${index}`}
+            >
+              {dept.department}
+              <button className="btn btn-light ml-auto faculty__btn">
+                <img src={delete_icon} alt="delete icon" />
+              </button>
+            </span>
+          ))}
       </div>
     </>
   );
@@ -158,6 +189,7 @@ const Faculty = ({
 function mapStateToProps(state: any) {
   return {
     faculty: state.faculty,
+    department: state.department,
     loading: state.apiCallsInProgress > 0,
   };
 }
@@ -165,6 +197,8 @@ function mapStateToProps(state: any) {
 const mapDispatchToProps = {
   getFaculty,
   createFaculty,
+  deleteFaculty,
+  createDepartment,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(FacultyPage);

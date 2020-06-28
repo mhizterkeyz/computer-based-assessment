@@ -8,6 +8,7 @@ import pin from "./pinReducer";
 import otherAdministrator from "./otherAdministratorReducer";
 import results from "./resultReducer";
 import faculty from "./facultyReducer";
+import department from "./departmentReducer";
 
 export const rootReducer = combineReducers({
   student,
@@ -18,7 +19,8 @@ export const rootReducer = combineReducers({
   pin,
   results,
   otherAdministrator,
-  faculty
+  faculty,
+  department
 });
 
 // export default rootReducer;

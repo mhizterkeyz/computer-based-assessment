@@ -71,16 +71,44 @@ export const AddFacultyWindow = ({
   );
 };
 
-export const AddDepartmentWindow = ({ handleModalClose }: any) => {
-  const [input, setInput] = useState({ faculty: "" });
+export const AddDepartmentWindow = ({ handleModalClose, faculty, createDepartment }: any) => {
+  const [input, setInput] = useState({ department: "" });
 
   const handleInputs = (ev: any) => {
     const { name, value } = ev.target;
     setInput({ ...input, [name]: value });
   };
+  const handleCreateDepartment = async () => {
+    if (
+      faculty.departments.filter(
+        (a: any) =>
+          a.department
+            .toLowerCase()
+            .indexOf(input.department.toLowerCase().split(" ")[0]) !== -1
+      ).length > 0
+    ) {
+      toast.configure();
+      toast.warning(`${input.department} Department Exists`);
+      return;
+    }
+
+    try {
+      await createDepartment(faculty._id,input.department);
+      toast.configure();
+      toast.success(`${input.department} Department was Successfully Added`);
+      handleModalClose();
+    } catch (error) {
+      toast.configure();
+      toast.error(error.message);
+    }
+  };  
+
   return (
     <div className="text-center profile">
-      <h3>Add a new Department</h3>
+      <h3>
+        <span style={{ textTransform: "capitalize" }}>{faculty.faculty}:</span> <br />{" "}
+        <span style={{ fontSize: "20px" }}>Add New Department</span>
+      </h3>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -97,7 +125,7 @@ export const AddDepartmentWindow = ({ handleModalClose }: any) => {
             Cancel
           </button>
 
-          <button type="submit" className="btn btn-primary ml-2">
+          <button type="submit" className="btn btn-primary ml-2" onClick={handleCreateDepartment}>
             Add
           </button>
         </div>

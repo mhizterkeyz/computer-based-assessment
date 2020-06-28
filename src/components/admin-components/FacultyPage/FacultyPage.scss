@@ -35,10 +35,18 @@
         border-radius: 0;
         margin-bottom: 0.5rem;
     }
+    &__accordion-info {
+        color: #c4c4c4;
+        font-size: 12px;
+    }
+
     &__active,
     &__accordion:hover {
         color: #fff;
         background-color: #4180fe;
+        span.faculty__accordion-info {
+            color: #fff;
+        }
     }
 
     &__btn {
@@ -76,7 +84,7 @@
             text-align: center;
             line-height: 36px;
             color: #4f4f4f;
-            padding: .8rem 2rem;
+            padding: 0.8rem 2rem;
             margin: 0;
             border-bottom: 1px solid rgb(241, 241, 241);
         }
