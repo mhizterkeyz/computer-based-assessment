@@ -11,6 +11,7 @@ import { StudentList, StudentInfo } from "./AssessmentStudentList";
 import { toast } from "react-toastify";
 import Modal from "../../Modal";
 import _ from "lodash";
+import PreviewQuestions from "./PreviewQuestions";
 
 const Assessment = ({
   exam: examination,
@@ -29,6 +30,7 @@ const Assessment = ({
     course: "",
     title: "",
     _id: "",
+    questions: []
   });
   const [modalData, setModalData] = useState({
     show: false,
@@ -36,6 +38,7 @@ const Assessment = ({
   });
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
+  const [preview, setPreview] = useState(false);
 
   useEffect(() => {
     setExam({ ...exam, ...examination });
@@ -195,7 +198,7 @@ const Assessment = ({
   })();
   const prev = page - 1 <= 0 ? 0 : page - 1;
   const next =
-    page + 1 >= __data.length / 5 ? Math.floor(__data.length / 5) : page + 1;
+    page + 1 >= __data.length / 5 ? Math.floor(__data.length / 5) : page + 1;    
   return (
     <>
       <Modal show={modalData.show} handleClose={handleModalClose}>
@@ -207,139 +210,149 @@ const Assessment = ({
         <span style={{ textTransform: "capitalize" }}>{exam.title}</span> <br />{" "}
         <span className={status.class + " status"}>{status.name}</span>
       </h2>
-      <section className="d-flex justify-content-center">
-        <div className="d-flex dash-detail">
-          <i className="icon-assessment">
-            <span className="path1"></span>
-            <span className="path2"></span>
-          </i>
-          <div className="ml-3 total-assessment">
-            <h3>{exam.bioData.length}</h3>
-            <h4>Students</h4>
-          </div>
-        </div>
-
-        <div className="d-flex dash-detail">
-          <i className="icon-pending">
-            <span className="path1"></span>
-            <span className="path2"></span>
-          </i>
-          <div className="ml-3 total-pending">
-            <h3>{studentsPendingExam.length}</h3>
-            <h4>Students pending</h4>
-          </div>
-        </div>
-
-        <div className="d-flex dash-detail">
-          <i className="icon-closed">
-            <span className="path1"></span>
-            <span className="path2"></span>
-          </i>
-          <div className="ml-3 total-closed">
-            <h3>{studentsFinishedExam.length}</h3>
-            <h4>Students finished</h4>
-          </div>
-        </div>
-
-        <div className="d-flex dash-detail">
-          <i className="icon-running">
-            <span className="path1"></span>
-            <span className="path2"></span>
-          </i>
-          <div className="ml-3 total-running">
-            <h3>{studentsWritingExam.length}</h3>
-            <h4>Students online</h4>
-          </div>
-        </div>
-      </section>
-
-      <div className="student-section">
-        <section className="tbl">
-          <button className="btn btn-primary m-auto preview-btn">Preview Assesment Questions</button>
-          <div className="d-flex justify-content-between align-items-center ctrl-actions">
-            <button className="btn btn-primary">Add Student</button>
-            <form>
-              <input
-                className="btn"
-                type="search"
-                value={search}
-                onChange={(ev: any) => {
-                  ev.preventDefault();
-                  return setSearch(ev.target.value);
-                }}
-                placeholder="&#xe902; Search Student"
-                style={{ fontFamily: "Poppins, icomoon" }}
-              />
-            </form>
-            <div>
-              <button
-                className="mr-3 btn btn-primary"
-                disabled={exam.status !== 0}
-                onClick={handleStartAssessment}
-              >
-                Start Assesment
-              </button>
-              <button
-                className="mr-3 btn btn-success"
-                onClick={handleViewResult}
-
-                // disabled={exam.status < 2}
-              >
-                View Assesment Result
-              </button>
-              <button
-                className="btn btn-danger"
-                disabled={exam.status === 0 || exam.status === 2}
-                onClick={onClickConfirmCloseAssessment}
-              >
-                Close Assessment
-              </button>
+      {preview ? (
+        <PreviewQuestions setPreview={setPreview} examQuestions={exam.questions}  />
+      ) : (
+        <>
+          <section className="d-flex justify-content-center">
+            <div className="d-flex dash-detail">
+              <i className="icon-assessment">
+                <span className="path1"></span>
+                <span className="path2"></span>
+              </i>
+              <div className="ml-3 total-assessment">
+                <h3>{exam.bioData.length}</h3>
+                <h4>Students</h4>
+              </div>
             </div>
-          </div>
 
-          <div className="dta-head ">
-            <span className="">Student</span>
-            <span className="">Matric. No</span>
-            <span className="">Department</span>
-            <span className="">Faculty</span>
-            <span className="">Status</span>
-          </div>
+            <div className="d-flex dash-detail">
+              <i className="icon-pending">
+                <span className="path1"></span>
+                <span className="path2"></span>
+              </i>
+              <div className="ml-3 total-pending">
+                <h3>{studentsPendingExam.length}</h3>
+                <h4>Students pending</h4>
+              </div>
+            </div>
 
-          {biodata.map((dta: any, ind: number) => (
-            <StudentList key={ind} {...dta} showStudent={showStudent} />
-          ))}
+            <div className="d-flex dash-detail">
+              <i className="icon-closed">
+                <span className="path1"></span>
+                <span className="path2"></span>
+              </i>
+              <div className="ml-3 total-closed">
+                <h3>{studentsFinishedExam.length}</h3>
+                <h4>Students finished</h4>
+              </div>
+            </div>
 
-          <div className="pagination">
-            <span
-              onClick={() => setPage(prev)}
-              className={`btn link prev-next ${page <= 0 ? "disabled" : ""}`}
-            >
-              Prev
-            </span>
-            {paginationArray.map((elem: number, i: number) => {
-              return (
+            <div className="d-flex dash-detail">
+              <i className="icon-running">
+                <span className="path1"></span>
+                <span className="path2"></span>
+              </i>
+              <div className="ml-3 total-running">
+                <h3>{studentsWritingExam.length}</h3>
+                <h4>Students online</h4>
+              </div>
+            </div>
+          </section>
+
+          <div className="student-section">
+            <section className="tbl">
+              <button className="btn btn-primary m-auto preview-btn" onClick={() => setPreview(true)}>
+                Preview Assesment Questions
+              </button>
+              <div className="d-flex justify-content-between align-items-center ctrl-actions">
+                <button className="btn btn-primary">Add Student</button>
+                <form>
+                  <input
+                    className="btn"
+                    type="search"
+                    value={search}
+                    onChange={(ev: any) => {
+                      ev.preventDefault();
+                      return setSearch(ev.target.value);
+                    }}
+                    placeholder="&#xe902; Search Student"
+                    style={{ fontFamily: "Poppins, icomoon" }}
+                  />
+                </form>
+                <div>
+                  <button
+                    className="mr-3 btn btn-primary"
+                    disabled={exam.status !== 0}
+                    onClick={handleStartAssessment}
+                  >
+                    Start Assesment
+                  </button>
+                  <button
+                    className="mr-3 btn btn-success"
+                    onClick={handleViewResult}
+
+                    // disabled={exam.status < 2}
+                  >
+                    View Assesment Result
+                  </button>
+                  <button
+                    className="btn btn-danger"
+                    disabled={exam.status === 0 || exam.status === 2}
+                    onClick={onClickConfirmCloseAssessment}
+                  >
+                    Close Assessment
+                  </button>
+                </div>
+              </div>
+
+              <div className="dta-head ">
+                <span className="">Student</span>
+                <span className="">Matric. No</span>
+                <span className="">Department</span>
+                <span className="">Faculty</span>
+                <span className="">Status</span>
+              </div>
+
+              {biodata.map((dta: any, ind: number) => (
+                <StudentList key={ind} {...dta} showStudent={showStudent} />
+              ))}
+
+              <div className="pagination">
                 <span
-                  onClick={() => setPage(elem)}
-                  className={`btn link ${elem === page ? "active" : ""}`}
-                  key={`pagination_link_${i}`}
+                  onClick={() => setPage(prev)}
+                  className={`btn link prev-next ${
+                    page <= 0 ? "disabled" : ""
+                  }`}
                 >
-                  {elem + 1}
+                  Prev
                 </span>
-              );
-            })}
-            <span
-              onClick={() => setPage(next)}
-              className={`btn link prev-next ${
-                page >= Math.floor(__data.length / 10) ? "disabled" : ""
-              }`}
-            >
-              Next
-            </span>
-          </div>
-        </section>
+                {paginationArray.map((elem: number, i: number) => {
+                  return (
+                    <span
+                      onClick={() => setPage(elem)}
+                      className={`btn link ${elem === page ? "active" : ""}`}
+                      key={`pagination_link_${i}`}
+                    >
+                      {elem + 1}
+                    </span>
+                  );
+                })}
+                <span
+                  onClick={() => setPage(next)}
+                  className={`btn link prev-next ${
+                    page >= Math.floor(__data.length / 10) ? "disabled" : ""
+                  }`}
+                >
+                  Next
+                </span>
+              </div>
+            </section>
 
-        <StudentInfo {...student} />
-      </div>
+            <StudentInfo {...student} />
+          </div>
+        </>
+      )}
     </>
   );
 };
