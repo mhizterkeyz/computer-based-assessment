@@ -3,16 +3,16 @@ import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import { connect } from "react-redux";
 import { ToastContainer } from "react-toastify";
 
-import Login from "./login/Login";
-import RunningAssessment from "./running-assessment/RunningAssessment";
-import AssessmentHistory from "./assessment-history/AssessmentHistory";
-import AddAssessment from "./add-assessment/AddAssessment";
-import { VerifyAdministrator } from "../../redux/actions/AdministratorActions";
+import Login from "../login/Login";
+import RunningAssessment from "../running-assessment/RunningAssessment";
+import AssessmentHistory from "../assessment-history/AssessmentHistory";
+import AddAssessment from "../add-assessment/AddAssessment";
+import { VerifyAdministrator } from "../../../redux/actions/AdministratorActions";
 import Header from "./Header";
-import SettingsPage from "./settingsPage/SettingsPage";
+import SettingsPage from "../settingsPage/SettingsPage";
 import PrintPin from "./PrintPinPage";
 import PrintResult from "./PrintResultPage";
-import FacultyPage from "./FacultyPage/FacultyPage";
+import FacultyPage from "../FacultyPage/FacultyPage";
 
 const Index = ({ administrator, VerifyAdministrator }: any) => {
   useEffect(() => {

@@ -8,7 +8,7 @@ import InstructionPage from "./components/instruction/InstructionPage";
 import QuestionPage from "./components/question/QuestionPage";
 import CredentialsPage from "./components/credentials/CredentialsPage";
 import SubmitPage from "./components/submit/SubmitPage";
-import Administrator from "./components/admin-components";
+import Administrator from "./components/admin-components/common";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 

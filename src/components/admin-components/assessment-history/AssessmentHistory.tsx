@@ -5,7 +5,7 @@ import "./AssessmentHistory.scss";
 import { loadUpExams } from "../../../redux/actions/AdministratorActions";
 import Preloader from "../../Preloader";
 import Examination from "./Examination";
-import Assessment from "../Assessment";
+import Assessment from "../common/Assessment";
 import { toast } from "react-toastify";
 import _ from "lodash";
 

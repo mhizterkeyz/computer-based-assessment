@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TextField } from "../InputField";
+import { TextField } from "../common/InputField";
 import { toast } from "react-toastify";
 
 export const AddFacultyWindow = ({
@@ -82,7 +82,7 @@ export const AddDepartmentWindow = ({
     const { name, value } = ev.target;
     setInput({ ...input, [name]: value });
   };
-  const handleCreateDepartment = async () => {
+  const handleCreateDepartment = async () => {  
     if (
       faculty.departments.filter((a: any) => a.department === input.department)
         .length > 0

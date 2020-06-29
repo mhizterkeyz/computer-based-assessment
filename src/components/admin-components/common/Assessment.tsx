@@ -6,10 +6,10 @@ import "./Assessment.scss";
 import {
   loadUpResults,
   updateExamStatus,
-} from "../../redux/actions/AdministratorActions";
+} from "../../../redux/actions/AdministratorActions";
 import { StudentList, StudentInfo } from "./AssessmentStudentList";
 import { toast } from "react-toastify";
-import Modal from "../Modal";
+import Modal from "../../Modal";
 import _ from "lodash";
 
 const Assessment = ({
@@ -255,6 +255,7 @@ const Assessment = ({
 
       <div className="student-section">
         <section className="tbl">
+          <button className="btn btn-primary m-auto preview-btn">Preview Assesment Questions</button>
           <div className="d-flex justify-content-between align-items-center ctrl-actions">
             <button className="btn btn-primary">Add Student</button>
             <form>

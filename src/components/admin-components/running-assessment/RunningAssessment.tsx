@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { loadUpExams } from "../../../redux/actions/AdministratorActions";
 import { connect } from "react-redux";
 import Preloader from "../../Preloader";
-import Assessment from "../Assessment";
+import Assessment from "../common/Assessment";
 import { toast } from "react-toastify";
 
 const RunningAssessment = (props: any) => {
