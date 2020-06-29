@@ -27,7 +27,7 @@ export const login = async ({ username, password }: any) => {
     const res = await req.json();
     parseResponseError({ res, status, statusText });
     localStorage["jwt"] = res.data.accessToken;
-    localStorage["route"] = "administrator";
+    localStorage["route"] = "student";
     api.headers({ Authorization: "Bearer " + localStorage["jwt"] });
     return res.data;
   } catch (error) {
