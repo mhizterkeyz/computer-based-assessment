@@ -1,6 +1,6 @@
 import React from "react";
 
-import display_img from "../../image/Rectangle-19.png";
+import display_img from "../../../image/Rectangle-19.png";
 
 export const StudentList = ({ user, status, showStudent }: any) => {
   let examStatus = {

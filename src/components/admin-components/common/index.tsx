@@ -12,6 +12,7 @@ import Header from "./Header";
 import SettingsPage from "../settingsPage/SettingsPage";
 import PrintPin from "./PrintPinPage";
 import PrintResult from "./PrintResultPage";
+import PreviewQuestions from "./PreviewQuestions";
 import FacultyPage from "../FacultyPage/FacultyPage";
 
 const Index = ({ administrator, VerifyAdministrator }: any) => {
@@ -63,6 +64,7 @@ const Index = ({ administrator, VerifyAdministrator }: any) => {
         <Route path={"/admin/faculty-depts"} component={FacultyPage} />
         <Route path={"/admin/print-pin"} component={PrintPin} />
         <Route path={"/admin/print-result"} component={PrintResult} />
+        <Route path={"/admin/preview"} component={PreviewQuestions} />
         <Route component={AssessmentHistory} />
       </Switch>
       <ToastContainer autoClose={3000} hideProgressBar={true} />
