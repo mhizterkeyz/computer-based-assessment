@@ -243,9 +243,13 @@ const QuestionPage = (props: any) => {
           {props.loading ? (
             <h3>Loading Questions...</h3>
           ) : (
-            <h3>
-              Course - <span>Nigeria People and culture (GST 103)</span>
-            </h3>
+            // <h3>
+            //   Course - <span>Nigeria People and culture (GST 103)</span>
+            // </h3>
+              <h2 className="text-center mb-2">
+              <span style={{ textTransform: "uppercase" }}>GST 103</span> -{" "}
+              <span style={{ textTransform: "capitalize" }}>Nigeria People and culture</span>
+            </h2>
           )}
 
           <div className="question-body">
