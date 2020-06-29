@@ -1,0 +1,104 @@
+.faculty {
+    width: 70%;
+    margin: 4rem auto;
+    min-height: 80vh;
+    &__header {
+        margin-bottom: 1.5rem;
+    }
+    &__title {
+        margin: 0;
+    }
+
+    &__add-btn {
+        font-size: 12px;
+        font-weight: 500;
+        color: white;
+        // background: #4180fe;
+        border-radius: 20px;
+        border: 0;
+        box-shadow: 0px 1px 11px rgba(0, 0, 0, 0.1);
+    }
+
+    &__accordion {
+        background-color: #fff;
+        color: #4f4f4f;
+        cursor: pointer;
+        padding: 18px;
+        width: 100%;
+        font-weight: 600;
+        text-align: left;
+        text-transform: capitalize;
+        border: none;
+        outline: none;
+        transition: 0.4s;
+        box-shadow: 0px 1px 11px rgba(0, 0, 0, 0.1);
+        border-radius: 0;
+        margin-bottom: 0.5rem;
+    }
+    &__accordion-info {
+        color: #c4c4c4;
+        font-size: 12px;
+    }
+
+    &__active,
+    &__accordion:hover {
+        color: #fff;
+        background-color: #4180fe;
+        span.faculty__accordion-info {
+            color: #fff;
+        }
+    }
+
+    &__btn {
+        // &::before {
+        //     content: '+';
+        // }
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #fff;
+        color: #c4c4c4;
+        border: 1px solid #c4c4c4;
+    }
+
+    &__active {
+        margin-bottom: 0px;
+    }
+
+    &__department-panel {
+        // padding: 0 18px;
+        background-color: white;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease-out;
+        // margin-bottom: 1rem;
+        // border: 1px solid #c4c4c4;
+        box-shadow: 0px 1px 11px rgba(0, 0, 0, 0.1);
+
+        h3 {
+            font-weight: 600;
+            font-size: 20px;
+            text-align: center;
+            line-height: 36px;
+            color: #4f4f4f;
+            padding: 0.8rem 2rem;
+            margin: 0;
+            border-bottom: 1px solid rgb(241, 241, 241);
+        }
+        span {
+            display: block;
+            text-transform: capitalize;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgb(241, 241, 241);
+        }
+
+        span:hover {
+            color: #fff;
+            background-color: #4180fe;
+            cursor: pointer;
+        }
+    }
+}

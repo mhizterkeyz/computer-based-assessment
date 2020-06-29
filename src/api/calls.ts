@@ -1,4 +1,4 @@
-export const api_url = "http://localhost:8000/api/v1";
+export const api_url = `http://${window.location.hostname}:8000/api/v1`;
 
 export const app = {
   h: {

@@ -3,15 +3,17 @@ import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import { connect } from "react-redux";
 import { ToastContainer } from "react-toastify";
 
-import Login from "./login/Login";
-import RunningAssessment from "./running-assessment/RunningAssessment";
-import AssessmentHistory from "./assessment-history/AssessmentHistory";
-import AddAssessment from "./add-assessment/AddAssessment";
-import { VerifyAdministrator } from "../../redux/actions/AdministratorActions";
+import Login from "../login/Login";
+import RunningAssessment from "../running-assessment/RunningAssessment";
+import AssessmentHistory from "../assessment-history/AssessmentHistory";
+import AddAssessment from "../add-assessment/AddAssessment";
+import { VerifyAdministrator } from "../../../redux/actions/AdministratorActions";
 import Header from "./Header";
-import SettingsPage from "./settingsPage/SettingsPage";
+import SettingsPage from "../settingsPage/SettingsPage";
 import PrintPin from "./PrintPinPage";
 import PrintResult from "./PrintResultPage";
+import PreviewQuestions from "./PreviewQuestions";
+import FacultyPage from "../FacultyPage/FacultyPage";
 
 const Index = ({ administrator, VerifyAdministrator }: any) => {
   useEffect(() => {
@@ -59,8 +61,10 @@ const Index = ({ administrator, VerifyAdministrator }: any) => {
         />
         <Route path={"/admin/add-assessment"} component={AddAssessment} />
         <Route path={"/admin/settings"} component={SettingsPage} />
+        <Route path={"/admin/faculty-depts"} component={FacultyPage} />
         <Route path={"/admin/print-pin"} component={PrintPin} />
         <Route path={"/admin/print-result"} component={PrintResult} />
+        <Route path={"/admin/preview"} component={PreviewQuestions} />
         <Route component={AssessmentHistory} />
       </Switch>
       <ToastContainer autoClose={3000} hideProgressBar={true} />

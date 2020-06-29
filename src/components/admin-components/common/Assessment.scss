@@ -33,7 +33,7 @@ h2 {
 div.dash-detail {
   background: #ffffff;
   box-shadow: 0px 1px 11px rgba(0, 0, 0, 0.1);
-  border-radius: 15px;
+  // border-radius: 15px;
   padding: 1.5rem 2rem;
   margin-right: 9px;
   margin-left: 9px;
@@ -93,7 +93,7 @@ div.dash-detail {
     line-height: 18px;
     padding-top: 5px;
     padding-bottom: 5px;
-    border-radius: 15px;
+    // border-radius: 15px;
   }
 }
 
@@ -133,6 +133,9 @@ div.student-section {
   margin: auto;
   margin-top: 70px;
 
+  .preview-btn {
+    margin-bottom: 3rem !important;
+  }
   .tbl {
     width: 100%;
     display: grid;
@@ -144,7 +147,7 @@ div.student-section {
       color: #ffffff;
       background: #4180fe;
       box-shadow: 0px 1px 11px rgba(0, 0, 0, 0.1);
-      border-radius: 15px;
+      // border-radius: 15px;
       padding: 11px 25px;
       margin-top: 25px;
 
@@ -161,9 +164,9 @@ div.student-section {
       background: #fff;
       box-shadow: 0px 1px 11px rgba(0, 0, 0, 0.1);
       // border: 1px solid #c4c4c4;
-      border-radius: 16px;
+      // border-radius: 16px;
       padding: 24px 25px;
-      margin-top: 10px;
+      margin-top: 1rem;
 
       font-weight: normal;
       font-size: 14px;
@@ -181,13 +184,13 @@ div.student-section {
     display: none;
     // transform: translateX(1000px);
     margin-left: 61px;
-    max-height: 78%;
+    max-height: 80vh;
     width: 40%;
     background: #ffffff;
     border: 1px solid #f0f0f0;
     box-sizing: border-box;
     box-shadow: 0px 1px 11px rgba(0, 0, 0, 0.1);
-    border-radius: 15px;
+    // border-radius: 15px;
     padding: 0 22px;
     margin-top: 63px;
 
@@ -255,7 +258,7 @@ div.student-section {
   color: #ffffff;
   background: #4180fe;
   box-shadow: 0px 1px 11px rgba(0, 0, 0, 0.1);
-  border-radius: 15px;
+  // border-radius: 15px;
   padding: 11px 25px;
   margin-top: 25px;
 
@@ -272,9 +275,9 @@ div.student-section {
   background: #fff;
   box-shadow: 0px 1px 11px rgba(0, 0, 0, 0.1);
   // border: 1px solid #c4c4c4;
-  border-radius: 16px;
+  // border-radius: 16px;
   padding: 24px 25px;
-  margin-top: 10px;
+  margin-top: 1rem;
 
   font-weight: normal;
   font-size: 14px;
@@ -332,4 +335,6 @@ input[type="search"] {
   box-sizing: border-box;
   border-radius: 21px;
   padding: 6px 19px;
+  text-align: left;
+  cursor: default !important;
 }
