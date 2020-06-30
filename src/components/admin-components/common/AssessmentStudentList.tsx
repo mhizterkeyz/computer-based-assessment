@@ -3,27 +3,16 @@ import React from "react";
 import display_img from "../../../image/Rectangle-19.png";
 
 export const StudentList = ({ user, status, showStudent }: any) => {
-  let examStatus = {
-    class: "",
-    name: "",
-  };
-
-  if (status === 0) {
-    examStatus.class = "status-pending";
-    examStatus.name = "Pending";
-  } else if (status === 1) {
-    examStatus.class = "status-running";
-    examStatus.name = "Running";
-  } else {
-    examStatus.class = "status-closed";
-    examStatus.name = "Finished";
-  }
-
   return (
     <div
       className="dta-body"
       onClick={() => {
-        showStudent(user, user.department.department, user.faculty.faculty);
+        showStudent(
+          user,
+          user.department.department,
+          user.faculty.faculty,
+          status
+        );
       }}
     >
       <span>{user.name}</span>
@@ -34,15 +23,35 @@ export const StudentList = ({ user, status, showStudent }: any) => {
       <span style={{ textTransform: "capitalize" }}>
         {user.faculty.faculty}
       </span>
-      <span className={examStatus.class}>{examStatus.name}</span>
+      <span
+        className={
+          status === 0
+            ? "status-pending"
+            : status === 1
+            ? "status-running"
+            : "status-closed"
+        }
+      >
+        {status === 0 ? "Pending" : status === 1 ? "Online" : "Finished"}
+      </span>
     </div>
   );
 };
 
-export const StudentInfo = ({ user, faculty, department }: any) => {
+export const StudentInfo = ({ user, faculty, department, status }: any) => {
   return (
     <section className="student-info">
-      <span className="status-running">Online</span>
+      <span
+        className={
+          status === 0
+            ? "status-pending"
+            : status === 1
+            ? "status-running"
+            : "status-closed"
+        }
+      >
+        {status === 0 ? "Pending" : status === 1 ? "Online" : "Finished"}
+      </span>
 
       <div className="d-flex flex-column align-items-center">
         <span className="image-cropper">
@@ -60,7 +69,7 @@ export const StudentInfo = ({ user, faculty, department }: any) => {
 
         <div>
           <h3>Level</h3>
-          <h4>200</h4>
+          <h4>{user.level}</h4>
         </div>
 
         <div>
@@ -79,7 +88,6 @@ export const StudentInfo = ({ user, faculty, department }: any) => {
       <div className="d-flex justify-content-between">
         <button className="btn btn-primary">Extend time</button>
         <button className="btn btn-primary">Retake</button>
-        <button className="btn btn-primary">View Score</button>
       </div>
 
       <hr />
