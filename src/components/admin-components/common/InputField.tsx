@@ -1,7 +1,7 @@
 import React from "react";
 
 export const TextField = (props: any) => (
-  <div className="mb-4">
+  <div className={props.class ? "mb-4 " + props.class : "mb-4"}>
     <label htmlFor="" className="profile__label">
       {props.label}
     </label>
@@ -17,7 +17,7 @@ export const TextField = (props: any) => (
 );
 
 export const NumberField = (props: any) => (
-  <div className="mb-4">
+  <div className={props.class ? "mb-4 " + props.class : "mb-4"}>
     <label htmlFor={props.name} className="profile__label">
       {props.label}
     </label>
@@ -31,7 +31,7 @@ export const NumberField = (props: any) => (
 );
 
 export const EmailField = (props: any) => (
-  <div className="mb-4">
+  <div className={props.class ? "mb-4 " + props.class : "mb-4"}>
     <label htmlFor="" className="profile__label">
       {props.label}
     </label>
@@ -46,8 +46,35 @@ export const EmailField = (props: any) => (
   </div>
 );
 
+export const SelectField = (props: any) => (
+  <div className={props.class ? "mb-4 " + props.class : "mb-4"}>
+    <label htmlFor="" className="profile__label">
+      {props.label}
+    </label>
+    <select
+      className="profile__select profile__select--placeholder "
+      disabled={props.isDisabled ? true : false}
+      name={props.name}
+      onChange={props.handleInputs}
+    >
+      <option selected>Select {props.name}</option>
+      {props.value.length > 0 ? (
+        props.value.map((val: string, index: number) => (
+          <option value={val} key={index}>
+            {val}
+          </option>
+        ))
+      ) : (
+        <>
+          <option>No assigned Department</option>
+        </>
+      )}
+    </select>
+  </div>
+);
+
 export const PasswordField = (props: any) => (
-  <div className={"mb-4 " + props.class}>
+  <div className={props.class ? "mb-4 " + props.class : "mb-4"}>
     <label htmlFor="" className="profile__label">
       {props.label}
     </label>

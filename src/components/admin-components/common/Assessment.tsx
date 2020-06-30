@@ -12,17 +12,23 @@ import { toast } from "react-toastify";
 import Modal from "../../Modal";
 import _ from "lodash";
 import PreviewQuestions from "./PreviewQuestions";
+import { AddStudentModalWindow } from "./AssessmentModalWindow";
+import { getFaculty } from "../../../redux/actions/AdministratorActions";
 
 const Assessment = ({
   exam: examination,
   loadUpResults,
   updateExamStatus,
+  faculty,
+  loading,
+  getFaculty,
 }: any) => {
   const [student, setStudent] = useState({
     show: false,
     user: "",
     department: "",
     faculty: "",
+    status: 0
   });
   const [exam, setExam] = useState({
     status: 0,
@@ -30,7 +36,7 @@ const Assessment = ({
     course: "",
     title: "",
     _id: "",
-    questions: []
+    questions: [],
   });
   const [modalData, setModalData] = useState({
     show: false,
@@ -54,8 +60,8 @@ const Assessment = ({
     }
   }, [student]);
 
-  const showStudent = (user: any, department: string, faculty: string) => {
-    setStudent({ show: true, user, department, faculty });
+  const showStudent = (user: any, department: string, faculty: string, status: number) => {
+    setStudent({ show: true, user, department, faculty, status });
   };
 
   const history = useHistory();
@@ -189,6 +195,7 @@ const Assessment = ({
     }
     return data;
   })();
+
   const paginationArray = (() => {
     const arr = [];
     for (let i = 0; i <= Math.floor(__data.length / 5); i++) {
@@ -196,9 +203,34 @@ const Assessment = ({
     }
     return arr;
   })();
+
   const prev = page - 1 <= 0 ? 0 : page - 1;
   const next =
-    page + 1 >= __data.length / 5 ? Math.floor(__data.length / 5) : page + 1;    
+    page + 1 >= __data.length / 5 ? Math.floor(__data.length / 5) : page + 1;
+
+  useEffect(() => {
+    if (Object.keys(faculty).length < 1) {
+      (async () => {
+        try {
+          await getFaculty();
+        } catch (error) {
+          console.log(error);
+        }
+      })();
+    }
+  }, [getFaculty, faculty]);
+
+  const onClickShowAddStudentModal = () => {
+    setModalData({
+      show: true,
+      display: (
+        <AddStudentModalWindow
+          handleModalClose={handleModalClose}
+          faculty={faculty}
+        />
+      ),
+    });
+  };
   return (
     <>
       <Modal show={modalData.show} handleClose={handleModalClose}>
@@ -211,7 +243,10 @@ const Assessment = ({
         <span className={status.class + " status"}>{status.name}</span>
       </h2>
       {preview ? (
-        <PreviewQuestions setPreview={setPreview} examQuestions={exam.questions}  />
+        <PreviewQuestions
+          setPreview={setPreview}
+          examQuestions={exam.questions}
+        />
       ) : (
         <>
           <section className="d-flex justify-content-center">
@@ -262,11 +297,19 @@ const Assessment = ({
 
           <div className="student-section">
             <section className="tbl">
-              <button className="btn btn-primary m-auto preview-btn" onClick={() => setPreview(true)}>
+              <button
+                className="btn btn-primary m-auto preview-btn"
+                onClick={() => setPreview(true)}
+              >
                 Preview Assesment Questions
               </button>
               <div className="d-flex justify-content-between align-items-center ctrl-actions">
-                <button className="btn btn-primary">Add Student</button>
+                <button
+                  className="btn btn-primary"
+                  onClick={onClickShowAddStudentModal}
+                >
+                  Add Student
+                </button>
                 <form>
                   <input
                     className="btn"
@@ -357,9 +400,17 @@ const Assessment = ({
   );
 };
 
+function mapStateToProps(state: any) {
+  return {
+    faculty: state.faculty,
+    loading: state.apiCallsInProgress > 0,
+  };
+}
+
 const mapDispatchToProps = {
   loadUpResults,
   updateExamStatus,
+  getFaculty,
 };
 
-export default connect(null, mapDispatchToProps)(Assessment);
+export default connect(mapStateToProps, mapDispatchToProps)(Assessment);
