@@ -172,7 +172,7 @@ const QuestionPage = (props: any) => {
 
       if (seconds === 0) {
         if (minutes === 0) {
-          // props.history.push("/exam/submit");
+          props.history.push("/exam/submit");
           clearInterval(myInterval);
         } else {
           setCounter({
@@ -257,9 +257,11 @@ const QuestionPage = (props: any) => {
             // <h3>
             //   Course - <span>Nigeria People and culture (GST 103)</span>
             // </h3>
-              <h2 className="text-center mb-2">
+            <h2 className="text-center mb-2">
               <span style={{ textTransform: "uppercase" }}>GST 103</span> -{" "}
-              <span style={{ textTransform: "capitalize" }}>Nigeria People and culture</span>
+              <span style={{ textTransform: "capitalize" }}>
+                Nigeria People and culture
+              </span>
             </h2>
           )}
 

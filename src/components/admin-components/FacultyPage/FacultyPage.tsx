@@ -7,11 +7,13 @@ import {
   getFaculty,
   createFaculty,
   deleteFaculty,
+  deleteDepartment,
   createDepartment,
 } from "../../../redux/actions/AdministratorActions";
 import { connect } from "react-redux";
 import { toast } from "react-toastify";
 import Preloader from "../../Preloader";
+import { department } from "../../model/student";
 
 const FacultyPage = ({
   faculty,
@@ -20,6 +22,7 @@ const FacultyPage = ({
   getFaculty,
   createFaculty,
   createDepartment,
+  ...props
 }: any) => {
   const [modalData, setModalData] = useState({
     show: false,
@@ -37,7 +40,7 @@ const FacultyPage = ({
         }
       })();
     }
-  }, []);
+  }, [faculty, getFaculty]);
 
   useEffect(() => {
     let acc = document.querySelectorAll(".faculty__accordion");
@@ -112,13 +115,26 @@ const FacultyPage = ({
               .sort((a: any, b: any) =>
                 a.faculty > b.faculty ? 1 : a.faculty < b.faculty ? -1 : 0
               )
-              .map((faculty: any, index: number) => (
-                <Faculty
-                  faculty={faculty}
-                  onClickShowAddDepartmentModal={onClickShowAddDepartmentModal}
-                  key={index}
-                />
-              ))}
+              .map((faculty: any, index: number) => {
+                return (
+                  <Faculty
+                    faculty={faculty}
+                    onClickShowAddDepartmentModal={
+                      onClickShowAddDepartmentModal
+                    }
+                    onDepartmentDelete={props.deleteDepartment}
+                    onDeleteClick={async (id) => {
+                      try {
+                        await props.deleteFaculty(id);
+                      } catch (error) {
+                        getFaculty();
+                        throw error;
+                      }
+                    }}
+                    key={index}
+                  />
+                );
+              })}
           </section>
         </>
       )}
@@ -129,23 +145,33 @@ const FacultyPage = ({
 const Faculty = ({
   faculty,
   onClickShowAddDepartmentModal,
+  onDeleteClick,
+  onDepartmentDelete,
 }: {
   faculty: any;
   onClickShowAddDepartmentModal: (faculty: string) => void;
+  onDeleteClick: (id: string) => Promise<any>;
+  onDepartmentDelete: (department: string, faculty: string) => Promise<any>;
 }) => {
   const departments = faculty.departments;
 
   return (
     <>
       <div className="d-flex align-items-center btn faculty__accordion">
-       <div className="d-flex flex-column">
+        <div className="d-flex flex-column">
           {faculty.faculty}{" "}
           <span className="faculty__accordion-info">
-            {departments.length > 0
-              ? <>{departments.length > 1 ? `${departments.length} departments`: `${departments.length} department`} </>
-              : "No Assigned department"}
+            {departments.length > 0 ? (
+              <>
+                {departments.length > 1
+                  ? `${departments.length} departments`
+                  : `${departments.length} department`}{" "}
+              </>
+            ) : (
+              "No Assigned department"
+            )}
           </span>
-       </div>
+        </div>
 
         <div className="d-flex ml-auto">
           <button
@@ -154,7 +180,17 @@ const Faculty = ({
           >
             +
           </button>{" "}
-          <button className="btn btn-light faculty__btn">
+          <button
+            onClick={async () => {
+              try {
+                await onDeleteClick(faculty._id);
+                toast.success("Faculty deleted");
+              } catch (error) {
+                toast.error(error.message);
+              }
+            }}
+            className="btn btn-light faculty__btn"
+          >
             <img src={delete_icon} alt="delete icon" />
           </button>
         </div>
@@ -176,7 +212,17 @@ const Faculty = ({
               key={`department_${index}`}
             >
               {dept.department}
-              <button className="btn btn-light ml-auto faculty__btn">
+              <button
+                onClick={async () => {
+                  try {
+                    await onDepartmentDelete(dept._id, faculty._id);
+                    toast.success("Department deleted");
+                  } catch (error) {
+                    toast.error(error.message);
+                  }
+                }}
+                className="btn btn-light ml-auto faculty__btn"
+              >
                 <img src={delete_icon} alt="delete icon" />
               </button>
             </span>
@@ -199,6 +245,7 @@ const mapDispatchToProps = {
   createFaculty,
   deleteFaculty,
   createDepartment,
+  deleteDepartment,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(FacultyPage);

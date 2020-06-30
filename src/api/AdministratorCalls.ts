@@ -241,17 +241,26 @@ export const createFaculty = async (faculty: string) => {
 };
 
 export const deleteFaculty = async (faculty_id: string) => {
-  try {
-    const req = await api
-      .headers({ Authorization: "Bearer " + localStorage["jwt"] })
-      .delete(`${apiUrl}/faculty${faculty_id}`);
-    const { statusText, status } = req;
-    const res = await req.json();
-    parseResponseError({ res, status, statusText });
-    return res.data;
-  } catch (error) {
-    throw error;
-  }
+  const req = await api
+    .headers({ Authorization: "Bearer " + localStorage["jwt"] })
+    .delete(`${apiUrl}/faculty/${faculty_id}`);
+  const { statusText, status } = req;
+  const res = await req.json();
+  parseResponseError({ res, status, statusText });
+  return res.data;
+};
+
+export const deleteDepartment = async (
+  department: string,
+  faculty_id: string
+) => {
+  const req = await api
+    .headers({ Authorization: "Bearer " + localStorage["jwt"] })
+    .delete(`${apiUrl}/faculty/${faculty_id}/departments/${department}`);
+  const { statusText, status } = req;
+  const res = await req.json();
+  parseResponseError({ res, status, statusText });
+  return res.data;
 };
 
 export const createDepartment = async (
