@@ -5,27 +5,26 @@ import { NavLink } from "react-router-dom";
 
 const navItems = [
   {
-    name: "Add Assessment",
+    name: `Add\xa0Assessment`,
     url: "/admin/add-assessment",
   },
   {
-    name: "Assessment List",
-    url: "/admin/history",
+    name: "Assessment\xa0List",
+    url: "/admin",
   },
   {
-    name: "Running Assessment",
+    name: "Running\xa0Assessment",
     url: "/admin/running-asssesment",
   },
- 
+
   {
-    name: "Faculties & Departments",
+    name: "Faculties\xa0&\xa0Departments",
     url: "/admin/faculty-depts",
   },
   {
     name: "Settings",
     url: "/admin/settings",
   },
-  
 ];
 
 const Navigation = (props: { name: string; url: string }) => {

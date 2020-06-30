@@ -1,13 +1,8 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import "./AssessmentHistory.scss";
 
-const Examination = ({
-  exam,
-  onClickShowExamination,
-}: {
-  exam: any;
-  onClickShowExamination: (show: boolean, exam: any) => void;
-}) => {
+const Examination = ({ exam }: { exam: any }) => {
   let status = {
     class: "",
     name: "",
@@ -27,11 +22,10 @@ const Examination = ({
   let decDate = `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`;
 
   return (
-    <div
+    <Link
+      to={`admin/history/${exam._id}`}
       className="dta-body"
-      onClick={() => {
-        return onClickShowExamination(true, exam);
-      }}
+      style={{ textDecoration: "none" }}
     >
       <span className="">
         {exam.course} - {exam.title}
@@ -40,7 +34,7 @@ const Examination = ({
       <span className="">{decDate}</span>
       {/* <span className="">7th June 2020</span> */}
       <span className={status.class}>{status.name}</span>
-    </div>
+    </Link>
   );
 };
 
