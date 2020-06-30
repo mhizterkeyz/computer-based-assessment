@@ -38,19 +38,22 @@ export const StudentList = ({ user, status, showStudent }: any) => {
   );
 };
 
-export const StudentInfo = ({ user, faculty, department, status }: any) => {
+export const StudentInfo = ({
+  student,
+  setStudent,
+}: any) => {
   return (
     <section className="student-info">
       <span
         className={
-          status === 0
+          student.status === 0
             ? "status-pending"
-            : status === 1
+            : student.status === 1
             ? "status-running"
             : "status-closed"
         }
       >
-        {status === 0 ? "Pending" : status === 1 ? "Online" : "Finished"}
+        {student.status === 0 ? "Pending" : student.status === 1 ? "Online" : "Finished"}
       </span>
 
       <div className="d-flex flex-column align-items-center">
@@ -58,39 +61,58 @@ export const StudentInfo = ({ user, faculty, department, status }: any) => {
           <img src={display_img} alt="student" />
         </span>
 
-        <h3 className="text-center">{user.name}</h3>
+        <h3 className="text-center">{student.user.name}</h3>
       </div>
       <hr />
       <div className="details">
-        <div>
-          <h3>Matric.No</h3>
-          <h4>{user.matric}</h4>
+        <div className="row mb-3">
+          <div className="col-8">
+            <h3>Matric.No</h3>
+            <h4 style={{ textTransform: "uppercase" }}>{student.user.matric}</h4>
+          </div>
+
+          <div className="col-4">
+            <h3>Level</h3>
+            <h4>{student.user.level}</h4>
+          </div>
         </div>
 
-        <div>
-          <h3>Level</h3>
-          <h4>{user.level}</h4>
-        </div>
-
-        <div>
+        <div className="mb-3">
           <h3>Department</h3>
-          <h4>{department}</h4>
+          <h4 style={{ textTransform: "capitalize" }}>{student.department}</h4>
         </div>
 
         <div>
           <h3>Faculty</h3>
-          <h4>{faculty}</h4>
+          <h4 style={{ textTransform: "capitalize" }}>{student.faculty}</h4>
         </div>
       </div>
 
       <hr />
 
       <div className="d-flex justify-content-between">
-        <button className="btn btn-primary">Extend time</button>
-        <button className="btn btn-primary">Retake</button>
+        <button
+          className="btn btn-primary"
+          disabled={student.status === 0 || student.status === 2 ? true : false}
+        >
+          Extend time
+        </button>
+        <button
+          className="btn btn-primary"
+          disabled={student.status === 0 || student.status === 1 ? true : false}
+        >
+          Retake
+        </button>
       </div>
 
       <hr />
+
+      <button
+        className="cancel-btn"
+        onClick={() => setStudent({ ...student, show: false })}
+      >
+        &times;
+      </button>
     </section>
   );
 };

@@ -28,7 +28,7 @@ const Assessment = ({
     user: "",
     department: "",
     faculty: "",
-    status: 0
+    status: 0,
   });
   const [exam, setExam] = useState({
     status: 0,
@@ -60,26 +60,16 @@ const Assessment = ({
     }
   }, [student]);
 
-  const showStudent = (user: any, department: string, faculty: string, status: number) => {
+  const showStudent = (
+    user: any,
+    department: string,
+    faculty: string,
+    status: number
+  ) => {
     setStudent({ show: true, user, department, faculty, status });
   };
 
   const history = useHistory();
-  let status = {
-    class: "",
-    name: "",
-  };
-
-  if (exam.status === 0) {
-    status.class = "pending";
-    status.name = "Pending";
-  } else if (exam.status === 1) {
-    status.class = "running";
-    status.name = "Running";
-  } else {
-    status.class = "closed";
-    status.name = "Closed";
-  }
 
   const studentsPendingExam = exam.bioData.filter((dta: any) => {
     return dta.status === 0;
@@ -240,7 +230,21 @@ const Assessment = ({
       <h2 className="text-center">
         <span style={{ textTransform: "uppercase" }}>{exam.course}</span> -{" "}
         <span style={{ textTransform: "capitalize" }}>{exam.title}</span> <br />{" "}
-        <span className={status.class + " status"}>{status.name}</span>
+        <span
+          className={
+            exam.status === 0
+              ? "pending status"
+              : exam.status === 1
+              ? "running status"
+              : "closed status"
+          }
+        >
+          {exam.status === 0
+            ? "Pending"
+            : exam.status === 1
+            ? "Running"
+            : "Closed"}
+        </span>
       </h2>
       {preview ? (
         <PreviewQuestions
@@ -392,7 +396,7 @@ const Assessment = ({
               </div>
             </section>
 
-            <StudentInfo {...student} />
+            <StudentInfo student={student} setStudent={setStudent} />
           </div>
         </>
       )}

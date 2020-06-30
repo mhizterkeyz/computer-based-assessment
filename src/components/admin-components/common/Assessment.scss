@@ -182,6 +182,7 @@ div.student-section {
 
   section.student-info {
     display: none;
+    position: relative;
     // transform: translateX(1000px);
     margin-left: 61px;
     max-height: 80vh;
@@ -219,12 +220,30 @@ div.student-section {
       margin: 5px auto 40px;
       font-size: 12px;
     }
-    .details {
-      display: grid;
-      grid-template-columns: 1fr 0.6fr;
-      grid-gap: 2px;
-      grid-row-gap: 10px;
-      align-items: center;
+
+    .cancel-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      width: 2rem;
+      height: 2rem;
+      font-size: 1.7rem;
+      color: #4f4f4f;
+      border: 0;
+      background-color: transparent;
+    }
+
+    .cancel-btn:hover {
+      color: #c4c4c4;
+      background-color: rgb(250, 250, 250);
+      border-radius: 50%;
+      width: 2rem;
+      height: 2rem;
+    }
+
+    .cancel-btn:focus{
+      outline: 0;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
     }
 
     button {
