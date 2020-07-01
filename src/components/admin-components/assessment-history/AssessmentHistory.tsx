@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import { connect } from "react-redux";
 
 import "./AssessmentHistory.scss";
@@ -10,16 +9,16 @@ import Assessment from "../common/Assessment";
 import { toast } from "react-toastify";
 import _ from "lodash";
 
-const AssessmentHistory = (props: {
-  exams: any;
-  loading: boolean;
-  history: any;
-  loadUpExams: () => Promise<any>;
-}) => {
+const AssessmentHistory = (props: any) => {
+  const [assessment, setAssessment] = useState({ show: false, exam: "" });
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
   let { exams, loadUpExams } = props;
 
+  if (window.location.pathname !== "/admin/history") {
+    props.history.push("/admin/history");
+  }
+  
   useEffect(() => {
     if (Object.keys(exams).length < 1) {
       (async () => {
@@ -31,6 +30,10 @@ const AssessmentHistory = (props: {
       })();
     }
   }, [exams, loadUpExams]);
+
+  const onClickShowExamination = (show: boolean, exam: any) => {
+    setAssessment({ ...assessment, show: show, exam: exam });
+  };
 
   exams = _.orderBy(Object.values(props.exams), "status");
   if (search.length > 0) {
@@ -77,23 +80,10 @@ const AssessmentHistory = (props: {
       {props.loading ? (
         <Preloader />
       ) : (
-        <Router>
-          <Switch>
-            <Route
-              path="/admin/history/:id"
-              render={(routeParams: any) => {
-                return (
-                  <Assessment
-                    exam={Object.values(orderedExams).find(
-                      (elem: any) => elem._id === routeParams.match.params.id
-                    )}
-                  />
-                );
-              }}
-            ></Route>
-            <Route
-              render={() => (
-                <>
+        <>
+        {assessment.show ? (
+          <Assessment exam={assessment.exam} match={props.match} />
+        ) : (
                   <section className="mt-5 assessment-history">
                     <form className="text-right">
                       <input
@@ -116,6 +106,7 @@ const AssessmentHistory = (props: {
                     {Object.values(orderedExams).map((exam: any, i: number) => (
                       <Examination
                         exam={exam}
+                        onClickShowExamination={onClickShowExamination}
                         key={`examination_history_${i}`}
                       />
                     ))}
@@ -154,11 +145,9 @@ const AssessmentHistory = (props: {
                       </span>
                     </div>
                   </section>
-                </>
               )}
-            ></Route>
-          </Switch>
-        </Router>
+                </>
+           
       )}
     </>
   );

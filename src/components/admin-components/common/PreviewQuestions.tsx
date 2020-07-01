@@ -5,7 +5,7 @@ interface ConfirmSubmitProps {
   handleModalClose: () => void;
 }
 
-const PreviewQuestions = ({ examQuestions, ...props }: any) => {
+const PreviewQuestions = ({ setPreview, examQuestions, ...props }: any) => {
   examQuestions = examQuestions.reduce(
     (acc: any, cur: any, i: any) => ({
       ...acc,
@@ -74,7 +74,7 @@ const PreviewQuestions = ({ examQuestions, ...props }: any) => {
               <div className="">
                 <Link
                   className="btn mr-4 prev"
-                  to={`/admin/history/${props.examId}/questions/${prev}`}
+                  to={`/${window.location.pathname}/${props.examId}/questions/${prev}`}
                 >
                   Previous
                 </Link>
@@ -84,6 +84,11 @@ const PreviewQuestions = ({ examQuestions, ...props }: any) => {
                 >
                   Next
                 </Link>
+              </div>
+              <div className="text-right">
+                <button className="btn" onClick={() => setPreview(false)}>
+                  Back to Assessment view
+                </button>
               </div>
             </div>
           </div>
