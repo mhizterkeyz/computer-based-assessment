@@ -186,3 +186,94 @@ section.add-assessment {
     background: transparent !important;
   }
 }
+
+.new-assessment {
+  background: #ffffff;
+  box-shadow: 0px 4px 11px rgba(0, 0, 0, 0.15);
+  border-radius: 15px;
+
+  width: 90%;
+  margin: 4rem auto;
+  padding: 25px 50px;
+
+  &__fieldset {
+    border: 1px solid #c4c4c4;
+    box-sizing: border-box;
+    border-radius: 15px;
+    padding: 22px 36px;
+    margin-bottom: 3rem;
+  }
+  &__legend {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 21px;
+    width: auto;
+    color: #c4c4c4;
+  }
+
+  &__time-input {
+    background: #ecf2fc;
+    border: 1px solid #c4c4c4;
+    box-sizing: border-box;
+    border-radius: 15px;
+    height: 38px;
+    width: 15%;
+    margin-right: 10px;
+    padding: 0 10px;
+  }
+
+  &__time-label {
+    margin-right: 1rem;
+  }
+
+  &__course-input {
+    width: 100%;
+    background: #ecf2fc;
+    border: 1px solid #c4c4c4;
+    box-sizing: border-box;
+    border-radius: 15px;
+    padding: 10px;
+    margin-bottom: 2rem;
+  }
+  textarea {
+    height: 123px;
+  }
+
+  &__course-input--mark {
+    width: 10%;
+  }
+
+  &__course-input:focus,
+  &__time-input:focus,
+  &__add-data:focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+
+  &__label-hint {
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 18px;
+    color: #c4c4c4;
+  }
+
+  &__student-data {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  &__add-data {
+    border: 0;
+    border-radius: 50%;
+    width: 27px;
+    height: 27px;
+    color: white;
+    background: #4180fe;
+  }
+  &__nav-ques {
+    border: 0;
+    font-size: 12px;
+    color: #fff;
+    background: #4180FE;
+  }
+}
