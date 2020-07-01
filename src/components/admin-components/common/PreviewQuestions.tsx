@@ -1,98 +1,107 @@
-import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
-import display_img from "../../../image/Rectangle-19.png";
-import timer_icon from "../../../svg/access_alarms_24px_outlined.svg";
+import React from "react";
+import { Link } from "react-router-dom";
 
 interface ConfirmSubmitProps {
   handleModalClose: () => void;
 }
 
-const PreviewQuestions = ({setPreview, examQuestions}: any) => {
- 
+const PreviewQuestions = ({ examQuestions, ...props }: any) => {
+  examQuestions = examQuestions.reduce(
+    (acc: any, cur: any, i: any) => ({
+      ...acc,
+      [`question-${i + 1}`]: { ...cur, question_no: `question-${i + 1}` },
+    }),
+    {}
+  );
+  const { question, prev, next }: any = Object.values(examQuestions).reduce(
+    (acc: any, cur: any, ind: any, arr: any) => {
+      const prev =
+        ind - 1 < 0 ? arr[0].question_no || "" : arr[ind - 1].question_no || "";
+      const next =
+        ind + 1 >= arr.length
+          ? arr[arr.length - 1].question_no || ""
+          : arr[ind + 1].question_no || "";
+      if (cur.question_no === props.match.params.question)
+        return { question: cur, prev, next };
+      return acc;
+    },
+    {
+      question: examQuestions["question-1"],
+      prev: "",
+      next: "question-2",
+    }
+  );
   return (
     <>
       <main>
         <section className="question preview">
           <div className="question-body">
-            <h4 className="text-center mb-4">Question 1</h4>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent
-              efficitur, turpis quis condimentum convallis, nibh urna viverra
-              neque, ac tristique odio diam sit amet libero. Donec pretium ac
-              magna ut sagittis. Sed euismod, velit et interdum porttitor, ex ex
-              dapibus augue, eget interdum nisi orci vitae lorem. Morbi vel
-              tellus luctus, faucibus justo ut, tristique lacus.
-            </p>
+            <h4
+              className="text-center mb-4"
+              style={{ textTransform: "capitalize" }}
+            >
+              {(question &&
+                question.question_no &&
+                question.question_no.replace("-", " ")) ||
+                ""}
+            </h4>
+            <p>{(question && question.question) || ""}</p>
 
             <form className="d-flex flex-column">
-              <div>
-                <label>
-                  A.
-                  <input type="radio" className="ml-3 mr-2" />
-                  Lorem ipsum dolor
-                </label>
-              </div>
-
-              <div>
-                <label>
-                  B.
-                  <input type="radio" className="ml-3 mr-2" />
-                  Lorem ipsum dolor
-                </label>
-              </div>
-
-              <div>
-                <label>
-                  C.
-                  <input type="radio" className="ml-3 mr-2" />
-                  Lorem ipsum dolor
-                </label>
-              </div>
-
-              <div>
-                <label>
-                  D.
-                  <input type="radio" className="ml-3 mr-2" />
-                  Lorem ipsum dolor
-                </label>
-              </div>
+              {question &&
+                question.options &&
+                Object.keys(question.options).map((opt) => {
+                  return (
+                    <div key={`${question._id}_opt_${opt}`}>
+                      <label>
+                        {opt.toUpperCase()}.
+                        <input
+                          type="radio"
+                          checked={question.correct && question.correct === opt}
+                          name="answer"
+                          value={opt}
+                          className="ml-3 mr-2"
+                          readOnly={true}
+                        />
+                        {question.options[opt]}
+                      </label>
+                    </div>
+                  );
+                })}
             </form>
 
             <div className="d-flex justify-content-between ctrl-btn">
               <div className="">
-                <button className="btn mr-4 prev" onClick={() => {}}>
+                <Link
+                  className="btn mr-4 prev"
+                  to={`/admin/history/${props.examId}/questions/${prev}`}
+                >
                   Previous
-                </button>
-                <button className="btn" onClick={() => {}}>
+                </Link>
+                <Link
+                  className="btn"
+                  to={`/admin/history/${props.examId}/questions/${next}`}
+                >
                   Next
-                </button>
-              </div>
-
-              <div className="text-right">
-                <button className="btn" onClick={() => setPreview(false)}>Back to Assessment view</button>
+                </Link>
               </div>
             </div>
           </div>
 
           <div className="mt-3 mb-5 question-btn">
-            <a href="/admin/preview" className="btn answered">
-              <span>1</span>
-            </a>
-            <a href="/admin/preview" className="btn answered">
-              <span>2</span>
-            </a>
-            <a href="/admin/preview" className="btn answered">
-              <span>3</span>
-            </a>
-            <a href="/admin/preview" className="btn answered">
-              <span>4</span>
-            </a>
-            <a href="/admin/preview" className="btn answered">
-              <span>5</span>
-            </a>
-            <a href="/admin/preview" className="btn answered">
-              <span>6</span>
-            </a>
+            {Object.values(examQuestions).map((elem: any, key) => {
+              return (
+                <Link
+                  className={`btn answered ${
+                    elem.question_no === question.question_no ? "focus" : ""
+                  }`}
+                  to={`/admin/history/${props.examId}/questions/${elem.question_no}`}
+                  key={key}
+                >
+                  <span>{key + 1}</span>
+                </Link>
+              );
+            })}
           </div>
         </section>
       </main>

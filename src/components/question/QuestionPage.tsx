@@ -81,6 +81,7 @@ const QuestionPage = (props: any) => {
     },
     answered: {},
   });
+  const [timerInterval, setTimerInterval] = useState(1000);
   const { studentExamination, loadStudentExamination } = props;
 
   useEffect(() => {
@@ -135,9 +136,19 @@ const QuestionPage = (props: any) => {
           toast.error("Error: " + error.message);
         }
       })();
+      const minutes =
+        Math.floor(
+          ((studentExamination.timeLeft / studentExamination.timeAllowed) *
+            100 *
+            studentExamination.displayTime) /
+            100
+        ) - 1;
+      setTimerInterval(
+        (900 * studentExamination.timeAllowed) / studentExamination.displayTime
+      );
       setCounter({
         ...counter,
-        minutes: studentExamination.timeLeft,
+        minutes,
         firstUpdateMade: true,
       });
     }
@@ -171,10 +182,10 @@ const QuestionPage = (props: any) => {
           });
         }
       }
-    }, 1000);
+    }, timerInterval);
 
     return () => clearInterval(myInterval);
-  }, [minutes, seconds, counter, props.history]);
+  }, [minutes, seconds, counter, props.history, timerInterval]);
 
   const { question, prev, next }: any = Object.values(exam.questions).reduce(
     (acc, cur, ind, arr) => {
@@ -246,9 +257,11 @@ const QuestionPage = (props: any) => {
             // <h3>
             //   Course - <span>Nigeria People and culture (GST 103)</span>
             // </h3>
-              <h2 className="text-center mb-2">
+            <h2 className="text-center mb-2">
               <span style={{ textTransform: "uppercase" }}>GST 103</span> -{" "}
-              <span style={{ textTransform: "capitalize" }}>Nigeria People and culture</span>
+              <span style={{ textTransform: "capitalize" }}>
+                Nigeria People and culture
+              </span>
             </h2>
           )}
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
 import { connect } from "react-redux";
 
 import "./AssessmentHistory.scss";
@@ -15,14 +16,9 @@ const AssessmentHistory = (props: {
   history: any;
   loadUpExams: () => Promise<any>;
 }) => {
-  const [assessment, setAssessment] = useState({ show: false, exam: "" });
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
   let { exams, loadUpExams } = props;
-
-  if (window.location.pathname !== "/admin/history") {
-    props.history.push("/admin/history");
-  }
 
   useEffect(() => {
     if (Object.keys(exams).length < 1) {
@@ -35,10 +31,6 @@ const AssessmentHistory = (props: {
       })();
     }
   }, [exams, loadUpExams]);
-
-  const onClickShowExamination = (show: boolean, exam: any) => {
-    setAssessment({ ...assessment, show: show, exam: exam });
-  };
 
   exams = _.orderBy(Object.values(props.exams), "status");
   if (search.length > 0) {
@@ -85,71 +77,88 @@ const AssessmentHistory = (props: {
       {props.loading ? (
         <Preloader />
       ) : (
-        <>
-          {assessment.show ? (
-            <Assessment exam={assessment.exam} />
-          ) : (
-            <section className="mt-5 assessment-history">
-              <form className="text-right">
-                <input
-                  className="btn"
-                  type="search"
-                  value={search}
-                  onChange={(ev: any) => {
-                    ev.preventDefault();
-                    return setSearch(ev.target.value);
-                  }}
-                  placeholder="&#xe902; Search Examination"
-                  style={{ fontFamily: "Poppins, icomoon" }}
-                />
-              </form>
-              <div className="dta-head">
-                <span className="">Examination</span>
-                <span className="">Date Added</span>
-                <span className="text-center">Status</span>
-              </div>
-              {Object.values(orderedExams).map((exam: any, i: number) => (
-                <Examination
-                  exam={exam}
-                  onClickShowExamination={onClickShowExamination}
-                  key={`examination_history_${i}`}
-                />
-              ))}
+        <Router>
+          <Switch>
+            <Route
+              path="/admin/history/:id"
+              render={(routeParams: any) => {
+                return (
+                  <Assessment
+                    exam={Object.values(orderedExams).find(
+                      (elem: any) => elem._id === routeParams.match.params.id
+                    )}
+                  />
+                );
+              }}
+            ></Route>
+            <Route
+              render={() => (
+                <>
+                  <section className="mt-5 assessment-history">
+                    <form className="text-right">
+                      <input
+                        className="btn"
+                        type="search"
+                        value={search}
+                        onChange={(ev: any) => {
+                          ev.preventDefault();
+                          return setSearch(ev.target.value);
+                        }}
+                        placeholder="&#xe902; Search Examination"
+                        style={{ fontFamily: "Poppins, icomoon" }}
+                      />
+                    </form>
+                    <div className="dta-head">
+                      <span className="">Examination</span>
+                      <span className="">Date Added</span>
+                      <span className="text-center">Status</span>
+                    </div>
+                    {Object.values(orderedExams).map((exam: any, i: number) => (
+                      <Examination
+                        exam={exam}
+                        key={`examination_history_${i}`}
+                      />
+                    ))}
 
-              <div className="pagination">
-                <span
-                  onClick={() => setPage(prev)}
-                  className={`btn link prev-next ${
-                    page <= 0 ? "disabled" : ""
-                  }`}
-                >
-                  Prev
-                </span>
-                {paginationArray.map((elem: number, i: number) => {
-                  return (
-                    <span
-                      onClick={() => setPage(elem)}
-                      className={`btn link ${elem === page ? "active" : ""}`}
-                      key={`pagination_link_${i}`}
-                    >
-                      {elem + 1}
-                    </span>
-                  );
-                })}
-                <span
-                  onClick={() => setPage(next)}
-                  className={`btn link prev-next ${
-                    page >= Math.floor(Object.keys(exams).length / 10)
-                      ? "disabled"
-                      : ""
-                  }`}
-                >
-                  Next
-                </span>
-              </div>
-            </section>
-          )}
-        </>
+                    <div className="pagination">
+                      <span
+                        onClick={() => setPage(prev)}
+                        className={`btn link prev-next ${
+                          page <= 0 ? "disabled" : ""
+                        }`}
+                      >
+                        Prev
+                      </span>
+                      {paginationArray.map((elem: number, i: number) => {
+                        return (
+                          <span
+                            onClick={() => setPage(elem)}
+                            className={`btn link ${
+                              elem === page ? "active" : ""
+                            }`}
+                            key={`pagination_link_${i}`}
+                          >
+                            {elem + 1}
+                          </span>
+                        );
+                      })}
+                      <span
+                        onClick={() => setPage(next)}
+                        className={`btn link prev-next ${
+                          page >= Math.floor(Object.keys(exams).length / 10)
+                            ? "disabled"
+                            : ""
+                        }`}
+                      >
+                        Next
+                      </span>
+                    </div>
+                  </section>
+                </>
+              )}
+            ></Route>
+          </Switch>
+        </Router>
       )}
     </>
   );

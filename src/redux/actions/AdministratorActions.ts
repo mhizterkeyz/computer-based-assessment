@@ -230,6 +230,24 @@ export const getFaculty = () => {
   };
 };
 
+export const deleteDepartment = (department: string, faculty_id: string) => {
+  return async (dispatch: any) => {
+    try {
+      await Api.deleteDepartment(department, faculty_id);
+      dispatch(beginApiCall());
+      const faculty = await Api.getFaculty();
+      dispatch(getFacultySuccess(faculty));
+      dispatch(apiCallError());
+    } catch (error) {
+      dispatch(beginApiCall());
+      const faculty = await Api.getFaculty();
+      dispatch(getFacultySuccess(faculty));
+      dispatch(apiCallError());
+      throw error;
+    }
+  };
+};
+
 export const createFaculty = (faculty: string) => {
   return async (dispatch: any) => {
     try {
@@ -245,12 +263,8 @@ export const createFaculty = (faculty: string) => {
 
 export const deleteFaculty = (faculty_id: string) => {
   return async (dispatch: any) => {
-    try {
-      dispatch(deleteFacultyOptimistic(faculty_id));
-      return await Api.deleteFaculty(faculty_id);
-    } catch (error) {
-      throw error;
-    }
+    dispatch(deleteFacultyOptimistic(faculty_id));
+    return await Api.deleteFaculty(faculty_id);
   };
 };
 

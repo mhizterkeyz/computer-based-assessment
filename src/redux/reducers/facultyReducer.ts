@@ -10,6 +10,11 @@ export default function (
       return action.faculties;
     case types.CREATE_FACULTY_SUCCESS:
       return [...state, { ...action.faculty }];
+    case types.DELETE_FACULTY_OPTIMISTIC:
+      return state.reduce((acc: any, cur: any) => {
+        if (cur._id === action.faculty) return acc;
+        return [...acc, cur];
+      }, []);
     default:
       return state;
   }
