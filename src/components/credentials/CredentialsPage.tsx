@@ -44,7 +44,15 @@ const CredentialsPage = ({
         <h3>Welcome, {name} !</h3>
         <div className="row d-flex justify-content-center align-items-center">
           <div className="mr-5">
-            <img src={display_img} alt="ojay" />
+            <object
+              data={"http://localhost:8000/api/static/" + matric_no + ".png"}
+              type="image/jpg"
+            >
+              <img
+                src="http://localhost:8000/api/static/default.png"
+                alt="student avatar"
+              />
+            </object>
           </div>
           <div className="details">
             <Credentials detail="Matric. no" data={matric_no} />
