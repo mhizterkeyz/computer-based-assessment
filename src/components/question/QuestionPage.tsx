@@ -83,7 +83,6 @@ const QuestionPage = (props: any) => {
   });
   const [timerInterval, setTimerInterval] = useState(1000);
   const { studentExamination, loadStudentExamination } = props;
-  console.log(studentExamination);
 
   useEffect(() => {
     if (Object.keys(studentExamination).length < 1) {
@@ -232,7 +231,7 @@ const QuestionPage = (props: any) => {
       toast.error(`Error: ${error.message}`);
     }
   };
-  console.log(question);
+
   return (
     <>
       <Modal show={modalData.show} handleClose={handleModalClose}>
@@ -279,10 +278,13 @@ const QuestionPage = (props: any) => {
                 <div className="d-flex justify-content-center">
                   {question.images &&
                     question.images.map((elem: string, i: number) => {
-                      if (elem || true)
+                      if (elem && elem.includes(".png"))
                         return (
                           <img
-                            src={`http://localhost:8000/api/static/` + elem}
+                            src={
+                              `http://${window.location.hostname}:8000/api/static/` +
+                              elem
+                            }
                             alt="Question's figure"
                             key={"image_" + i}
                             style={{ maxWidth: "100%" }}
