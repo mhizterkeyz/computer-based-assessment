@@ -1,11 +1,12 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
 
 interface ConfirmSubmitProps {
   handleModalClose: () => void;
 }
 
 const PreviewQuestions = ({ setPreview, examQuestions, ...props }: any) => {
+  const [questionNo, setQuestionNo] = useState("question-1");
+
   examQuestions = examQuestions.reduce(
     (acc: any, cur: any, i: any) => ({
       ...acc,
@@ -21,8 +22,7 @@ const PreviewQuestions = ({ setPreview, examQuestions, ...props }: any) => {
         ind + 1 >= arr.length
           ? arr[arr.length - 1].question_no || ""
           : arr[ind + 1].question_no || "";
-      if (cur.question_no === props.match.params.question)
-        return { question: cur, prev, next };
+      if (cur.question_no === questionNo) return { question: cur, prev, next };
       return acc;
     },
     {
@@ -72,18 +72,18 @@ const PreviewQuestions = ({ setPreview, examQuestions, ...props }: any) => {
 
             <div className="d-flex justify-content-between ctrl-btn">
               <div className="">
-                <Link
-                  className="btn mr-4 prev"
-                  to={`/${window.location.pathname}/${props.examId}/questions/${prev}`}
+                <span
+                  className="btn mr-4 prev btn-primary"
+                  onClick={() => setQuestionNo(prev)}
                 >
                   Previous
-                </Link>
-                <Link
-                  className="btn"
-                  to={`/admin/history/${props.examId}/questions/${next}`}
+                </span>
+                <span
+                  className="btn next btn-primary"
+                  onClick={() => setQuestionNo(next)}
                 >
                   Next
-                </Link>
+                </span>
               </div>
               <div className="text-right">
                 <button className="btn" onClick={() => setPreview(false)}>
@@ -96,15 +96,15 @@ const PreviewQuestions = ({ setPreview, examQuestions, ...props }: any) => {
           <div className="mt-3 mb-5 question-btn">
             {Object.values(examQuestions).map((elem: any, key) => {
               return (
-                <Link
+                <span
                   className={`btn answered ${
                     elem.question_no === question.question_no ? "focus" : ""
                   }`}
-                  to={`/admin/history/${props.examId}/questions/${elem.question_no}`}
+                  onClick={() => setQuestionNo(elem.question_no)}
                   key={key}
                 >
                   <span>{key + 1}</span>
-                </Link>
+                </span>
               );
             })}
           </div>

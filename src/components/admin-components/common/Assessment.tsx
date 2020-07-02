@@ -23,7 +23,7 @@ const Assessment = ({
   faculty,
   loading,
   getFaculty,
-  match
+  match,
 }: any) => {
   const [student, setStudent] = useState({
     show: false,
@@ -252,6 +252,7 @@ const Assessment = ({
       {preview ? (
         <PreviewQuestions
           setPreview={setPreview}
+          examId={exam._id}
           examQuestions={exam.questions}
           match={match}
         />
@@ -305,7 +306,10 @@ const Assessment = ({
 
           <div className="student-section">
             <section className="tbl">
-            <button className="btn btn-primary m-auto preview-btn" onClick={() => setPreview(true)}>
+              <button
+                className="btn btn-primary m-auto preview-btn"
+                onClick={() => setPreview(true)}
+              >
                 Preview Assesment Questions
               </button>
               <div className="d-flex justify-content-between align-items-center ctrl-actions">

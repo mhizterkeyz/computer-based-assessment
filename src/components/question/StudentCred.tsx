@@ -17,7 +17,18 @@ const StudentCred = ({
         <>
           <div className="text-center">
             <span className="image-cropper">
-              <img src={display_img} alt="student" />
+              <object
+                data={
+                  "http://localhost:8000/api/static/" + props.matric + ".png"
+                }
+                type="image/jpg"
+              >
+                <img
+                  src="http://localhost:8000/api/static/default.png"
+                  srcSet=""
+                  alt="student"
+                />
+              </object>
             </span>
             <h2>{props.name}</h2>
           </div>
