@@ -385,7 +385,7 @@ const Questions = (props: any) => {
                       key={`question_image_${i}`}
                     >
                       <img
-                        src={`http://localhost:8000/api/static/${elem}`}
+                        src={`http://${window.location.hostname}:8000/api/static/${elem}`}
                         style={{ width: "100%" }}
                         alt=""
                       />

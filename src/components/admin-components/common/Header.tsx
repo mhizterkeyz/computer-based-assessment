@@ -5,8 +5,8 @@ import { NavLink } from "react-router-dom";
 
 const navItems = [
   {
-    name: `Add\xa0Assessment`,
-    url: "/admin/add-assessment",
+    name: `New\xa0Assessment`,
+    url: "/admin/new-assessment",
   },
   {
     name: "Assessment\xa0List",

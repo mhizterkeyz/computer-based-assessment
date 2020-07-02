@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import BioData from "./NewBioData";
 import Questions from "./NewQuestions";
 import { createExam } from "../../../redux/actions/AdministratorActions";
+import "./AddAssessment.scss";
 
 const NewAssessment = (props: any) => {
   const [inputs, setInputs] = useState({
@@ -215,6 +216,7 @@ const NewAssessment = (props: any) => {
                 value={inputs.instructions}
                 onChange={handleRegularInputs}
                 className="form-control"
+                style={{backgroundColor: "#ecf2fc"}}
                 placeholder="Specify the exam Instruction here..."
               />
             </div>
