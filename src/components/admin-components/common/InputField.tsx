@@ -56,13 +56,12 @@ export const SelectField = (props: any) => (
       disabled={props.isDisabled ? true : false}
       name={props.name}
       onChange={props.handleInputs}
+      value={props.value}
     >
-      <option selected>Select {props.name}</option>
-      {props.value.length > 0 ? (
-        props.value.map((val: string, index: number) => (
-          <option value={val} key={index}>
-            {val}
-          </option>
+      <option>Select {props.name}</option>
+      {props.options.length > 0 ? (
+        props.options.map((val: string, index: number) => (
+          <option key={index}>{val}</option>
         ))
       ) : (
         <>

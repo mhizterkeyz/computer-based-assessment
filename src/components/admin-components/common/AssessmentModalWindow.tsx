@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { ToastContainer, toast } from "react-toastify";
+// import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { TextField, SelectField } from "./InputField";
 
 export const AddStudentModalWindow = ({ handleModalClose, faculty }: any) => {
-  const [input, setInput] = useState({ faculty: null, department: ""});
+  const [input, setInput] = useState({ faculty: null, department: "" });
 
   const handleInputs = (ev: any) => {
     const { name, value } = ev.target;
@@ -27,16 +27,24 @@ export const AddStudentModalWindow = ({ handleModalClose, faculty }: any) => {
       (faculty: any) => faculty.faculty === input.faculty
     );
 
-    department = department[0].departments  
+    department = department[0].departments
       .sort(departmentAlphabeticalSortFn)
       .map((dept: any) => dept.department);
   }
-
   useEffect(() => {
-    setInput({...input, department: ""});
-  }, [input.faculty])
+    const check = faculty.find((elem: any) => {
+      return (
+        elem.faculty === input.faculty &&
+        elem.departments.find(
+          (dept: any) => dept.department === input.department
+        )
+      );
+    });
+    if (input.department.length && !check)
+      setInput((i) => ({ ...i, department: "" }));
+  }, [input, faculty]);
 
-  return (  
+  return (
     <div className="text-center profile">
       <h3>Add Student</h3>
       <form
@@ -64,7 +72,8 @@ export const AddStudentModalWindow = ({ handleModalClose, faculty }: any) => {
             class="col-6"
             label="Level"
             name="level"
-            value={["100", "200", "300", "400", "500"]}
+            value="100"
+            options={["100", "200", "300", "400", "500"]}
             handleInputs={handleInputs}
           />
         </div>
@@ -72,10 +81,11 @@ export const AddStudentModalWindow = ({ handleModalClose, faculty }: any) => {
         <SelectField
           label="Faculty"
           name="faculty"
-          value={fac}
+          value={input.faculty}
+          options={fac}
           handleInputs={handleInputs}
         />
-        
+
         {/**
          * TODO: fix bug partaining to sudden change of faculty
          */}
@@ -83,8 +93,9 @@ export const AddStudentModalWindow = ({ handleModalClose, faculty }: any) => {
         <SelectField
           label="Department"
           name="department"
-          isDisabled={input.faculty === null ? true : false}
-          value={department}
+          isDisabled={input.faculty === null}
+          value={input.department}
+          options={department}
           handleInputs={handleInputs}
         />
 
