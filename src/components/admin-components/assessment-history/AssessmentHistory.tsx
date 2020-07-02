@@ -15,10 +15,10 @@ const AssessmentHistory = (props: any) => {
   const [search, setSearch] = useState("");
   let { exams, loadUpExams } = props;
 
-  if (window.location.pathname !== "/admin/history") {
-    props.history.push("/admin/history");
-  }
-  
+  // if (window.location.pathname !== "/admin/history") {
+  //   props.history.push("/admin/history");
+  // }
+
   useEffect(() => {
     if (Object.keys(exams).length < 1) {
       (async () => {
@@ -81,73 +81,70 @@ const AssessmentHistory = (props: any) => {
         <Preloader />
       ) : (
         <>
-        {assessment.show ? (
-          <Assessment exam={assessment.exam} match={props.match} />
-        ) : (
-                  <section className="mt-5 assessment-history">
-                    <form className="text-right">
-                      <input
-                        className="btn"
-                        type="search"
-                        value={search}
-                        onChange={(ev: any) => {
-                          ev.preventDefault();
-                          return setSearch(ev.target.value);
-                        }}
-                        placeholder="&#xe902; Search Examination"
-                        style={{ fontFamily: "Poppins, icomoon" }}
-                      />
-                    </form>
-                    <div className="dta-head">
-                      <span className="">Examination</span>
-                      <span className="">Date Added</span>
-                      <span className="text-center">Status</span>
-                    </div>
-                    {Object.values(orderedExams).map((exam: any, i: number) => (
-                      <Examination
-                        exam={exam}
-                        onClickShowExamination={onClickShowExamination}
-                        key={`examination_history_${i}`}
-                      />
-                    ))}
+          {assessment.show ? (
+            <Assessment exam={assessment.exam} match={props.match} />
+          ) : (
+            <section className="mt-5 assessment-history">
+              <form className="text-right">
+                <input
+                  className="btn"
+                  type="search"
+                  value={search}
+                  onChange={(ev: any) => {
+                    ev.preventDefault();
+                    return setSearch(ev.target.value);
+                  }}
+                  placeholder="&#xe902; Search Examination"
+                  style={{ fontFamily: "Poppins, icomoon" }}
+                />
+              </form>
+              <div className="dta-head">
+                <span className="">Examination</span>
+                <span className="">Date Added</span>
+                <span className="text-center">Status</span>
+              </div>
+              {Object.values(orderedExams).map((exam: any, i: number) => (
+                <Examination
+                  exam={exam}
+                  onClickShowExamination={onClickShowExamination}
+                  key={`examination_history_${i}`}
+                />
+              ))}
 
-                    <div className="pagination">
-                      <span
-                        onClick={() => setPage(prev)}
-                        className={`btn link prev-next ${
-                          page <= 0 ? "disabled" : ""
-                        }`}
-                      >
-                        Prev
-                      </span>
-                      {paginationArray.map((elem: number, i: number) => {
-                        return (
-                          <span
-                            onClick={() => setPage(elem)}
-                            className={`btn link ${
-                              elem === page ? "active" : ""
-                            }`}
-                            key={`pagination_link_${i}`}
-                          >
-                            {elem + 1}
-                          </span>
-                        );
-                      })}
-                      <span
-                        onClick={() => setPage(next)}
-                        className={`btn link prev-next ${
-                          page >= Math.floor(Object.keys(exams).length / 10)
-                            ? "disabled"
-                            : ""
-                        }`}
-                      >
-                        Next
-                      </span>
-                    </div>
-                  </section>
-              )}
-                </>
-           
+              <div className="pagination">
+                <span
+                  onClick={() => setPage(prev)}
+                  className={`btn link prev-next ${
+                    page <= 0 ? "disabled" : ""
+                  }`}
+                >
+                  Prev
+                </span>
+                {paginationArray.map((elem: number, i: number) => {
+                  return (
+                    <span
+                      onClick={() => setPage(elem)}
+                      className={`btn link ${elem === page ? "active" : ""}`}
+                      key={`pagination_link_${i}`}
+                    >
+                      {elem + 1}
+                    </span>
+                  );
+                })}
+                <span
+                  onClick={() => setPage(next)}
+                  className={`btn link prev-next ${
+                    page >= Math.floor(Object.keys(exams).length / 10)
+                      ? "disabled"
+                      : ""
+                  }`}
+                >
+                  Next
+                </span>
+              </div>
+            </section>
+          )}
+        </>
       )}
     </>
   );

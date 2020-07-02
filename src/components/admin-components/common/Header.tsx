@@ -11,6 +11,7 @@ const navItems = [
   {
     name: "Assessment\xa0List",
     url: "/admin",
+    exact: true,
   },
   {
     name: "Running\xa0Assessment",
@@ -27,10 +28,14 @@ const navItems = [
   },
 ];
 
-const Navigation = (props: { name: string; url: string }) => {
+const Navigation = (props: {
+  name: string;
+  url: string;
+  exact?: boolean | undefined;
+}) => {
   return (
     <li>
-      <NavLink to={props.url} activeClassName={"active"}>
+      <NavLink exact={props.exact} to={props.url} activeClassName={"active"}>
         {props.name}
       </NavLink>
     </li>
