@@ -8,7 +8,7 @@ export const durationField = (props: any) => (
       <input
         className={props.class ? props.class : ""}
         type="number"
-        name="dur1"
+        name={((props.name && props.name + "_") || "") + "dur1"}
         onChange={props.onChange}
         value={props.dur1}
         placeholder="00"
@@ -17,9 +17,16 @@ export const durationField = (props: any) => (
       <input
         className={props.class ? props.class : ""}
         type="number"
-        name="dur2"
+        name={((props.name && props.name + "_") || "") + "dur2"}
         placeholder="00"
-        onChange={props.onChange}
+        max={60}
+        min={0}
+        onChange={(ev) => {
+          ev.persist();
+          if (parseInt(ev.target.value) > 60) ev.target.value = "60";
+          if (parseInt(ev.target.value) < 0) ev.target.value = "0";
+          props.onChange(ev);
+        }}
         value={props.dur2}
         // className="scnd"
       />

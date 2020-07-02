@@ -101,7 +101,7 @@ export const submitExam = async (data: any) => {
   }
 };
 
-export const getBioData = async (base64: string) => {
+export const getBioData = async (base64: any) => {
   const req = await api.body({ base64 }).post(`${apiUrl}/spreadsheet/biodata`);
   const { statusText, status } = req;
   const res = await req.json();
@@ -109,7 +109,7 @@ export const getBioData = async (base64: string) => {
   return res.data;
 };
 
-export const getQuestions = async (base64: string) => {
+export const getQuestions = async (base64: any) => {
   const req = await api
     .body({ base64 })
     .post(`${apiUrl}/spreadsheet/examquestion`);
@@ -119,7 +119,7 @@ export const getQuestions = async (base64: string) => {
   return res.data;
 };
 
-export const uploadImage = async (base64: string) => {
+export const uploadImage = async (base64: any) => {
   const req = await api.body({ base64 }).post(`${apiUrl}/image/upload`);
   const { statusText, status } = req;
   const res = await req.json();
