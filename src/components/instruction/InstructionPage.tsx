@@ -37,15 +37,15 @@ const InstructionPage = () => {
     })();
   }, []);
 
-  useEffect(()=>{
-    if(exam.noAssessment) {
-      setTimeout(() => {
-        delete localStorage["jwt"];
-        delete localStorage["route"];
-        window.location.reload();
-      }, 5000);
-    }
-  }, []);
+  // useEffect(()=>{
+  //   if(exam.noAssessment === true) {
+  //     setTimeout(() => {
+  //       delete localStorage["jwt"];
+  //       delete localStorage["route"];
+  //       window.location.reload();
+  //     }, 5000);
+  //   }
+  // }, []);
 
   return (
     <section className="m-auto instruction">

@@ -19,7 +19,7 @@ const RunningAssessment = (props: any) => {
         }
       })();
     }
-  }, [exams, loadUpExams]);
+  }, []);
 
   let runningExam: any;
   if (!props.loading) {
