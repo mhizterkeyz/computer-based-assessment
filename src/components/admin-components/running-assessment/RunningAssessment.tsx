@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
-import display_img from "../../../image/Rectangle-19.png";
-import { Link } from "react-router-dom";
 import { loadUpExams } from "../../../redux/actions/AdministratorActions";
 import { connect } from "react-redux";
-import Preloader from "../../Preloader";
 import Assessment from "../common/Assessment";
 import { toast } from "react-toastify";
+import Preloader from "../../Preloader";
 
 const RunningAssessment = (props: any) => {
   const [student, setStudent] = useState({ show: false, matric: "13MS1027" });
