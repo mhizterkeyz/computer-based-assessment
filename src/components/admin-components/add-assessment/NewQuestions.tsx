@@ -98,14 +98,15 @@ const Questions = (props: any) => {
       setQuestionNo(Object.values(inputs.questions).length);
       return;
     }
+    let final = inputs;
     arr.forEach((elem: any) => {
-      elem.images = [""];
+      elem.images = [];
       if (
-        !elem.question ||
-        !elem.type ||
-        !elem.marks ||
-        !elem.correct ||
-        !elem.options
+        !elem.hasOwnProperty("question") ||
+        !elem.hasOwnProperty("type") ||
+        !elem.hasOwnProperty("marks") ||
+        !elem.hasOwnProperty("correct") ||
+        !elem.hasOwnProperty("options")
       ) {
         return;
       }
@@ -118,7 +119,9 @@ const Questions = (props: any) => {
             return false;
           return acc;
         }, true);
-        if (!check) return;
+        if (!check) {
+          return;
+        }
       }
       if (
         typeof elem.options !== "object" ||
@@ -129,14 +132,15 @@ const Questions = (props: any) => {
       ) {
         return;
       }
-      setInputs({
-        ...inputs,
+      final = {
+        ...final,
         questions: {
-          ...inputs.questions,
-          [Object.values(inputs.questions).length]: elem,
+          ...final.questions,
+          [Object.values(final.questions).length]: elem,
         },
-      });
+      };
     });
+    setInputs(final);
   };
   //  Remove row
   const removeRow = () => {
