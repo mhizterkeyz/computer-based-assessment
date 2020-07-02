@@ -170,8 +170,8 @@ const QuestionPage = (props: any) => {
         });
       }
 
-      if (seconds === 0) {
-        if (minutes === 0) {
+      if (seconds <= 0) {
+        if (minutes <= 0) {
           props.history.push("/exam/submit");
           clearInterval(myInterval);
         } else {
@@ -281,7 +281,10 @@ const QuestionPage = (props: any) => {
                       if (elem && elem.includes(".png"))
                         return (
                           <img
-                            src={`http://${window.location.hostname}:8000/api/static/` + elem}
+                            src={
+                              `http://${window.location.hostname}:8000/api/static/` +
+                              elem
+                            }
                             alt="Question's figure"
                             key={"image_" + i}
                             style={{ maxWidth: "100%" }}
