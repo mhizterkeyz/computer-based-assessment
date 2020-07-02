@@ -45,6 +45,22 @@ const PreviewQuestions = ({ setPreview, examQuestions, ...props }: any) => {
                 question.question_no.replace("-", " ")) ||
                 ""}
             </h4>
+            <div className="d-flex justify-content-center">
+              {question &&
+                question.images &&
+                question.images.map((elem: string, i: number) => {
+                  if (elem && elem.includes(".png"))
+                    return (
+                      <img
+                        src={"http://localhost:8000/api/static/" + elem}
+                        alt="Question's figure"
+                        key={"image_" + i}
+                        style={{ maxWidth: "100%" }}
+                      />
+                    );
+                  return "";
+                })}
+            </div>
             <p>{(question && question.question) || ""}</p>
 
             <form className="d-flex flex-column">
