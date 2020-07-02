@@ -61,7 +61,7 @@ const NewAssessment = (props: any) => {
       durations.duration.dur1 +
       parseFloat((durations.duration.dur2 / 100).toFixed(2));
     const displayTime =
-      durations.screenDuration.dur2 +
+      durations.screenDuration.dur1 +
       parseFloat((durations.screenDuration.dur2 / 100).toFixed(2));
     setInputs((i) => ({ ...i, timeAllowed, displayTime }));
   }, [durations]);
@@ -216,7 +216,7 @@ const NewAssessment = (props: any) => {
                 value={inputs.instructions}
                 onChange={handleRegularInputs}
                 className="form-control"
-                style={{backgroundColor: "#ecf2fc"}}
+                style={{ backgroundColor: "#ecf2fc" }}
                 placeholder="Specify the exam Instruction here..."
               />
             </div>
