@@ -19,12 +19,12 @@ const StudentCred = ({
             <span className="image-cropper">
               <object
                 data={
-                  "http://localhost:8000/api/static/" + props.matric + ".png"
+                  `http://${window.location.hostname}:8000/api/static/` + props.matric + ".png"
                 }
                 type="image/jpg"
               >
                 <img
-                  src="http://localhost:8000/api/static/default.png"
+                  src={`http://${window.location.hostname}:8000/api/static/default.png`}
                   srcSet=""
                   alt="student"
                 />

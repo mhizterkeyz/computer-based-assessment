@@ -45,11 +45,11 @@ const CredentialsPage = ({
         <div className="row d-flex justify-content-center align-items-center">
           <div className="mr-5">
             <object
-              data={"http://localhost:8000/api/static/" + matric_no + ".png"}
+              data={`http://${window.location.hostname}:8000/api/static/` + matric_no + ".png"}
               type="image/jpg"
             >
               <img
-                src="http://localhost:8000/api/static/default.png"
+                src={`http://${window.location.hostname}:8000/api/static/default.png`}
                 alt="student avatar"
               />
             </object>

@@ -6,7 +6,7 @@ import { ToastContainer } from "react-toastify";
 import Login from "../login/Login";
 import RunningAssessment from "../running-assessment/RunningAssessment";
 import AssessmentHistory from "../assessment-history/AssessmentHistory";
-import AddAssessment from "../add-assessment/AddAssessment";
+// import AddAssessment from "../add-assessment/AddAssessment";
 import { VerifyAdministrator } from "../../../redux/actions/AdministratorActions";
 import Header from "./Header";
 import SettingsPage from "../settingsPage/SettingsPage";

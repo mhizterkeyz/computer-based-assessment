@@ -281,7 +281,7 @@ const QuestionPage = (props: any) => {
                       if (elem && elem.includes(".png"))
                         return (
                           <img
-                            src={"http://localhost:8000/api/static/" + elem}
+                            src={`http://${window.location.hostname}:8000/api/static/` + elem}
                             alt="Question's figure"
                             key={"image_" + i}
                             style={{ maxWidth: "100%" }}
