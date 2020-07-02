@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import "./InstructionPage.scss";
 
-import { getInstructions, answerExam } from "../../api/studentApi";
+import { getInstructions } from "../../api/studentApi";
 import { toast } from "react-toastify";
 
 const InstructionPage = () => {
@@ -37,15 +37,15 @@ const InstructionPage = () => {
     })();
   }, []);
 
-  useEffect(()=>{
-    if(exam.noAssessment) {
-      setTimeout(() => {
-        delete localStorage["jwt"];
-        delete localStorage["route"];
-        window.location.reload();
-      }, 5000);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (exam.noAssessment) {
+  //     setTimeout(() => {
+  //       delete localStorage["jwt"];
+  //       delete localStorage["route"];
+  //       window.location.reload();
+  //     }, 5000);
+  //   }
+  // }, []);
 
   return (
     <section className="m-auto instruction">
