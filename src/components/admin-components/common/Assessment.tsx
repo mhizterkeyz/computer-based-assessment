@@ -85,7 +85,7 @@ const Assessment = ({
     return dta.status === 2;
   });
 
-  const handleViewResult = () => {
+  const startCloseAssessmentCheck = () => {
     if (exam.status === 0) {
       toast.configure();
       toast.warning("No available result yet, Start Assessment first");
@@ -97,7 +97,10 @@ const Assessment = ({
       toast.warning("You have to close this Assessment first");
       return;
     }
+  };
 
+  const handleViewResult = () => {
+    startCloseAssessmentCheck();
     (async () => {
       try {
         await loadUpResults(exam._id);
@@ -107,6 +110,18 @@ const Assessment = ({
         toast.error(error.message);
       }
     })();
+  };
+
+  const handleDownloadPDF = () => {
+    startCloseAssessmentCheck();
+  };
+
+  const handleDownloadExcel = () => {
+    startCloseAssessmentCheck();
+  };
+
+  const handleUpload = () => {
+    startCloseAssessmentCheck();
   };
 
   const handleStartAssessment = async () => {
@@ -303,14 +318,28 @@ const Assessment = ({
             </div>
           </section>
 
+          <div className="d-flex align-items-center justify-content-between mb-5 mt-5 assessment-actions">
+            <button
+              className="btn btn-primary"
+              onClick={() => setPreview(true)}
+            >
+              Preview Questions
+            </button>
+
+            <button className="btn btn-success" onClick={handleUpload}>Upload Result</button>
+
+            <div>
+              <button className="btn btn-success" onClick={handleDownloadPDF}>
+                Download Result (PDF)
+              </button>
+              <button className="btn btn-success ml-3" onClick={handleDownloadExcel}>
+                Download Result (Excel)
+              </button>
+            </div>
+          </div>
+
           <div className="student-section">
             <section className="tbl">
-              <button
-                className="btn btn-primary m-auto preview-btn"
-                onClick={() => setPreview(true)}
-              >
-                Preview Assesment Questions
-              </button>
               <div className="d-flex justify-content-between align-items-center ctrl-actions">
                 <button
                   className="btn btn-primary"
