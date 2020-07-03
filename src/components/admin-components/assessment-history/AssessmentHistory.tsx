@@ -29,7 +29,7 @@ const AssessmentHistory = (props: any) => {
         }
       })();
     }
-  }, [exams, loadUpExams]);
+  }, []);
 
   const onClickShowExamination = (show: boolean, exam: any) => {
     setAssessment({ ...assessment, show: show, exam: exam });
@@ -103,13 +103,19 @@ const AssessmentHistory = (props: any) => {
                 <span className="">Date Added</span>
                 <span className="text-center">Status</span>
               </div>
-              {Object.values(orderedExams).map((exam: any, i: number) => (
-                <Examination
-                  exam={exam}
-                  onClickShowExamination={onClickShowExamination}
-                  key={`examination_history_${i}`}
-                />
-              ))}
+              {Object.values(orderedExams).length === 0 ? (
+                <div className="text-center mt-5 no-running-exam">
+                  There are no available assessments
+                </div>
+              ) : (
+                Object.values(orderedExams).map((exam: any, i: number) => (
+                  <Examination
+                    exam={exam}
+                    onClickShowExamination={onClickShowExamination}
+                    key={`examination_history_${i}`}
+                  />
+                ))
+              )}
 
               <div className="pagination">
                 <span
