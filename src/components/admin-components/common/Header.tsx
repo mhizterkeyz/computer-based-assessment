@@ -49,7 +49,7 @@ const Header = () => {
         <img src={logo} alt="site logo" />
 
         <nav>
-          <ul className="d-flex d-print-none">
+          <ul className="d-flex d-print-none align-items-center">
             {navItems.map((item, index) => (
               <Navigation
                 {...item}
@@ -59,7 +59,6 @@ const Header = () => {
           </ul>
         </nav>
       </header>
-
       <button
         className="d-flex align-items-center btn btn-primary text-right mt-3 d-print-none logout"
         onClick={() => {
@@ -70,6 +69,7 @@ const Header = () => {
       >
         <i className="icon-settings_power_24px_outlined" /> Logout
       </button>
+
     </>
   );
 };

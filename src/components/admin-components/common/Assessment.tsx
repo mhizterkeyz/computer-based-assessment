@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
+// @ts-ignore
+import Workbook from "react-excel-workbook";
 
 import "./Assessment.scss";
 import {
@@ -23,6 +25,7 @@ const Assessment = ({
   loading,
   getFaculty,
   match,
+  results,
 }: any) => {
   const [student, setStudent] = useState({
     show: false,
@@ -53,6 +56,36 @@ const Assessment = ({
   }, []);
 
   useEffect(() => {
+    console.log(exam);
+    console.log(exam._id !== "");
+
+    if (Object.values(results).length < 1 && exam.status === 2) {
+      (async () => {
+        try {
+          await loadUpResults(exam._id);
+        } catch (error) {
+          toast.configure();
+          toast.error(error.message);
+        }
+      })();
+    }
+  }, [exam]);
+
+  // useEffect(() => {
+  //   // @ts-ignore
+  //   if (Object.values(exam) > 0) {
+  //     (async () => {
+  //       try {
+  //         await loadUpResults(exam._id);
+  //       } catch (error) {
+  //         toast.configure();
+  //         toast.error(error.message);
+  //       }
+  //     })();
+  //   }
+  // }, []);
+
+  useEffect(() => {
     if (student.show) {
       document.querySelector(".student-section")?.classList.add("show-student");
     } else {
@@ -61,6 +94,22 @@ const Assessment = ({
         ?.classList.remove("show-student");
     }
   }, [student]);
+
+  // useEffect(() => {
+  //   console.log(examination._id);
+  //     (async () => {
+
+  //     if (examination.status === 2) {
+  //       try {
+  //         // debugger;
+  //         await loadUpResults(exam._id);
+  //       } catch (error) {
+  //         toast.configure();
+  //         toast.error(error.message);
+  //       }
+  //     }
+  //   })();
+  // }, []);
 
   const showStudent = (
     user: any,
@@ -99,26 +148,33 @@ const Assessment = ({
     }
   };
 
-  const handleViewResult = () => {
-    startCloseAssessmentCheck();
-    (async () => {
-      try {
-        await loadUpResults(exam._id);
-        history.push("/admin/print-result");
-      } catch (error) {
-        toast.configure();
-        toast.error(error.message);
-      }
-    })();
-  };
+  // const handleViewResult = () => {
+  //   startCloseAssessmentCheck();
+  //   (async () => {
+  //     try {
+  //       await loadUpResults(exam._id);
+  //       history.push("/admin/print-result");
+  //     } catch (error) {
+  //       toast.configure();
+  //       toast.error(error.message);
+  //     }
+  //   })();
+  // };
 
   const handleDownloadPDF = () => {
     startCloseAssessmentCheck();
   };
 
-  const handleDownloadExcel = () => {
-    startCloseAssessmentCheck();
-  };
+  // const handleDownloadExcel = async () => {
+  //   startCloseAssessmentCheck();
+  //   try {
+  //     await loadUpResults(exam._id);
+  //   } catch (error) {
+  //     toast.configure();
+  //     toast.error(error.message);
+  //   }
+  // };
+  if (Object.values(results).length > 0) console.log(Object.values(results));
 
   const handleUpload = () => {
     startCloseAssessmentCheck();
@@ -140,6 +196,7 @@ const Assessment = ({
     try {
       toast.configure();
       await updateExamStatus(exam._id, { status: 2 });
+      await loadUpResults(exam._id);
       setExam({ ...exam, status: 2 });
       toast.success("Assessment Closed");
       setModalData({ ...modalData, show: false });
@@ -326,15 +383,42 @@ const Assessment = ({
               Preview Questions
             </button>
 
-            <button className="btn btn-success" onClick={handleUpload}>Upload Result</button>
+            <button className="btn btn-success" onClick={handleUpload}>
+              Upload Result
+            </button>
 
             <div>
               <button className="btn btn-success" onClick={handleDownloadPDF}>
                 Download Result (PDF)
               </button>
-              <button className="btn btn-success ml-3" onClick={handleDownloadExcel}>
+
+              <Workbook
+                filename={`${exam.course}-${exam.title}.xlsx`}
+                element={
+                  <button
+                    className="btn btn-success ml-3"
+                    disabled={exam.status < 2 ? true : false}
+                  >
+                    Download Result (Excel)
+                  </button>
+                }
+              >
+                <Workbook.Sheet data={Object.values(results)} name="Sheet A">
+                  <Workbook.Column label="Name" value="name" />
+                  <Workbook.Column label="Matric No." value="matric" />
+                  <Workbook.Column label="Level" value="level" />
+                  <Workbook.Column label="Department" value="department" />
+                  <Workbook.Column label="Faculty" value="faculty" />
+                  <Workbook.Column label="CA Score" value="ca" />
+                  <Workbook.Column label="Examination" value="exam" />
+                </Workbook.Sheet>
+              </Workbook>
+              {/* <button
+                className="btn btn-success ml-3"
+                onClick={handleDownloadExcel}
+              >
                 Download Result (Excel)
-              </button>
+              </button> */}
             </div>
           </div>
 
@@ -368,14 +452,14 @@ const Assessment = ({
                   >
                     Start Assesment
                   </button>
-                  <button
+                  {/* <button
                     className="mr-3 btn btn-success"
                     onClick={handleViewResult}
 
                     // disabled={exam.status < 2}
                   >
                     View Assesment Result
-                  </button>
+                  </button> */}
                   <button
                     className="btn btn-danger"
                     disabled={exam.status === 0 || exam.status === 2}
@@ -439,6 +523,7 @@ const Assessment = ({
 
 function mapStateToProps(state: any) {
   return {
+    results: state.results,
     faculty: state.faculty,
     loading: state.apiCallsInProgress > 0,
   };
