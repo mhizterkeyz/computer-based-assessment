@@ -29,23 +29,27 @@ const InstructionPage = () => {
           });
           return;
         }
-        if (req.status === 404) return;
+        if (req.status === 404) {
+          setTimeout(() => {
+            delete localStorage["jwt"];
+            delete localStorage["route"];
+            window.location.reload();
+          }, 5000);
+          return;
+        }
         throw new Error("An unexpected error has occurred");
       } catch (error) {
         toast.error(`Error: ${error.message}`);
       }
     })();
   }, []);
-
-  // useEffect(() => {
-  //   if (exam.noAssessment) {
-  //     setTimeout(() => {
-  //       delete localStorage["jwt"];
-  //       delete localStorage["route"];
-  //       window.location.reload();
-  //     }, 5000);
-  //   }
-  // }, []);
+  let [minutes = 0, seconds = 0] = exam.timeAllowed
+    .toFixed(2)
+    .toString()
+    .split(".");
+  let h = Math.floor(parseInt(seconds + "") / 60);
+  minutes = parseInt(minutes + "") + h;
+  seconds = parseInt(seconds + "") - 60 * h;
 
   return (
     <section className="m-auto instruction">
@@ -68,7 +72,10 @@ const InstructionPage = () => {
           <h4>Instruction</h4>
           <div className="timer align-items-end">
             <h4>
-              Time: <span>{exam.timeAllowed} Minutes</span>
+              Time:{" "}
+              <span>
+                {minutes} Minutes and {seconds} seconds
+              </span>
             </h4>
           </div>
         </div>
@@ -100,7 +107,9 @@ const InstructionPage = () => {
             </span>
             <span>
               Exam Duration:
-              <span>{exam.timeAllowed} minutes</span>
+              <span>
+                {minutes} minutes and {seconds} seconds
+              </span>
             </span>
 
             <div className="text-right">
