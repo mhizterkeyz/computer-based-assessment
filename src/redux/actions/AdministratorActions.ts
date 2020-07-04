@@ -82,6 +82,17 @@ export const addBiodataSuccess = (biodatas: any, examId: any) => ({
   examId,
 });
 
+export const updateBiodataSuccess = (
+  biodatas: any,
+  examId: any,
+  biodataId: any
+) => ({
+  type: types.UPDATE_SINGLE_BIODATA_SUCCESS,
+  biodatas,
+  examId,
+  biodataId,
+});
+
 export function SignInAdmin({ username, password }: any) {
   return async (dispatch: any) => {
     try {
@@ -293,6 +304,21 @@ export const addBiodata = (data: any) => {
       dispatch(beginApiCall());
       const biodatas = await Api.addBiodata(data);
       return dispatch(addBiodataSuccess(biodatas, data.examId));
+    } catch (error) {
+      dispatch(apiCallError());
+      throw error;
+    }
+  };
+};
+
+export const updateBiodata = (data: any) => {
+  return async (dispatch: any) => {
+    try {
+      dispatch(beginApiCall());
+      const biodatas = await Api.updateSingleBiodata(data);
+      return dispatch(
+        updateBiodataSuccess(biodatas, data.examId, data.biodataId)
+      );
     } catch (error) {
       dispatch(apiCallError());
       throw error;

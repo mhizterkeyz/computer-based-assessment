@@ -1,8 +1,7 @@
 import React from "react";
+import { toast } from "react-toastify";
 
-import display_img from "../../../image/Rectangle-19.png";
-
-export const StudentList = ({ user, status, showStudent }: any) => {
+export const StudentList = ({ user, status, showStudent, _id }: any) => {
   return (
     <div
       className="dta-body"
@@ -11,7 +10,8 @@ export const StudentList = ({ user, status, showStudent }: any) => {
           user,
           user.department.department,
           user.faculty.faculty,
-          status
+          status,
+          _id
         );
       }}
     >
@@ -38,10 +38,21 @@ export const StudentList = ({ user, status, showStudent }: any) => {
   );
 };
 
-export const StudentInfo = ({
-  student,
-  setStudent,
-}: any) => {
+export const StudentInfo = ({ student, setStudent, ...props }: any) => {
+  const handleRetake = async () => {
+    try {
+      return (
+        (await props.updateBiodata({
+          data: { status: 0 },
+          examId: props.examId,
+          biodataId: student._id,
+        })) && toast.success("Operation successful")
+      );
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   return (
     <section className="student-info">
       <span
@@ -53,12 +64,28 @@ export const StudentInfo = ({
             : "status-closed"
         }
       >
-        {student.status === 0 ? "Pending" : student.status === 1 ? "Online" : "Finished"}
+        {student.status === 0
+          ? "Pending"
+          : student.status === 1
+          ? "Online"
+          : "Finished"}
       </span>
 
       <div className="d-flex flex-column align-items-center">
         <span className="image-cropper">
-          <img src={display_img} alt="student" />
+          <object
+            data={
+              `http://${window.location.hostname}:8000/api/static/` +
+              student.user.matric +
+              ".png"
+            }
+            type="image/jpg"
+          >
+            <img
+              src={`http://${window.location.hostname}:8000/api/static/default.png`}
+              alt="student"
+            />
+          </object>
         </span>
 
         <h3 className="text-center">{student.user.name}</h3>
@@ -68,7 +95,9 @@ export const StudentInfo = ({
         <div className="row mb-3">
           <div className="col-8">
             <h3>Matric.No</h3>
-            <h4 style={{ textTransform: "uppercase" }}>{student.user.matric}</h4>
+            <h4 style={{ textTransform: "uppercase" }}>
+              {student.user.matric}
+            </h4>
           </div>
 
           <div className="col-4">
@@ -93,13 +122,14 @@ export const StudentInfo = ({
       <div className="d-flex justify-content-between">
         <button
           className="btn btn-primary"
-          disabled={student.status === 0 || student.status === 2 ? true : false}
+          disabled={student.status === 0 || student.status === 2}
         >
           Extend time
         </button>
         <button
           className="btn btn-primary"
-          disabled={student.status === 0 || student.status === 1 ? true : false}
+          onClick={handleRetake}
+          disabled={student.status === 0 || student.status === 1}
         >
           Retake
         </button>

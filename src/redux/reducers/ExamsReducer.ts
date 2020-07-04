@@ -11,6 +11,23 @@ export default function (state: any = initialState.exams, action: any) {
         ...state,
         [action.examId]: { ...state[action.examId], bioData: action.biodatas },
       };
+    case types.UPDATE_SINGLE_BIODATA_SUCCESS:
+      return {
+        ...state,
+        [action.examId]: {
+          ...state[action.examId],
+          bioData: Object.values({
+            ...state[action.examId].bioData.reduce(
+              (acc: any, cur: any) => ({
+                ...acc,
+                [cur._id]: cur,
+              }),
+              {}
+            ),
+            [action.biodataId]: action.biodatas,
+          }),
+        },
+      };
     default:
       return state;
   }

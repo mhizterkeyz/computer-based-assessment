@@ -289,6 +289,16 @@ export const addBiodata = async ({ toSend, examId }: any) => {
   const { statusText, status } = req;
   const res = await req.json();
   parseResponseError({ res, status, statusText });
-  console.log(res.data);
+  return res.data;
+};
+
+export const updateSingleBiodata = async ({ data, examId, biodataId }: any) => {
+  const req = await api
+    .body(data)
+    .headers({ Authorization: "Bearer " + localStorage["jwt"] })
+    .put(`${apiUrl}/exams/${examId}/biodatas/${biodataId}`);
+  const { statusText, status } = req;
+  const res = await req.json();
+  parseResponseError({ res, status, statusText });
   return res.data;
 };

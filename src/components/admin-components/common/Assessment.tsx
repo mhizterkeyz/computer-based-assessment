@@ -13,7 +13,10 @@ import Modal from "../../Modal";
 import _ from "lodash";
 import PreviewQuestions from "./PreviewQuestions";
 import AddStudentModalWindow from "./AssessmentModalWindow";
-import { getFaculty } from "../../../redux/actions/AdministratorActions";
+import {
+  getFaculty,
+  updateBiodata,
+} from "../../../redux/actions/AdministratorActions";
 
 const Assessment = ({
   exam: examination,
@@ -23,6 +26,7 @@ const Assessment = ({
   loading,
   getFaculty,
   match,
+  ...props
 }: any) => {
   const [student, setStudent] = useState({
     show: false,
@@ -30,6 +34,7 @@ const Assessment = ({
     department: "",
     faculty: "",
     status: 0,
+    _id: "",
   });
   const [exam, setExam] = useState({
     status: 0,
@@ -66,9 +71,10 @@ const Assessment = ({
     user: any,
     department: string,
     faculty: string,
-    status: number
+    status: number,
+    _id: string
   ) => {
-    setStudent({ show: true, user, department, faculty, status });
+    setStudent({ show: true, user, department, faculty, status, _id });
   };
 
   const history = useHistory();
@@ -401,7 +407,12 @@ const Assessment = ({
               </div>
             </section>
 
-            <StudentInfo student={student} setStudent={setStudent} />
+            <StudentInfo
+              student={student}
+              setStudent={setStudent}
+              updateBiodata={props.updateBiodata}
+              examId={exam._id}
+            />
           </div>
         </>
       )}
@@ -420,6 +431,7 @@ const mapDispatchToProps = {
   loadUpResults,
   updateExamStatus,
   getFaculty,
+  updateBiodata,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Assessment);
