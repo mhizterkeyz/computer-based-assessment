@@ -313,3 +313,14 @@ export const extendStudentTime = async ({ timeIncrease, userId }: any) => {
   parseResponseError({ res, status, statusText });
   return res.data;
 };
+
+export const updateAccount = async (update: any) => {
+  const req = await api
+    .body(update)
+    .headers({ Authorization: "Bearer " + localStorage["jwt"] })
+    .put(`${apiUrl}/me`);
+  const { statusText, status } = req;
+  const res = await req.json();
+  parseResponseError({ res, status, statusText });
+  return res.data;
+};

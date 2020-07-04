@@ -138,12 +138,12 @@ export const loadUpExams = () => {
 export const updateExamStatus = (exam_id: string, exam_status: any) => {
   return async (dispatch: any) => {
     try {
-      // dispatch(beginApiCall());
+      dispatch(beginApiCall());
       debugger;
       const exam = await Api.updateExamstatus(exam_id, exam_status);
       return dispatch(updateExamStatusSuccess(exam));
     } catch (error) {
-      // dispatch(apiCallError());
+      dispatch(apiCallError());
       throw error;
     }
   };
@@ -319,6 +319,19 @@ export const updateBiodata = (data: any) => {
       return dispatch(
         updateBiodataSuccess(biodatas, data.examId, data.biodataId)
       );
+    } catch (error) {
+      dispatch(apiCallError());
+      throw error;
+    }
+  };
+};
+
+export const updateAccount = (update: any) => {
+  return async (dispatch: any) => {
+    try {
+      dispatch(beginApiCall());
+      const administrator = await Api.updateAccount(update);
+      return dispatch(AdministratorSigninSuccess(administrator));
     } catch (error) {
       dispatch(apiCallError());
       throw error;
