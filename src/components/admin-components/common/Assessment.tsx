@@ -17,6 +17,8 @@ import {
   getFaculty,
   updateBiodata,
 } from "../../../redux/actions/AdministratorActions";
+import { TextField } from "./InputField";
+import { extendStudentTime } from "../../../api/AdministratorCalls";
 
 const Assessment = ({
   exam: examination,
@@ -35,6 +37,7 @@ const Assessment = ({
     faculty: "",
     status: 0,
     _id: "",
+    studentId: "",
   });
   const [exam, setExam] = useState({
     status: 0,
@@ -44,6 +47,7 @@ const Assessment = ({
     _id: "",
     questions: [],
   });
+  const [extendTime, setExtendTime] = useState(0);
   const [modalData, setModalData] = useState({
     show: false,
     display: <></>,
@@ -72,9 +76,18 @@ const Assessment = ({
     department: string,
     faculty: string,
     status: number,
-    _id: string
+    _id: string,
+    studentId: string
   ) => {
-    setStudent({ show: true, user, department, faculty, status, _id });
+    setStudent({
+      show: true,
+      user,
+      department,
+      faculty,
+      status,
+      _id,
+      studentId,
+    });
   };
 
   const history = useHistory();
@@ -230,6 +243,52 @@ const Assessment = ({
       ),
     });
   };
+
+  const handleTimeExtend = async () => {
+    try {
+      return (
+        (await extendStudentTime({
+          timeIncrease: extendTime,
+          userId: student.studentId,
+        })) &&
+        toast.success("Operation successful") &&
+        handleModalClose()
+      );
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+  const handleShowExtendModal = () => {
+    setModalData({
+      show: true,
+      display: (
+        <div className="text-center profile">
+          <h3>Extend Time</h3>
+          <TextField
+            name="timeIncrease"
+            label="Time Increment (in minutes)"
+            placeholder="0"
+            type="number"
+            handleInputs={(ev: any) => setExtendTime(ev.target.value)}
+          />
+          <div className="">
+            <button onClick={handleModalClose} className="btn btn-primary">
+              Cancel
+            </button>
+
+            <button
+              onClick={handleTimeExtend}
+              type="submit"
+              className="btn btn-primary ml-2"
+            >
+              Extend
+            </button>
+          </div>
+        </div>
+      ),
+    });
+  };
+
   return (
     <>
       <Modal show={modalData.show} handleClose={handleModalClose}>
@@ -412,6 +471,7 @@ const Assessment = ({
               setStudent={setStudent}
               updateBiodata={props.updateBiodata}
               examId={exam._id}
+              handleShowExtendModal={handleShowExtendModal}
             />
           </div>
         </>

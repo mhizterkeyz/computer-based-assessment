@@ -11,7 +11,8 @@ export const StudentList = ({ user, status, showStudent, _id }: any) => {
           user.department.department,
           user.faculty.faculty,
           status,
-          _id
+          _id,
+          user._id
         );
       }}
     >
@@ -122,6 +123,7 @@ export const StudentInfo = ({ student, setStudent, ...props }: any) => {
       <div className="d-flex justify-content-between">
         <button
           className="btn btn-primary"
+          onClick={props.handleShowExtendModal}
           disabled={student.status === 0 || student.status === 2}
         >
           Extend time

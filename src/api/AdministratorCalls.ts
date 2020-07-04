@@ -302,3 +302,14 @@ export const updateSingleBiodata = async ({ data, examId, biodataId }: any) => {
   parseResponseError({ res, status, statusText });
   return res.data;
 };
+
+export const extendStudentTime = async ({ timeIncrease, userId }: any) => {
+  const req = await api
+    .body({ timeIncrease })
+    .headers({ Authorization: "Bearer " + localStorage["jwt"] })
+    .post(`${apiUrl}/users/${userId}`);
+  const { statusText, status } = req;
+  const res = await req.json();
+  parseResponseError({ res, status, statusText });
+  return res.data;
+};
