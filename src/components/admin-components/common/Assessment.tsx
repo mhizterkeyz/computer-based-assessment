@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 import Modal from "../../Modal";
 import _ from "lodash";
 import PreviewQuestions from "./PreviewQuestions";
-import { AddStudentModalWindow } from "./AssessmentModalWindow";
+import AddStudentModalWindow from "./AssessmentModalWindow";
 import { getFaculty } from "../../../redux/actions/AdministratorActions";
 
 const Assessment = ({
@@ -219,6 +219,7 @@ const Assessment = ({
         <AddStudentModalWindow
           handleModalClose={handleModalClose}
           faculty={faculty}
+          examId={exam._id}
         />
       ),
     });

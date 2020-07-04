@@ -76,6 +76,12 @@ export const createDepartmentSuccess = (department: any) => ({
   department,
 });
 
+export const addBiodataSuccess = (biodatas: any, examId: any) => ({
+  type: types.ADD_BIODATA_SUCCESS,
+  biodatas,
+  examId,
+});
+
 export function SignInAdmin({ username, password }: any) {
   return async (dispatch: any) => {
     try {
@@ -274,6 +280,19 @@ export const createDepartment = (faculty_id: string, department: string) => {
       dispatch(beginApiCall());
       const departmentDta = await Api.createDepartment(faculty_id, department);
       return dispatch(createDepartmentSuccess(departmentDta));
+    } catch (error) {
+      dispatch(apiCallError());
+      throw error;
+    }
+  };
+};
+
+export const addBiodata = (data: any) => {
+  return async (dispatch: any) => {
+    try {
+      dispatch(beginApiCall());
+      const biodatas = await Api.addBiodata(data);
+      return dispatch(addBiodataSuccess(biodatas, data.examId));
     } catch (error) {
       dispatch(apiCallError());
       throw error;

@@ -280,3 +280,15 @@ export const createDepartment = async (
     throw error;
   }
 };
+
+export const addBiodata = async ({ toSend, examId }: any) => {
+  const req = await api
+    .body(toSend)
+    .headers({ Authorization: "Bearer " + localStorage["jwt"] })
+    .post(`${apiUrl}/exams/${examId}/biodatas`);
+  const { statusText, status } = req;
+  const res = await req.json();
+  parseResponseError({ res, status, statusText });
+  console.log(res.data);
+  return res.data;
+};

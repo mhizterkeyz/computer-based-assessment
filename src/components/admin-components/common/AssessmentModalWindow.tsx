@@ -1,16 +1,39 @@
 import React, { useState, useEffect } from "react";
-// import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 import { TextField, SelectField } from "./InputField";
+import { connect } from "react-redux";
+import { addBiodata } from "../../../redux/actions/AdministratorActions";
 
-export const AddStudentModalWindow = ({ handleModalClose, faculty }: any) => {
-  const [input, setInput] = useState({ faculty: null, department: "" });
-
+const AddStudentModalWindow = ({
+  handleModalClose,
+  faculty,
+  ...props
+}: any) => {
+  const [input, setInput] = useState({
+    faculty: null,
+    department: "",
+    name: "",
+    level: "100",
+    matric: "",
+    ca: 0,
+  });
   const handleInputs = (ev: any) => {
     const { name, value } = ev.target;
     setInput({ ...input, [name]: value });
   };
-
+  const handleSubmit = async () => {
+    try {
+      const toSubmit = input;
+      delete toSubmit.faculty;
+      return (
+        (await props.addBiodata({ toSend: toSubmit, examId: props.examId })) &&
+        toast.success("Student added successfully") &&
+        handleModalClose()
+      );
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
   const facultyAlphabeticalSortFn = (a: any, b: any) =>
     a.faculty > b.faculty ? 1 : a.faculty < b.faculty ? -1 : 0;
 
@@ -27,9 +50,12 @@ export const AddStudentModalWindow = ({ handleModalClose, faculty }: any) => {
       (faculty: any) => faculty.faculty === input.faculty
     );
 
-    department = department[0].departments
-      .sort(departmentAlphabeticalSortFn)
-      .map((dept: any) => dept.department);
+    department =
+      (department[0] &&
+        department[0].departments
+          .sort(departmentAlphabeticalSortFn)
+          .map((dept: any) => dept.department)) ||
+      department;
   }
   useEffect(() => {
     const check = faculty.find((elem: any) => {
@@ -47,32 +73,38 @@ export const AddStudentModalWindow = ({ handleModalClose, faculty }: any) => {
   return (
     <div className="text-center profile">
       <h3>Add Student</h3>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-        }}
-      >
+      <form onSubmit={handleSubmit}>
         <TextField
           name="name"
           label="Name"
           placeholder="Enter Student's Name"
+          value={input.name}
           handleInputs={handleInputs}
         />
 
         <div className="row">
           <TextField
-            class="col-6"
             name="matric"
+            class="col-12"
             label="Matric No."
             placeholder="Enter Matric No."
+            value={input.matric}
             handleInputs={handleInputs}
           />
-
+          <TextField
+            name="ca"
+            class="col-6"
+            label="CA."
+            type="number"
+            placeholder="Enter CA."
+            value={input.ca}
+            handleInputs={handleInputs}
+          />
           <SelectField
             class="col-6"
             label="Level"
             name="level"
-            value="100"
+            value={input.level}
             options={["100", "200", "300", "400", "500"]}
             handleInputs={handleInputs}
           />
@@ -81,7 +113,7 @@ export const AddStudentModalWindow = ({ handleModalClose, faculty }: any) => {
         <SelectField
           label="Faculty"
           name="faculty"
-          value={input.faculty}
+          value={input.faculty || ""}
           options={fac}
           handleInputs={handleInputs}
         />
@@ -104,13 +136,7 @@ export const AddStudentModalWindow = ({ handleModalClose, faculty }: any) => {
             Cancel
           </button>
 
-          <button
-            type="submit"
-            className="btn btn-primary ml-2"
-            onClick={() => {
-              // history.push("/exam/submit");
-            }}
-          >
+          <button type="submit" className="btn btn-primary ml-2">
             Add
           </button>
         </div>
@@ -118,3 +144,7 @@ export const AddStudentModalWindow = ({ handleModalClose, faculty }: any) => {
     </div>
   );
 };
+
+export default connect((state, ownProps) => ({ ...ownProps }), { addBiodata })(
+  AddStudentModalWindow
+);

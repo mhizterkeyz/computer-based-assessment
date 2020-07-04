@@ -6,7 +6,7 @@ export const TextField = (props: any) => (
       {props.label}
     </label>
     <input
-      type="text"
+      type={props.type || "text"}
       value={props.value}
       name={props.name}
       className="profile__input"
