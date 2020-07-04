@@ -136,15 +136,14 @@ const QuestionPage = (props: any) => {
           toast.error("Error: " + error.message);
         }
       })();
-      let p =
-        (studentExamination.timeLeft / studentExamination.timeAllowed) * 100;
-      let dp = ((p * studentExamination.displayTime) / 100).toFixed(2);
+
+      let p = studentExamination.timeLeft / studentExamination.timeAllowed;
+      let dp = (p * studentExamination.displayTime).toFixed(2);
       let [minutes = 0, seconds = 0] = dp.split(".");
-      let h = Math.floor(parseInt(seconds + "") / 60);
-      minutes = parseInt(minutes + "") + h;
-      seconds = parseInt(seconds + "") - 60 * h;
+      minutes = parseInt(minutes + "");
+      seconds = Math.floor((parseInt(seconds + "") / 99) * 60);
       setTimerInterval(
-        (900 * studentExamination.timeAllowed) / studentExamination.displayTime
+        (1000 * studentExamination.timeAllowed) / studentExamination.displayTime
       );
       setCounter({
         ...counter,

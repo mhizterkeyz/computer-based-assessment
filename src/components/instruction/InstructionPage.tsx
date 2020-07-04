@@ -47,9 +47,8 @@ const InstructionPage = () => {
     .toFixed(2)
     .toString()
     .split(".");
-  let h = Math.floor(parseInt(seconds + "") / 60);
-  minutes = parseInt(minutes + "") + h;
-  seconds = parseInt(seconds + "") - 60 * h;
+  minutes = parseInt(minutes + "");
+  seconds = Math.floor((parseInt(seconds + "") / 99) * 60);
 
   return (
     <section className="m-auto instruction">
