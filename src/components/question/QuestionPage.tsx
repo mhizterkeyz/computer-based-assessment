@@ -138,7 +138,7 @@ const QuestionPage = (props: any) => {
       })();
 
       let p = studentExamination.timeLeft / studentExamination.timeAllowed;
-      let dp = (p * studentExamination.displayTime).toFixed(2);
+      let dp = (p * studentExamination.displayTime - 1).toFixed(2);
       let [minutes = 0, seconds = 0] = dp.split(".");
       minutes = parseInt(minutes + "");
       seconds = Math.floor((parseInt(seconds + "") / 99) * 60);
