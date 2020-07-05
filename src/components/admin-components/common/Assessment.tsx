@@ -28,6 +28,7 @@ const Assessment = ({
   loading,
   getFaculty,
   match,
+  exams,
   ...props
 }: any) => {
   const [student, setStudent] = useState({
@@ -57,9 +58,8 @@ const Assessment = ({
   const [preview, setPreview] = useState(false);
 
   useEffect(() => {
-    setExam({ ...exam, ...examination });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    setExam((exam) => ({ ...exam, ...exams[examination._id] }));
+  }, [examination, exams]);
 
   useEffect(() => {
     if (student.show) {
@@ -483,6 +483,7 @@ const Assessment = ({
 function mapStateToProps(state: any) {
   return {
     faculty: state.faculty,
+    exams: state.exams,
     loading: state.apiCallsInProgress > 0,
   };
 }

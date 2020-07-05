@@ -109,27 +109,27 @@ export function SignInAdmin({ username, password }: any) {
   };
 }
 
-export function VerifyAdministrator() {
+export function VerifyAdministrator(updateCall: boolean = false) {
   return async (dispatch: any) => {
     try {
-      dispatch(beginApiCall());
+      !updateCall && dispatch(beginApiCall());
       const administrator = await Api.verifyAdministrator();
       return dispatch(AdministratorVerifySuccess(administrator));
     } catch (error) {
-      dispatch(apiCallError());
+      !updateCall && dispatch(apiCallError());
       throw error;
     }
   };
 }
 
-export const loadUpExams = () => {
+export const loadUpExams = (updateCall: boolean = false) => {
   return async (dispatch: any) => {
     try {
-      dispatch(beginApiCall());
+      !updateCall && dispatch(beginApiCall());
       const exam = await Api.getExams();
       return dispatch(getExamsSuccess(exam));
     } catch (error) {
-      dispatch(apiCallError());
+      !updateCall && dispatch(apiCallError());
       throw error;
     }
   };
@@ -175,14 +175,14 @@ export const loadUpResults = (exam_id: string) => {
   };
 };
 
-export const loadPin = () => {
+export const loadPin = (updateCall: boolean = false) => {
   return async (dispatch: any) => {
     try {
-      dispatch(beginApiCall());
+      !updateCall && dispatch(beginApiCall());
       const pin = await Api.getPin();
       return dispatch(getPinSuccess(pin));
     } catch (error) {
-      dispatch(apiCallError());
+      !updateCall && dispatch(apiCallError());
       throw error;
     }
   };
@@ -201,14 +201,14 @@ export const createPin = (count: any) => {
   };
 };
 
-export const getAdministrators = () => {
+export const getAdministrators = (updateCall: boolean = false) => {
   return async (dispatch: any) => {
     try {
-      dispatch(beginApiCall());
+      !updateCall && dispatch(beginApiCall());
       const admin = await Api.getAdministrators();
       return dispatch(getAdministratorsSuccess(admin));
     } catch (error) {
-      dispatch(apiCallError());
+      !updateCall && dispatch(apiCallError());
       throw error;
     }
   };
@@ -234,14 +234,14 @@ export function deleteAdministrator(admin_id: string) {
   };
 }
 
-export const getFaculty = () => {
+export const getFaculty = (updateCall: boolean = false) => {
   return async (dispatch: any) => {
     try {
-      dispatch(beginApiCall());
+      !updateCall && dispatch(beginApiCall());
       const faculty = await Api.getFaculty();
       return dispatch(getFacultySuccess(faculty));
     } catch (error) {
-      dispatch(apiCallError());
+      !updateCall && dispatch(apiCallError());
       throw error;
     }
   };

@@ -15,7 +15,6 @@ export function verifyStudentSuccess(student: student) {
   return { type: types.VERIFY_STUDENT_SUCCESS, student };
 }
 
-
 export function loadStudent({ "matric-no": username, password }: any) {
   return async function (dispatch: any) {
     try {
@@ -29,15 +28,15 @@ export function loadStudent({ "matric-no": username, password }: any) {
   };
 }
 
-export function verifyStudent() {
+export function verifyStudent(updateCall: boolean = false) {
   return async (dispatch: any) => {
     try {
-      dispatch(beginApiCall());
+      !updateCall && dispatch(beginApiCall());
       const student = await studentApi.verifyStudent();
       return dispatch(verifyStudentSuccess(student));
     } catch (error) {
-      dispatch(apiCallError());
+      !updateCall && dispatch(apiCallError());
       throw error;
     }
   };
-};
+}

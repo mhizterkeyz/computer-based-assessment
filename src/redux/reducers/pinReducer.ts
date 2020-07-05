@@ -7,9 +7,10 @@ export default function (
 ) {
   switch (action.type) {
     case types.GET_PIN_SUCCESS:
+      return action.pin;
     case types.CREATE_PIN_SUCCESS:
       return { ...state, ...action.pin };
     default:
       return state;
   }
-};
+}
