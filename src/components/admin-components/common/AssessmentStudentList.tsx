@@ -38,10 +38,7 @@ export const StudentList = ({ user, status, showStudent }: any) => {
   );
 };
 
-export const StudentInfo = ({
-  student,
-  setStudent,
-}: any) => {
+export const StudentInfo = ({ student, setStudent }: any) => {
   return (
     <section className="student-info">
       <span
@@ -53,12 +50,26 @@ export const StudentInfo = ({
             : "status-closed"
         }
       >
-        {student.status === 0 ? "Pending" : student.status === 1 ? "Online" : "Finished"}
+        {student.status === 0
+          ? "Pending"
+          : student.status === 1
+          ? "Online"
+          : "Finished"}
       </span>
 
       <div className="d-flex flex-column align-items-center">
         <span className="image-cropper">
-          <img src={display_img} alt="student" />
+          <object
+            data={`http://${window.location.hostname}:8000/api/static/${student.user.matric}.png`}
+            type="image/jpg"
+            style={{ width: "100%" }}
+          >
+            <img
+              src={`http://${window.location.hostname}:8000/api/static/default.png`}
+              srcSet=""
+              alt="student"
+            />
+          </object>
         </span>
 
         <h3 className="text-center">{student.user.name}</h3>
@@ -68,7 +79,9 @@ export const StudentInfo = ({
         <div className="row mb-3">
           <div className="col-8">
             <h3>Matric.No</h3>
-            <h4 style={{ textTransform: "uppercase" }}>{student.user.matric}</h4>
+            <h4 style={{ textTransform: "uppercase" }}>
+              {student.user.matric}
+            </h4>
           </div>
 
           <div className="col-4">

@@ -42,15 +42,17 @@ const CredentialsPage = ({
     <section className="m-auto credentials">
       <div className="d-flex flex-column mb-5">
         <h3>Welcome, {name} !</h3>
-        <div className="row d-flex justify-content-center align-items-center">
-          <div className="mr-5">
+        <div className="row d-flex flex-column justify-content-center align-items-center">
+          <div className="mr-5 mb-3">
             <object
               data={`http://${window.location.hostname}:8000/api/static/` + matric_no + ".png"}
               type="image/jpg"
-            >
+              style={{maxWidth: "10rem", borderRadius: "50%"}}
+              >
               <img
                 src={`http://${window.location.hostname}:8000/api/static/default.png`}
                 alt="student avatar"
+                style={{maxWidth: "100%", borderRadius: "50%"}}
               />
             </object>
           </div>
@@ -61,7 +63,7 @@ const CredentialsPage = ({
           </div>
         </div>
         <p>
-          If this page does not Auotmatically redirect you. <br /> Click on the
+          Confirm this Information to be your Information and <br /> Click on the
           proceed button.
         </p>
 

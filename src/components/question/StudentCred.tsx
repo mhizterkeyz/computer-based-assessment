@@ -22,6 +22,7 @@ const StudentCred = ({
                   `http://${window.location.hostname}:8000/api/static/` + props.matric + ".png"
                 }
                 type="image/jpg"
+                style={{width: "100%"}}
               >
                 <img
                   src={`http://${window.location.hostname}:8000/api/static/default.png`}

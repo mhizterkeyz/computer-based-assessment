@@ -71,20 +71,6 @@ const Assessment = ({
     }
   }, [exam]);
 
-  // useEffect(() => {
-  //   // @ts-ignore
-  //   if (Object.values(exam) > 0) {
-  //     (async () => {
-  //       try {
-  //         await loadUpResults(exam._id);
-  //       } catch (error) {
-  //         toast.configure();
-  //         toast.error(error.message);
-  //       }
-  //     })();
-  //   }
-  // }, []);
-
   useEffect(() => {
     if (student.show) {
       document.querySelector(".student-section")?.classList.add("show-student");
@@ -383,12 +369,20 @@ const Assessment = ({
               Preview Questions
             </button>
 
-            <button className="btn btn-success" onClick={handleUpload}>
+            <button
+              className="btn btn-success"
+              onClick={handleUpload}
+              disabled={exam.status < 2 ? true : false}
+            >
               Upload Result
             </button>
 
             <div>
-              <button className="btn btn-success" onClick={handleDownloadPDF}>
+              <button
+                className="btn btn-success"
+                onClick={handleDownloadPDF}
+                disabled={exam.status < 2 ? true : false}
+              >
                 Download Result (PDF)
               </button>
 
@@ -399,7 +393,7 @@ const Assessment = ({
                     className="btn btn-success ml-3"
                     disabled={exam.status < 2 ? true : false}
                   >
-                    Download Result (Excel)
+                    Download Result (Spreadsheet)
                   </button>
                 }
               >
