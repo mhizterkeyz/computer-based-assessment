@@ -56,7 +56,6 @@ const QuestionPage = (props: any) => {
   const [counter, setCounter] = useState({
     minutes: 0,
     seconds: 0,
-    firstUpdateMade: false,
   });
   const [modalData, setModalData] = useState({
     show: false,
@@ -81,9 +80,21 @@ const QuestionPage = (props: any) => {
     },
     answered: {},
   });
+  const [live, setLive] = useState(true);
   const [timerInterval, setTimerInterval] = useState(1000);
   const { studentExamination, loadStudentExamination } = props;
 
+  useEffect(() => {
+    (async () => {
+      try {
+        await loadStudentExamination(true);
+      } catch (error) {
+        // Live updates failed, do nothing
+      }
+    })();
+    const inte = setInterval(() => setLive(!live), 5000);
+    return () => clearInterval(inte);
+  }, [live, loadStudentExamination]);
   useEffect(() => {
     if (Object.keys(studentExamination).length < 1) {
       (async () => {
@@ -116,10 +127,7 @@ const QuestionPage = (props: any) => {
       setExam({ questions, answered });
       setExamSet(true);
     }
-    if (
-      Object.keys(studentExamination).length > 1 &&
-      !counter.firstUpdateMade
-    ) {
+    if (Object.keys(studentExamination).length > 1) {
       //  Quick check to make sure you're supposed to be here...
       (async () => {
         try {
@@ -136,24 +144,22 @@ const QuestionPage = (props: any) => {
           toast.error("Error: " + error.message);
         }
       })();
-      let p =
-        (studentExamination.timeLeft / studentExamination.timeAllowed) * 100;
-      let dp = ((p * studentExamination.displayTime) / 100).toFixed(2);
-      let [minutes = 0, seconds = 0] = dp.split(".");
-      let h = Math.floor(parseInt(seconds + "") / 60);
-      minutes = parseInt(minutes + "") + h;
-      seconds = parseInt(seconds + "") - 60 * h;
+
+      let p = studentExamination.timeLeft / studentExamination.timeAllowed;
+      let dp = (p * studentExamination.displayTime - 1).toFixed(2);
+      let [min = 0, sec = 0] = dp.split(".");
+      let minutes = parseInt(min + "");
+      let seconds = Math.floor((parseInt(sec + "") / 99) * 60);
       setTimerInterval(
-        (900 * studentExamination.timeAllowed) / studentExamination.displayTime
+        (1000 * studentExamination.timeAllowed) / studentExamination.displayTime
       );
-      setCounter({
-        ...counter,
+      setCounter((i) => ({
+        ...i,
         minutes,
         seconds,
-        firstUpdateMade: true,
-      });
+      }));
     }
-  }, [counter, studentExamination, loadStudentExamination, examSet]);
+  }, [studentExamination, loadStudentExamination, examSet]);
 
   if (studentExamination.hasOwnProperty("examNotFound")) {
     props.history.push("/exam/submit");
@@ -382,7 +388,7 @@ function mapStateToProps(state: any) {
   return {
     studentExamination: state.studentExamination,
     student: state.student,
-    loading: false, //  state.apiCallsInProgress > 0,
+    loading: state.apiCallsInProgress > 0,
   };
 }
 

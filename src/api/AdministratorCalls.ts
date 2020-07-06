@@ -280,3 +280,47 @@ export const createDepartment = async (
     throw error;
   }
 };
+
+export const addBiodata = async ({ toSend, examId }: any) => {
+  const req = await api
+    .body(toSend)
+    .headers({ Authorization: "Bearer " + localStorage["jwt"] })
+    .post(`${apiUrl}/exams/${examId}/biodatas`);
+  const { statusText, status } = req;
+  const res = await req.json();
+  parseResponseError({ res, status, statusText });
+  return res.data;
+};
+
+export const updateSingleBiodata = async ({ data, examId, biodataId }: any) => {
+  const req = await api
+    .body(data)
+    .headers({ Authorization: "Bearer " + localStorage["jwt"] })
+    .put(`${apiUrl}/exams/${examId}/biodatas/${biodataId}`);
+  const { statusText, status } = req;
+  const res = await req.json();
+  parseResponseError({ res, status, statusText });
+  return res.data;
+};
+
+export const extendStudentTime = async ({ timeIncrease, userId }: any) => {
+  const req = await api
+    .body({ timeIncrease })
+    .headers({ Authorization: "Bearer " + localStorage["jwt"] })
+    .post(`${apiUrl}/users/${userId}`);
+  const { statusText, status } = req;
+  const res = await req.json();
+  parseResponseError({ res, status, statusText });
+  return res.data;
+};
+
+export const updateAccount = async (update: any) => {
+  const req = await api
+    .body(update)
+    .headers({ Authorization: "Bearer " + localStorage["jwt"] })
+    .put(`${apiUrl}/me`);
+  const { statusText, status } = req;
+  const res = await req.json();
+  parseResponseError({ res, status, statusText });
+  return res.data;
+};

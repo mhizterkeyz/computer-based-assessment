@@ -15,6 +15,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Header from "./components/Header";
 import { student as studentInterface } from "./components/model/student";
 import { verifyStudent } from "./redux/actions/studentAction";
+import LiveUpdater from "./LiveUpdater";
 
 function App({
   student,
@@ -84,6 +85,7 @@ function App({
           )}
         />
       </Switch>
+      <LiveUpdater></LiveUpdater>
       <ToastContainer hideProgressBar={true} autoClose={3000} />
     </Router>
   );

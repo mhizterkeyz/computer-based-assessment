@@ -76,6 +76,23 @@ export const createDepartmentSuccess = (department: any) => ({
   department,
 });
 
+export const addBiodataSuccess = (biodatas: any, examId: any) => ({
+  type: types.ADD_BIODATA_SUCCESS,
+  biodatas,
+  examId,
+});
+
+export const updateBiodataSuccess = (
+  biodatas: any,
+  examId: any,
+  biodataId: any
+) => ({
+  type: types.UPDATE_SINGLE_BIODATA_SUCCESS,
+  biodatas,
+  examId,
+  biodataId,
+});
+
 export function SignInAdmin({ username, password }: any) {
   return async (dispatch: any) => {
     try {
@@ -92,27 +109,27 @@ export function SignInAdmin({ username, password }: any) {
   };
 }
 
-export function VerifyAdministrator() {
+export function VerifyAdministrator(updateCall: boolean = false) {
   return async (dispatch: any) => {
     try {
-      dispatch(beginApiCall());
+      !updateCall && dispatch(beginApiCall());
       const administrator = await Api.verifyAdministrator();
       return dispatch(AdministratorVerifySuccess(administrator));
     } catch (error) {
-      dispatch(apiCallError());
+      !updateCall && dispatch(apiCallError());
       throw error;
     }
   };
 }
 
-export const loadUpExams = () => {
+export const loadUpExams = (updateCall: boolean = false) => {
   return async (dispatch: any) => {
     try {
-      dispatch(beginApiCall());
+      !updateCall && dispatch(beginApiCall());
       const exam = await Api.getExams();
       return dispatch(getExamsSuccess(exam));
     } catch (error) {
-      dispatch(apiCallError());
+      !updateCall && dispatch(apiCallError());
       throw error;
     }
   };
@@ -121,12 +138,12 @@ export const loadUpExams = () => {
 export const updateExamStatus = (exam_id: string, exam_status: any) => {
   return async (dispatch: any) => {
     try {
-      // dispatch(beginApiCall());
+      dispatch(beginApiCall());
       debugger;
       const exam = await Api.updateExamstatus(exam_id, exam_status);
       return dispatch(updateExamStatusSuccess(exam));
     } catch (error) {
-      // dispatch(apiCallError());
+      dispatch(apiCallError());
       throw error;
     }
   };
@@ -158,14 +175,14 @@ export const loadUpResults = (exam_id: string) => {
   };
 };
 
-export const loadPin = () => {
+export const loadPin = (updateCall: boolean = false) => {
   return async (dispatch: any) => {
     try {
-      dispatch(beginApiCall());
+      !updateCall && dispatch(beginApiCall());
       const pin = await Api.getPin();
       return dispatch(getPinSuccess(pin));
     } catch (error) {
-      dispatch(apiCallError());
+      !updateCall && dispatch(apiCallError());
       throw error;
     }
   };
@@ -184,14 +201,14 @@ export const createPin = (count: any) => {
   };
 };
 
-export const getAdministrators = () => {
+export const getAdministrators = (updateCall: boolean = false) => {
   return async (dispatch: any) => {
     try {
-      dispatch(beginApiCall());
+      !updateCall && dispatch(beginApiCall());
       const admin = await Api.getAdministrators();
       return dispatch(getAdministratorsSuccess(admin));
     } catch (error) {
-      dispatch(apiCallError());
+      !updateCall && dispatch(apiCallError());
       throw error;
     }
   };
@@ -217,14 +234,14 @@ export function deleteAdministrator(admin_id: string) {
   };
 }
 
-export const getFaculty = () => {
+export const getFaculty = (updateCall: boolean = false) => {
   return async (dispatch: any) => {
     try {
-      dispatch(beginApiCall());
+      !updateCall && dispatch(beginApiCall());
       const faculty = await Api.getFaculty();
       return dispatch(getFacultySuccess(faculty));
     } catch (error) {
-      dispatch(apiCallError());
+      !updateCall && dispatch(apiCallError());
       throw error;
     }
   };
@@ -274,6 +291,47 @@ export const createDepartment = (faculty_id: string, department: string) => {
       dispatch(beginApiCall());
       const departmentDta = await Api.createDepartment(faculty_id, department);
       return dispatch(createDepartmentSuccess(departmentDta));
+    } catch (error) {
+      dispatch(apiCallError());
+      throw error;
+    }
+  };
+};
+
+export const addBiodata = (data: any) => {
+  return async (dispatch: any) => {
+    try {
+      dispatch(beginApiCall());
+      const biodatas = await Api.addBiodata(data);
+      return dispatch(addBiodataSuccess(biodatas, data.examId));
+    } catch (error) {
+      dispatch(apiCallError());
+      throw error;
+    }
+  };
+};
+
+export const updateBiodata = (data: any) => {
+  return async (dispatch: any) => {
+    try {
+      dispatch(beginApiCall());
+      const biodatas = await Api.updateSingleBiodata(data);
+      return dispatch(
+        updateBiodataSuccess(biodatas, data.examId, data.biodataId)
+      );
+    } catch (error) {
+      dispatch(apiCallError());
+      throw error;
+    }
+  };
+};
+
+export const updateAccount = (update: any) => {
+  return async (dispatch: any) => {
+    try {
+      dispatch(beginApiCall());
+      const administrator = await Api.updateAccount(update);
+      return dispatch(AdministratorSigninSuccess(administrator));
     } catch (error) {
       dispatch(apiCallError());
       throw error;

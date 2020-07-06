@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import React, { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
   TextField,
@@ -11,16 +11,42 @@ import { useHistory } from "react-router-dom";
 
 export const UpdateProfileModalWindow = ({
   handleModalClose,
-  profile,
-  handleInputs,
+  profile: inComing,
+  handleInputs: inComingHandle,
   handleUpdate,
-  errors = {},
+  errors: inComingErrors = {},
 }: any) => {
+  const [profile, setProfile] = useState({
+    name: "",
+    username: "",
+    email: "",
+    password: "",
+    cpassword: "",
+  });
+  const [errors, setErrors] = useState({
+    onSaveError: "",
+    onPasswordMismatch: "",
+  });
+
+  useEffect(() => {
+    setProfile((i) => ({ ...i, ...inComing }));
+    setErrors((i) => ({ ...i, ...inComingErrors }));
+  }, [inComing, inComingErrors]);
+  const handleInputs = (ev: any) => {
+    const { name, value } = ev.target;
+    setProfile({ ...profile, [name]: value });
+    inComingHandle(ev);
+  };
   // const history = useHistory();
   return (
     <div className="text-center profile">
       <h3>Update profile</h3>
-      <form onSubmit={handleUpdate}>
+      <form
+        onSubmit={(ev: any) => {
+          ev.preventDefault();
+          handleUpdate(profile, (err: any) => setErrors({ ...errors, ...err }));
+        }}
+      >
         {errors.onSaveError && (
           <div className="alert alert-danger" role="alert">
             {errors.onSaveError}
@@ -78,13 +104,7 @@ export const UpdateProfileModalWindow = ({
             Cancel
           </button>
 
-          <button
-            type="submit"
-            className="btn btn-primary ml-2"
-            onClick={() => {
-              // history.push("/exam/submit");
-            }}
-          >
+          <button type="submit" className="btn btn-primary ml-2">
             Update
           </button>
         </div>
@@ -98,7 +118,6 @@ export const AddAdminModalWindow = ({
   createAdministrator,
   errors = {},
 }: any) => {
-  const history = useHistory();
   const [input, setInput] = useState({});
 
   const handleInputs = (ev: any) => {

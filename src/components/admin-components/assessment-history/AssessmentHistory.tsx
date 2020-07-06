@@ -29,7 +29,7 @@ const AssessmentHistory = (props: any) => {
         }
       })();
     }
-  }, []);
+  }, [exams, loadUpExams]);
 
   const onClickShowExamination = (show: boolean, exam: any) => {
     setAssessment({ ...assessment, show: show, exam: exam });

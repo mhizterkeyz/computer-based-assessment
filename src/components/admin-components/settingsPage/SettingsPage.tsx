@@ -7,6 +7,7 @@ import {
   getAdministrators,
   createAdministrator,
   deleteAdministrator,
+  updateAccount,
 } from "../../../redux/actions/AdministratorActions";
 import {
   UpdateProfileModalWindow,
@@ -70,39 +71,46 @@ const SettingsPage = (props: any) => {
 
   const handleProfileInputs = (ev: any) => {
     const { name, value } = ev.target;
-    setProfile((prevProfile: any) => ({ ...prevProfile, [name]: value }));
+    setProfile({ ...profile, [name]: value });
   };
 
   const handleModalClose = () => setModalData({ ...modalData, show: false });
 
-  const handleUpdate = (event: any) => {
-    event.preventDefault();
-    // setSaving(true);
+  const handleUpdate = async (profile: any, cb: any) => {
     let updatedProfile;
     if (profile.password !== profile.cpassword) {
-      setErrors({
-        ...errors,
-        onPasswordMismatch: "Your password is not the same",
-      });
+      if (cb) {
+        cb({ onPasswordMismatch: "Your password is not the same" });
+      }
     } else {
       updatedProfile = {
         name: profile.name,
         username: profile.username,
         email: profile.email,
-        password: profile.password,
+        ...((profile.password && { password: profile.password }) || {}),
       };
+      try {
+        return (
+          (await props.updateAccount(updatedProfile)) &&
+          toast.success("Account updated") &&
+          handleModalClose()
+        );
+      } catch (error) {
+        cb({ onSaveError: error.message });
+      }
     }
   };
 
+  const { getAdministrators } = props;
   useEffect(() => {
     (async () => {
       try {
-        await props.getAdministrators();
+        await getAdministrators();
       } catch (error) {
-        setErrors({ ...errors, onSaveError: error.message });
+        setErrors((i) => ({ ...i, onSaveError: error.message }));
       }
     })();
-  }, []);
+  }, [getAdministrators]);
 
   const nonRootAdmin = Object.values(props.otherAdministrator).filter(
     (admin: any, index: number) => {
@@ -219,6 +227,7 @@ const mapDispatchToProps = {
   getAdministrators,
   createAdministrator,
   deleteAdministrator,
+  updateAccount,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SettingsPage);

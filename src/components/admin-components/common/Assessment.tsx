@@ -15,12 +15,17 @@ import Modal from "../../Modal";
 import _ from "lodash";
 import PreviewQuestions from "./PreviewQuestions";
 import { AddStudentModalWindow } from "./AssessmentModalWindow";
-import { getFaculty } from "../../../redux/actions/AdministratorActions";
 import {
   facultyAlphabeticalSortFn,
   departmentAlphabeticalSortFn,
   matricDescendingSortFn,
 } from "./sortHelperFn";
+import {
+  getFaculty,
+  updateBiodata,
+} from "../../../redux/actions/AdministratorActions";
+import { TextField } from "./InputField";
+import { extendStudentTime } from "../../../api/AdministratorCalls";
 
 const Assessment = ({
   exam: examination,
@@ -31,6 +36,8 @@ const Assessment = ({
   getFaculty,
   match,
   results,
+  exams,
+  ...props
 }: any) => {
   const [student, setStudent] = useState({
     show: false,
@@ -38,6 +45,8 @@ const Assessment = ({
     department: "",
     faculty: "",
     status: 0,
+    _id: "",
+    studentId: "",
   });
   const [exam, setExam] = useState({
     status: 0,
@@ -47,6 +56,7 @@ const Assessment = ({
     _id: "",
     questions: [],
   });
+  const [extendTime, setExtendTime] = useState(0);
   const [modalData, setModalData] = useState({
     show: false,
     display: <></>,
@@ -56,9 +66,8 @@ const Assessment = ({
   const [preview, setPreview] = useState(false);
 
   useEffect(() => {
-    setExam({ ...exam, ...examination });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    setExam((exam) => ({ ...exam, ...exams[examination._id] }));
+  }, [examination, exams]);
 
   useEffect(() => {
     if (Object.values(results).length < 1 && exam.status === 2) {
@@ -87,9 +96,19 @@ const Assessment = ({
     user: any,
     department: string,
     faculty: string,
-    status: number
+    status: number,
+    _id: string,
+    studentId: string
   ) => {
-    setStudent({ show: true, user, department, faculty, status });
+    setStudent({
+      show: true,
+      user,
+      department,
+      faculty,
+      status,
+      _id,
+      studentId,
+    });
   };
 
   const studentsPendingExam = exam.bioData.filter((dta: any) => {
@@ -246,10 +265,57 @@ const Assessment = ({
         <AddStudentModalWindow
           handleModalClose={handleModalClose}
           faculty={faculty}
+          examId={exam._id}
         />
       ),
     });
   };
+
+  const handleTimeExtend = async () => {
+    try {
+      return (
+        (await extendStudentTime({
+          timeIncrease: extendTime,
+          userId: student.studentId,
+        })) &&
+        toast.success("Operation successful") &&
+        handleModalClose()
+      );
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+  const handleShowExtendModal = () => {
+    setModalData({
+      show: true,
+      display: (
+        <div className="text-center profile">
+          <h3>Extend Time</h3>
+          <TextField
+            name="timeIncrease"
+            label="Time Increment (in minutes)"
+            placeholder="0"
+            type="number"
+            handleInputs={(ev: any) => setExtendTime(ev.target.value)}
+          />
+          <div className="">
+            <button onClick={handleModalClose} className="btn btn-primary">
+              Cancel
+            </button>
+
+            <button
+              onClick={handleTimeExtend}
+              type="submit"
+              className="btn btn-primary ml-2"
+            >
+              Extend
+            </button>
+          </div>
+        </div>
+      ),
+    });
+  };
+
   return (
     <>
       <Modal show={modalData.show} handleClose={handleModalClose}>
@@ -484,7 +550,13 @@ const Assessment = ({
               </div>
             </section>
 
-            <StudentInfo student={student} setStudent={setStudent} />
+            <StudentInfo
+              student={student}
+              setStudent={setStudent}
+              updateBiodata={props.updateBiodata}
+              examId={exam._id}
+              handleShowExtendModal={handleShowExtendModal}
+            />
           </div>
         </>
       )}
@@ -496,6 +568,7 @@ function mapStateToProps(state: any) {
   return {
     results: state.results,
     faculty: state.faculty,
+    exams: state.exams,
     loading: state.apiCallsInProgress > 0,
   };
 }
@@ -504,6 +577,7 @@ const mapDispatchToProps = {
   loadUpResults,
   updateExamStatus,
   getFaculty,
+  updateBiodata,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Assessment);

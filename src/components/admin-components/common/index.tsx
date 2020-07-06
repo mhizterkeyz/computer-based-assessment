@@ -14,6 +14,7 @@ import PrintPin from "./PrintPinPage";
 import PrintResult from "./PrintResultPage";
 import FacultyPage from "../FacultyPage/FacultyPage";
 import NewAssessment from "../add-assessment/NewAssessment";
+import LiveUpdater from "./LiveUpdater";
 
 const Index = ({ administrator, VerifyAdministrator }: any) => {
   useEffect(() => {
@@ -67,6 +68,7 @@ const Index = ({ administrator, VerifyAdministrator }: any) => {
         <Route path={"/admin/new-assessment"} component={NewAssessment} />
         <Route component={AssessmentHistory} />
       </Switch>
+      <LiveUpdater></LiveUpdater>
       <ToastContainer autoClose={3000} hideProgressBar={true} />
     </Router>
   );

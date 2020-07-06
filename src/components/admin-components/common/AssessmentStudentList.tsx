@@ -1,8 +1,7 @@
 import React from "react";
+import { toast } from "react-toastify";
 
-import display_img from "../../../image/Rectangle-19.png";
-
-export const StudentList = ({ user, status, showStudent }: any) => {
+export const StudentList = ({ user, status, showStudent, _id }: any) => {
   return (
     <div
       className="dta-body"
@@ -11,7 +10,9 @@ export const StudentList = ({ user, status, showStudent }: any) => {
           user,
           user.department.department,
           user.faculty.faculty,
-          status
+          status,
+          _id,
+          user._id
         );
       }}
     >
@@ -38,7 +39,21 @@ export const StudentList = ({ user, status, showStudent }: any) => {
   );
 };
 
-export const StudentInfo = ({ student, setStudent }: any) => {
+export const StudentInfo = ({ student, setStudent, ...props }: any) => {
+  const handleRetake = async () => {
+    try {
+      return (
+        (await props.updateBiodata({
+          data: { status: 0 },
+          examId: props.examId,
+          biodataId: student._id,
+        })) && toast.success("Operation successful")
+      );
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   return (
     <section className="student-info">
       <span
@@ -66,7 +81,6 @@ export const StudentInfo = ({ student, setStudent }: any) => {
           >
             <img
               src={`http://${window.location.hostname}:8000/api/static/default.png`}
-              srcSet=""
               alt="student"
             />
           </object>
@@ -106,13 +120,15 @@ export const StudentInfo = ({ student, setStudent }: any) => {
       <div className="d-flex justify-content-between">
         <button
           className="btn btn-primary"
-          disabled={student.status === 0 || student.status === 2 ? true : false}
+          onClick={props.handleShowExtendModal}
+          disabled={student.status === 0 || student.status === 2}
         >
           Extend time
         </button>
         <button
           className="btn btn-primary"
-          disabled={student.status === 0 || student.status === 1 ? true : false}
+          onClick={handleRetake}
+          disabled={student.status === 0 || student.status === 1}
         >
           Retake
         </button>

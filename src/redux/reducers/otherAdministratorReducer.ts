@@ -6,8 +6,9 @@ export default function (
   action: { type: string; admin: any }
 ) {
   switch (action.type) {
-    case types.CREATE_ADMINISTRATOR_SUCCESS:
     case types.GET_ADMINISTRATOR_SUCCESS:
+      return action.admin;
+    case types.CREATE_ADMINISTRATOR_SUCCESS:
     case types.DELETE_ADMINISTRATOR_OPTIMISTIC:
       return { ...state, ...action.admin };
     default:
