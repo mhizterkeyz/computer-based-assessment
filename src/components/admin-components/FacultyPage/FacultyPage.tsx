@@ -14,6 +14,10 @@ import { connect } from "react-redux";
 import { toast } from "react-toastify";
 import Preloader from "../../Preloader";
 import { department } from "../../model/student";
+import {
+  facultyAlphabeticalSortFn,
+  departmentAlphabeticalSortFn,
+} from "../common/sortHelperFn";
 
 const FacultyPage = ({
   faculty,
@@ -112,9 +116,7 @@ const FacultyPage = ({
               </button>
             </div>
             {Object.values(faculty)
-              .sort((a: any, b: any) =>
-                a.faculty > b.faculty ? 1 : a.faculty < b.faculty ? -1 : 0
-              )
+              .sort(facultyAlphabeticalSortFn)
               .map((faculty: any, index: number) => {
                 return (
                   <Faculty
@@ -199,13 +201,7 @@ const Faculty = ({
       <div className="faculty__department-panel">
         <h3 className="faculty__title">Departments</h3>
         {departments
-          .sort((a: any, b: any) =>
-            a.department > b.department
-              ? 1
-              : a.department < b.department
-              ? -1
-              : 0
-          )
+          .sort(departmentAlphabeticalSortFn)
           .map((dept: any, index: number) => (
             <span
               className="d-flex align-items-center"

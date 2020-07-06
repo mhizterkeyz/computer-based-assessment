@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 // import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { TextField, SelectField } from "./InputField";
+import { facultyAlphabeticalSortFn, departmentAlphabeticalSortFn } from "./sortHelperFn";
 
 export const AddStudentModalWindow = ({ handleModalClose, faculty }: any) => {
   const [input, setInput] = useState({ faculty: null, department: "" });
@@ -10,12 +11,6 @@ export const AddStudentModalWindow = ({ handleModalClose, faculty }: any) => {
     const { name, value } = ev.target;
     setInput({ ...input, [name]: value });
   };
-
-  const facultyAlphabeticalSortFn = (a: any, b: any) =>
-    a.faculty > b.faculty ? 1 : a.faculty < b.faculty ? -1 : 0;
-
-  const departmentAlphabeticalSortFn = (a: any, b: any) =>
-    a.department > b.department ? 1 : a.department < b.department ? -1 : 0;
 
   const fac = faculty
     .sort(facultyAlphabeticalSortFn)

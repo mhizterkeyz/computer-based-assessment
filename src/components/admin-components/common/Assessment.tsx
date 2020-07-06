@@ -1,6 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { useHistory } from "react-router-dom";
 // @ts-ignore
 import Workbook from "react-excel-workbook";
 
@@ -16,6 +16,11 @@ import _ from "lodash";
 import PreviewQuestions from "./PreviewQuestions";
 import { AddStudentModalWindow } from "./AssessmentModalWindow";
 import { getFaculty } from "../../../redux/actions/AdministratorActions";
+import {
+  facultyAlphabeticalSortFn,
+  departmentAlphabeticalSortFn,
+  matricDescendingSortFn,
+} from "./sortHelperFn";
 
 const Assessment = ({
   exam: examination,
@@ -56,9 +61,6 @@ const Assessment = ({
   }, []);
 
   useEffect(() => {
-    console.log(exam);
-    console.log(exam._id !== "");
-
     if (Object.values(results).length < 1 && exam.status === 2) {
       (async () => {
         try {
@@ -81,22 +83,6 @@ const Assessment = ({
     }
   }, [student]);
 
-  // useEffect(() => {
-  //   console.log(examination._id);
-  //     (async () => {
-
-  //     if (examination.status === 2) {
-  //       try {
-  //         // debugger;
-  //         await loadUpResults(exam._id);
-  //       } catch (error) {
-  //         toast.configure();
-  //         toast.error(error.message);
-  //       }
-  //     }
-  //   })();
-  // }, []);
-
   const showStudent = (
     user: any,
     department: string,
@@ -105,8 +91,6 @@ const Assessment = ({
   ) => {
     setStudent({ show: true, user, department, faculty, status });
   };
-
-  const history = useHistory();
 
   const studentsPendingExam = exam.bioData.filter((dta: any) => {
     return dta.status === 0;
@@ -134,33 +118,18 @@ const Assessment = ({
     }
   };
 
-  // const handleViewResult = () => {
-  //   startCloseAssessmentCheck();
-  //   (async () => {
-  //     try {
-  //       await loadUpResults(exam._id);
-  //       history.push("/admin/print-result");
-  //     } catch (error) {
-  //       toast.configure();
-  //       toast.error(error.message);
-  //     }
-  //   })();
-  // };
-
   const handleDownloadPDF = () => {
     startCloseAssessmentCheck();
   };
 
-  // const handleDownloadExcel = async () => {
-  //   startCloseAssessmentCheck();
-  //   try {
-  //     await loadUpResults(exam._id);
-  //   } catch (error) {
-  //     toast.configure();
-  //     toast.error(error.message);
-  //   }
-  // };
-  if (Object.values(results).length > 0) console.log(Object.values(results));
+  if (Object.values(results).length > 0)
+    console.log(
+      Object.values(results)
+        .sort(matricDescendingSortFn)
+        .sort(facultyAlphabeticalSortFn)
+        .sort(departmentAlphabeticalSortFn)
+      // .sort(levelSortFn)
+    );
 
   const handleUpload = () => {
     startCloseAssessmentCheck();
@@ -397,14 +366,22 @@ const Assessment = ({
                   </button>
                 }
               >
-                <Workbook.Sheet data={Object.values(results)} name="Sheet A">
+                <Workbook.Sheet
+                  data={Object.values(results)
+                    .sort(matricDescendingSortFn)
+                    .sort(facultyAlphabeticalSortFn)
+                    .sort(departmentAlphabeticalSortFn)}
+                  name="Sheet A"
+                >
                   <Workbook.Column label="Name" value="name" />
                   <Workbook.Column label="Matric No." value="matric" />
                   <Workbook.Column label="Level" value="level" />
                   <Workbook.Column label="Department" value="department" />
                   <Workbook.Column label="Faculty" value="faculty" />
-                  <Workbook.Column label="CA Score" value="ca" />
+                  <Workbook.Column label="CA. Score" value="ca" />
                   <Workbook.Column label="Examination" value="exam" />
+                  <Workbook.Column label="Total" value="total" />
+                  <Workbook.Column label="Grade" value="grade" />
                 </Workbook.Sheet>
               </Workbook>
               {/* <button
