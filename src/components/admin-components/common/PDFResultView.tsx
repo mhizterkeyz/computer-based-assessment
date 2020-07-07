@@ -41,7 +41,9 @@ const ResultRowData = ({
         borderRight: "1px solid #000",
       }}
     >
-      <Text style={[styles.table_body, { width: "4%" }]}>{sn + 1}.</Text>
+      <Text style={[styles.table_body, { width: "4%", textAlign: "center" }]}>
+        {sn + 1}.
+      </Text>
       <span style={{ borderLeft: "1px solid #000" }} />
       <Text style={[styles.table_body, { width: "28%" }]}>{name}</Text>
       <span style={{ borderLeft: "1px solid #000" }} />
@@ -62,13 +64,21 @@ const ResultRowData = ({
           : department}
       </Text>
       <span style={{ borderLeft: "1px solid #000" }} />
-      <Text style={[styles.table_body, { width: "5%" }]}>{ca}</Text>
+      <Text style={[styles.table_body, { width: "5%", textAlign: "center" }]}>
+        {ca}
+      </Text>
       <span style={{ borderLeft: "1px solid #000" }} />
-      <Text style={[styles.table_body, { width: "13%" }]}>{exam}</Text>
+      <Text style={[styles.table_body, { width: "13%", textAlign: "center" }]}>
+        {exam}
+      </Text>
       <span style={{ borderLeft: "1px solid #000" }} />
-      <Text style={[styles.table_body, { width: "6%" }]}>{total}</Text>
+      <Text style={[styles.table_body, { width: "6%", textAlign: "center" }]}>
+        {total}
+      </Text>
       <span style={{ borderLeft: "1px solid #000" }} />
-      <Text style={[styles.table_body, { width: "6%" }]}>{grade}</Text>
+      <Text style={[styles.table_body, { width: "6%", textAlign: "center" }]}>
+        {grade}
+      </Text>
     </View>
   );
 };
