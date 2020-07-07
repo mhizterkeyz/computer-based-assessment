@@ -60,7 +60,6 @@ const Index = ({ administrator, VerifyAdministrator }: any) => {
           path={"/admin/running-asssesment"}
           component={RunningAssessment}
         />
-        <Route path={"/admin/add-assessment"} component={NewAssessment} />
         <Route path={"/admin/settings"} component={SettingsPage} />
         <Route path={"/admin/faculty-depts"} component={FacultyPage} />
         <Route path={"/admin/print-pin"} component={PrintPin} />

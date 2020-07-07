@@ -26,6 +26,9 @@ import {
 } from "../../../redux/actions/AdministratorActions";
 import { TextField } from "./InputField";
 import { extendStudentTime } from "../../../api/AdministratorCalls";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import { PDFResultView } from "./PDFResultView";
+import Preloader from "../../Preloader";
 
 const Assessment = ({
   exam: examination,
@@ -403,60 +406,84 @@ const Assessment = ({
             >
               Preview Questions
             </button>
+            {exam.status === 2 ? (
+              <>
+                <button
+                  className="btn btn-success"
+                  onClick={handleUpload}
+                  disabled={exam.status < 2 ? true : false}
+                >
+                  Upload Result
+                </button>
 
-            <button
-              className="btn btn-success"
-              onClick={handleUpload}
-              disabled={exam.status < 2 ? true : false}
-            >
-              Upload Result
-            </button>
-
-            <div>
-              <button
+                <div>
+                  <PDFDownloadLink
+                    document={
+                      <PDFResultView
+                        results={Object.values(results)
+                          .sort(matricDescendingSortFn)
+                          .sort(facultyAlphabeticalSortFn)
+                          .sort(departmentAlphabeticalSortFn)}
+                        examTitle={`${exam.course} - ${exam.title}`}
+                      />
+                    }
+                    fileName={`${exam.course}-${exam.title}.pdf`}
+                    className="btn btn-success"
+                    style={{color: "#fff"}}
+                    // disabled={exam.status < 2 ? true : false}
+                  >
+                    {({ blob, url, loading, error }) =>
+                      loading ? "Loading PDF Result..." : "Download Result (PDF)"
+                    }
+                  </PDFDownloadLink>
+                  {/* <button
                 className="btn btn-success"
                 onClick={handleDownloadPDF}
                 disabled={exam.status < 2 ? true : false}
               >
                 Download Result (PDF)
-              </button>
+              </button> */}
 
-              <Workbook
-                filename={`${exam.course}-${exam.title}.xlsx`}
-                element={
-                  <button
-                    className="btn btn-success ml-3"
-                    disabled={exam.status < 2 ? true : false}
+                  <Workbook
+                    filename={`${exam.course}-${exam.title}.xlsx`}
+                    element={
+                      <button
+                        className="btn btn-success ml-3"
+                        disabled={exam.status < 2 ? true : false}
+                      >
+                        Download Result (Spreadsheet)
+                      </button>
+                    }
                   >
-                    Download Result (Spreadsheet)
-                  </button>
-                }
-              >
-                <Workbook.Sheet
-                  data={Object.values(results)
-                    .sort(matricDescendingSortFn)
-                    .sort(facultyAlphabeticalSortFn)
-                    .sort(departmentAlphabeticalSortFn)}
-                  name="Sheet A"
-                >
-                  <Workbook.Column label="Name" value="name" />
-                  <Workbook.Column label="Matric No." value="matric" />
-                  <Workbook.Column label="Level" value="level" />
-                  <Workbook.Column label="Department" value="department" />
-                  <Workbook.Column label="Faculty" value="faculty" />
-                  <Workbook.Column label="CA. Score" value="ca" />
-                  <Workbook.Column label="Examination" value="exam" />
-                  <Workbook.Column label="Total" value="total" />
-                  <Workbook.Column label="Grade" value="grade" />
-                </Workbook.Sheet>
-              </Workbook>
-              {/* <button
+                    <Workbook.Sheet
+                      data={Object.values(results)
+                        .sort(matricDescendingSortFn)
+                        .sort(facultyAlphabeticalSortFn)
+                        .sort(departmentAlphabeticalSortFn)}
+                      name="Sheet A"
+                    >
+                      <Workbook.Column label="Name" value="name" />
+                      <Workbook.Column label="Matric No." value="matric" />
+                      <Workbook.Column label="Level" value="level" />
+                      <Workbook.Column label="Department" value="department" />
+                      <Workbook.Column label="Faculty" value="faculty" />
+                      <Workbook.Column label="CA. Score" value="ca" />
+                      <Workbook.Column label="Examination" value="exam" />
+                      <Workbook.Column label="Total" value="total" />
+                      <Workbook.Column label="Grade" value="grade" />
+                    </Workbook.Sheet>
+                  </Workbook>
+                  {/* <button
                 className="btn btn-success ml-3"
                 onClick={handleDownloadExcel}
               >
                 Download Result (Excel)
               </button> */}
-            </div>
+                </div>
+              </>
+            ) : (
+              <></>
+            )}
           </div>
 
           <div className="student-section">

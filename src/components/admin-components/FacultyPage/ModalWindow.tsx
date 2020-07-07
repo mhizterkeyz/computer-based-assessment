@@ -99,14 +99,6 @@ export const AddDepartmentWindow = ({
         `${input.department} Department was Successfully Added to ${faculty.faculty} Faculty`
       );
       handleModalClose();
-      /**
-       * Reload hack to update number of departments in a faculty 
-       * Workaround would have been to updtate redux without reloading page
-       * will fix later (or please fix if you find the solution)
-       */
-      setTimeout(() => {
-        window.location.reload();
-      }, 300);
     } catch (error) {
       toast.configure();
       toast.error(error.message);
