@@ -230,8 +230,8 @@ const Assessment = ({
   __data = _.orderBy(__data, "status");
   const biodata = (function biodatas(): any {
     let data: any = [];
-    let count = page * 5 + 5 > __data.length ? __data.length : page * 5 + 5;
-    for (let i = page * 5; i < count; i++) {
+    let count = page * 20 + 20 > __data.length ? __data.length : page * 20 + 20;
+    for (let i = page * 20; i < count; i++) {
       data.push(__data[i]);
     }
     return data;
@@ -239,7 +239,7 @@ const Assessment = ({
 
   const paginationArray = (() => {
     const arr = [];
-    for (let i = 0; i <= Math.floor(__data.length / 5); i++) {
+    for (let i = 0; i <= Math.floor(__data.length / 20); i++) {
       arr.push(i);
     }
     return arr;
@@ -247,7 +247,7 @@ const Assessment = ({
 
   const prev = page - 1 <= 0 ? 0 : page - 1;
   const next =
-    page + 1 >= __data.length / 5 ? Math.floor(__data.length / 5) : page + 1;
+    page + 1 >= __data.length / 20 ? Math.floor(__data.length / 20) : page + 1;
 
   useEffect(() => {
     if (Object.keys(faculty).length < 1) {

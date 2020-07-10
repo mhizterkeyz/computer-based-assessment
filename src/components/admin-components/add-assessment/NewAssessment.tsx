@@ -14,7 +14,7 @@ const NewAssessment = (props: any) => {
     displayTime: 0,
     title: "",
     course: "",
-    questionsPerStudent: 30,
+    questionsPerStudent: 35,
     examType: true,
     bioData: [
       {
@@ -86,14 +86,21 @@ const NewAssessment = (props: any) => {
   const handleSubmit = async (ev: any) => {
     ev.preventDefault();
     try {
-      const toSend = { ...inputs, questions: Object.values(inputs.questions) };
+      const toSend = {
+        ...inputs,
+        questions: Object.values(inputs.questions),
+        questionsPerStudent:
+          typeof inputs.questionsPerStudent === "string"
+            ? parseInt(inputs.questionsPerStudent)
+            : inputs.questionsPerStudent,
+      };
       await props.createExam(toSend);
       setInputs({
         timeAllowed: 0,
         displayTime: 0,
         title: "",
         course: "",
-        questionsPerStudent: 30,
+        questionsPerStudent: 35,
         examType: true,
         bioData: [
           {
@@ -198,6 +205,19 @@ const NewAssessment = (props: any) => {
                   <option>School Exam</option>
                 </select>
               </div>
+
+              <Fields.regularInput
+                className="data-col col-6"
+                label="Number of questions per Students :"
+                htmlFor="questionsPerStudent"
+                input={{
+                  type: "number",
+                  name: "questionsPerStudent",
+                  placeholder: "Enter Course Title",
+                  value: inputs.questionsPerStudent,
+                  onChange: handleRegularInputs,
+                }}
+              />
             </div>
           </fieldset>
 
