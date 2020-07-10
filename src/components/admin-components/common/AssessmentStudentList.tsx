@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 export const StudentList = ({ user, status, showStudent, _id }: any) => {
@@ -39,7 +39,26 @@ export const StudentList = ({ user, status, showStudent, _id }: any) => {
   );
 };
 
-export const StudentInfo = ({ student, setStudent, ...props }: any) => {
+export const StudentInfo = ({
+  student: stud,
+  setStudent: setStud,
+  ...props
+}: any) => {
+  const [student, setStudent] = useState({
+    status: 0,
+    _id: "",
+    user: {
+      name: "",
+      matric: "",
+      level: "",
+    },
+    department: "",
+    faculty: "",
+  });
+
+  useEffect(() => {
+    setStudent((i) => ({ ...i, ...stud }));
+  }, [stud]);
   const handleRetake = async () => {
     try {
       return (
@@ -138,7 +157,7 @@ export const StudentInfo = ({ student, setStudent, ...props }: any) => {
 
       <button
         className="cancel-btn"
-        onClick={() => setStudent({ ...student, show: false })}
+        onClick={() => setStud({ ...student, show: false })}
       >
         &times;
       </button>
