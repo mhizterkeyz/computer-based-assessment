@@ -126,16 +126,27 @@ const AssessmentHistory = (props: any) => {
                 >
                   Prev
                 </span>
-                {paginationArray.map((elem: number, i: number) => {
-                  return (
-                    <span
-                      onClick={() => setPage(elem)}
-                      className={`btn link ${elem === page ? "active" : ""}`}
-                      key={`pagination_link_${i}`}
-                    >
-                      {elem + 1}
-                    </span>
-                  );
+                {paginationArray.map((i: number) => {
+                  if (
+                    i === 0 ||
+                    i === paginationArray.length - 1 ||
+                    i + 1 === page ||
+                    i - 1 === page
+                  ) {
+                    return (
+                      <span
+                        onClick={() => setPage(i)}
+                        className={`btn link ${i === page ? "active" : ""}`}
+                        key={`pagination_link_${i}`}
+                      >
+                        {i + 1}
+                      </span>
+                    );
+                  }
+                  if (i === page - 2 || i === page + 2) {
+                    return <>&hellip;</>;
+                  }
+                  return "";
                 })}
                 <span
                   onClick={() => setPage(next)}

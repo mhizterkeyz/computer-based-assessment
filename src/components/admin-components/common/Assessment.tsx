@@ -70,6 +70,19 @@ const Assessment = ({
 
   useEffect(() => {
     setExam((exam) => ({ ...exam, ...exams[examination._id] }));
+    let stud =
+      exams[examination._id].bioData.find(
+        (elem: any) => elem.user._id === student.studentId
+      ) || {};
+    stud.faculty = (stud.user && stud.user.faculty.faculty) || student.faculty;
+    stud.department =
+      (stud.user && stud.user.department.department) || student.faculty;
+    stud.studentId = (stud.user && stud.user._id) || student.studentId;
+
+    setStudent((i) => ({
+      ...i,
+      ...stud,
+    }));
   }, [examination, exams]);
 
   useEffect(() => {
@@ -143,15 +156,6 @@ const Assessment = ({
   const handleDownloadPDF = () => {
     startCloseAssessmentCheck();
   };
-
-  if (Object.values(results).length > 0)
-    console.log(
-      Object.values(results)
-        .sort(matricDescendingSortFn)
-        .sort(facultyAlphabeticalSortFn)
-        .sort(departmentAlphabeticalSortFn)
-      // .sort(levelSortFn)
-    );
 
   const handleUpload = () => {
     startCloseAssessmentCheck();
@@ -429,11 +433,13 @@ const Assessment = ({
                     }
                     fileName={`${exam.course}-${exam.title}.pdf`}
                     className="btn btn-success"
-                    style={{color: "#fff"}}
+                    style={{ color: "#fff" }}
                     // disabled={exam.status < 2 ? true : false}
                   >
                     {({ blob, url, loading, error }) =>
-                      loading ? "Loading PDF Result..." : "Download Result (PDF)"
+                      loading
+                        ? "Loading PDF Result..."
+                        : "Download Result (PDF)"
                     }
                   </PDFDownloadLink>
                   {/* <button
@@ -555,16 +561,27 @@ const Assessment = ({
                 >
                   Prev
                 </span>
-                {paginationArray.map((elem: number, i: number) => {
-                  return (
-                    <span
-                      onClick={() => setPage(elem)}
-                      className={`btn link ${elem === page ? "active" : ""}`}
-                      key={`pagination_link_${i}`}
-                    >
-                      {elem + 1}
-                    </span>
-                  );
+                {paginationArray.map((i: number) => {
+                  if (
+                    i === 0 ||
+                    i === paginationArray.length - 1 ||
+                    i + 1 === page ||
+                    i - 1 === page
+                  ) {
+                    return (
+                      <span
+                        onClick={() => setPage(i)}
+                        className={`btn link ${i === page ? "active" : ""}`}
+                        key={`pagination_link_${i}`}
+                      >
+                        {i + 1}
+                      </span>
+                    );
+                  }
+                  if (i === page - 2 || i === page + 2) {
+                    return <>&hellip;</>;
+                  }
+                  return "";
                 })}
                 <span
                   onClick={() => setPage(next)}
