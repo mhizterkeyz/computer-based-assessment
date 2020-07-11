@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { getBioData } from "../../../api/AdministratorCalls";
 import { toast } from "react-toastify";
 
@@ -6,6 +6,30 @@ import { toBase64 } from "./Functionality";
 
 const BioData = (props: any) => {
   const { setInputs, inputs } = props;
+  const [bioData, setBiodata] = useState([
+    {
+      matric: "",
+      name: "",
+      department: "",
+      level: "",
+      ca: 0,
+    },
+  ]);
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    const toSpread: any = inputs.bioData.reduce(
+      (acc: any, cur: any, i: number) => {
+        if (acc.length >= 5 || i < (page - 1) * 5) {
+          return acc;
+        }
+        return [...acc, cur];
+      },
+      []
+    );
+    setBiodata(toSpread);
+  }, [inputs, setBiodata, page]);
+
   const handleFileUpload = async (ev: any) => {
     const { files } = ev.target;
     try {
@@ -43,12 +67,15 @@ const BioData = (props: any) => {
     });
   };
   const handleBioData = (row: number, name: string, value: string | number) => {
-    const newData = { ...inputs.bioData[row], [name]: value };
     const arr = inputs.bioData;
-    arr.splice(row, 1);
-    setInputs({ ...inputs, bioData: [newData, ...arr] });
+    arr[row][name] = value;
+    setInputs({ ...inputs, bioData: arr });
   };
-
+  let pages = Math.floor(inputs.bioData.length / 5);
+  pages +=
+    parseInt((inputs.bioData.length / 5).toFixed(2).split(".")[1] + "") > 0
+      ? 1
+      : 0;
   return (
     <fieldset className="new-assessment__fieldset">
       <legend className="new-assessment__legend">Students information</legend>
@@ -84,20 +111,46 @@ const BioData = (props: any) => {
               +
             </button>
           </div>
+
+          <div>
+            <span
+              className="btn btn-primary new-assessment__nav-ques"
+              onClick={(ev) => {
+                const prev = page - 1 < 1 ? 1 : page - 1;
+                setPage(prev);
+              }}
+            >
+              prev
+            </span>
+            <span className="ml-2 mr-2">{`${page}/${pages}`}</span>
+            <span
+              onClick={(ev) => {
+                const next = page + 1 > pages ? pages : page + 1;
+                setPage(next);
+              }}
+              className="btn btn-primary new-assessment__nav-ques"
+            >
+              next
+            </span>
+          </div>
         </div>
 
         <fieldset className="new-assessment__fieldset">
-          {inputs.bioData.map((elem: any, index: number) => {
+          {bioData.map((elem: any, index: number) => {
             return (
               <div className="row" key={`biodata_row_${index}`}>
                 <div className="col-2 d-flex flex-column new-assessment__student-data">
                   <label>Matric No:</label>
                   <input
                     type="text"
-                    value={inputs.bioData[index].matric}
+                    value={bioData[index].matric}
                     name="matric"
                     onChange={(ev) =>
-                      handleBioData(index, ev.target.name, ev.target.value)
+                      handleBioData(
+                        (page - 1) * 5 + index,
+                        ev.target.name,
+                        ev.target.value
+                      )
                     }
                     className="new-assessment__course-input"
                   />
@@ -105,11 +158,15 @@ const BioData = (props: any) => {
                 <div className="col-3 d-flex flex-column new-assessment__student-data">
                   <label>Name:</label>
                   <input
-                    value={inputs.bioData[index].name}
+                    value={bioData[index].name}
                     type="text"
                     name="name"
                     onChange={(ev) =>
-                      handleBioData(index, ev.target.name, ev.target.value)
+                      handleBioData(
+                        (page - 1) * 5 + index,
+                        ev.target.name,
+                        ev.target.value
+                      )
                     }
                     className="new-assessment__course-input"
                   />
@@ -118,10 +175,14 @@ const BioData = (props: any) => {
                   <label>Department:</label>
                   <input
                     type="text"
-                    value={inputs.bioData[index].department}
+                    value={bioData[index].department}
                     name="department"
                     onChange={(ev) =>
-                      handleBioData(index, ev.target.name, ev.target.value)
+                      handleBioData(
+                        (page - 1) * 5 + index,
+                        ev.target.name,
+                        ev.target.value
+                      )
                     }
                     className="new-assessment__course-input"
                   />
@@ -132,9 +193,13 @@ const BioData = (props: any) => {
                   <select
                     name="level"
                     onChange={(ev) =>
-                      handleBioData(index, ev.target.name, ev.target.value)
+                      handleBioData(
+                        (page - 1) * 5 + index,
+                        ev.target.name,
+                        ev.target.value
+                      )
                     }
-                    value={inputs.bioData[index].level}
+                    value={bioData[index].level}
                     className="new-assessment__course-input"
                   >
                     <option value="100">100</option>
@@ -150,10 +215,14 @@ const BioData = (props: any) => {
                   <input
                     type="number"
                     onChange={(ev) =>
-                      handleBioData(index, ev.target.name, ev.target.value)
+                      handleBioData(
+                        (page - 1) * 5 + index,
+                        ev.target.name,
+                        ev.target.value
+                      )
                     }
                     style={{ paddingRight: "0px", paddingLeft: "7px" }}
-                    value={inputs.bioData[index].ca}
+                    value={bioData[index].ca}
                     name="ca"
                     className="new-assessment__course-input"
                   />
@@ -172,7 +241,7 @@ const BioData = (props: any) => {
                     }}
                     onClick={() => {
                       const arr = inputs.bioData;
-                      arr.splice(index, 1);
+                      arr.splice((page - 1) * 5 + index, 1);
                       setInputs({ ...inputs, bioData: arr });
                     }}
                   >
