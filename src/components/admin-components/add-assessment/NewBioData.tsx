@@ -61,9 +61,23 @@ const BioData = (props: any) => {
       });
       return;
     }
+    const t = Array.isArray(arr)
+      ? arr.reduce((acc: any, cur: any) => {
+          if (
+            typeof cur.matric !== "string" ||
+            typeof cur.name !== "string" ||
+            typeof cur.department !== "string" ||
+            isNaN(parseInt(cur.level)) ||
+            isNaN(parseInt(cur.ca))
+          ) {
+            return acc;
+          }
+          return [...acc, cur];
+        }, [])
+      : [];
     setInputs({
       ...inputs,
-      bioData: [...arr, ...inputs.bioData],
+      bioData: [...t, ...inputs.bioData],
     });
   };
   const handleBioData = (row: number, name: string, value: string | number) => {
@@ -138,7 +152,14 @@ const BioData = (props: any) => {
         <fieldset className="new-assessment__fieldset">
           {bioData.map((elem: any, index: number) => {
             return (
-              <div className="row" key={`biodata_row_${index}`}>
+              <div
+                className="row"
+                style={{ position: "relative" }}
+                key={`biodata_row_${index}`}
+              >
+                <span style={{ position: "absolute", left: "-10px" }}>
+                  {(page - 1) * 5 + index}.
+                </span>
                 <div className="col-2 d-flex flex-column new-assessment__student-data">
                   <label>Matric No:</label>
                   <input

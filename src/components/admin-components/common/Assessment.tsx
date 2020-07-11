@@ -564,6 +564,7 @@ const Assessment = ({
                 {paginationArray.map((i: number) => {
                   if (
                     i === 0 ||
+                    i === page ||
                     i === paginationArray.length - 1 ||
                     i + 1 === page ||
                     i - 1 === page
