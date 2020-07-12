@@ -13,12 +13,8 @@ const AssessmentHistory = (props: any) => {
   const [assessment, setAssessment] = useState({ show: false, exam: "" });
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
+  const [ahhh, setAhhh] = useState([]);
   let { exams, loadUpExams } = props;
-
-  // if (window.location.pathname !== "/admin/history") {
-  //   props.history.push("/admin/history");
-  // }
-
   useEffect(() => {
     if (Object.keys(exams).length < 1) {
       (async () => {
@@ -29,30 +25,37 @@ const AssessmentHistory = (props: any) => {
         }
       })();
     }
+    setAhhh(_.orderBy(Object.values(exams), "status"));
   }, [exams, loadUpExams]);
+  useEffect(() => {
+    if (search.length > 0) {
+      const searchResult: any = Object.values(
+        _.orderBy(Object.values(exams), "status")
+      ).reduce((acc: any, cur: any) => {
+        let { status, createdAt } = cur;
+        let date = new Date(createdAt);
+        createdAt = `${date.getDate()}-${date.getMonth()}-${date.getFullYear}`;
+        status = status === 0 ? "pending" : status === 1 ? "running" : "closed";
+        if (
+          cur.title.toLowerCase().indexOf(search.toLowerCase()) !== -1 ||
+          createdAt.toLowerCase().indexOf(search.toLowerCase()) !== -1 ||
+          status.toLowerCase().indexOf(search.toLowerCase()) !== -1
+        ) {
+          return [...acc, cur];
+        }
+        return acc;
+      }, []);
+      setAhhh(searchResult);
+    }
+  }, [search, exams]);
 
   const onClickShowExamination = (show: boolean, exam: any) => {
     setAssessment({ ...assessment, show: show, exam: exam });
   };
 
-  exams = _.orderBy(Object.values(props.exams), "status");
-  if (search.length > 0) {
-    exams = Object.values(exams).filter((elem: any) => {
-      let { status, createdAt } = elem;
-      let date = new Date(elem.createdAt);
-      createdAt = `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`;
-      status = status === 0 ? "pending" : status === 1 ? "running" : "closed";
-      return (
-        elem.title.toLowerCase().indexOf(search.toLowerCase()) !== -1 ||
-        createdAt.toLowerCase().indexOf(search.toLowerCase()) !== -1 ||
-        status.toLowerCase().indexOf(search.toLowerCase()) !== -1
-      );
-    });
-  }
-
   const paginationArray = (() => {
     const arr = [];
-    for (let i = 0; i <= Math.floor(Object.keys(exams).length / 10); i++) {
+    for (let i = 0; i <= Math.floor(Object.keys(ahhh).length / 10); i++) {
       arr.push(i);
     }
     return arr;
@@ -60,17 +63,22 @@ const AssessmentHistory = (props: any) => {
 
   const prev = page - 1 <= 0 ? 0 : page - 1;
   const next =
-    page + 1 >= Object.keys(exams).length / 10
-      ? Math.floor(Object.keys(exams).length / 10)
+    page + 1 >= Object.keys(ahhh).length / 10
+      ? Math.floor(Object.keys(ahhh).length / 10)
       : page + 1;
   const orderedExams = (function biodatas(): any {
     let data: any = [];
     let count =
-      page * 10 + 10 > Object.keys(exams).length
-        ? Object.keys(exams).length
+      page * 10 + 10 > Object.keys(ahhh).length
+        ? Object.keys(ahhh).length
         : page * 10 + 10;
     for (let i = page * 10; i < count; i++) {
-      data.push(exams[i]);
+      data.push(
+        Object.values(ahhh).reduce((acc: any, cur: any, index: number) => {
+          if (index === i) return cur;
+          return acc;
+        }, {})
+      );
     }
     return data;
   })();
@@ -145,7 +153,7 @@ const AssessmentHistory = (props: any) => {
                     );
                   }
                   if (i === page - 2 || i === page + 2) {
-                    return <>&hellip;</>;
+                    return <span key={`pagination_link_${i}`}>&hellip;</span>;
                   }
                   return "";
                 })}

@@ -28,7 +28,6 @@ import { TextField } from "./InputField";
 import { extendStudentTime } from "../../../api/AdministratorCalls";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { PDFResultView } from "./PDFResultView";
-import Preloader from "../../Preloader";
 
 const Assessment = ({
   exam: examination,
@@ -153,9 +152,9 @@ const Assessment = ({
     }
   };
 
-  const handleDownloadPDF = () => {
-    startCloseAssessmentCheck();
-  };
+  // const handleDownloadPDF = () => {
+  //   startCloseAssessmentCheck();
+  // };
 
   const handleUpload = () => {
     startCloseAssessmentCheck();
@@ -215,10 +214,10 @@ const Assessment = ({
   };
   let __data = exam.bioData;
   if (search.length > 0) {
-    __data = __data.filter((elem: any) => {
+    __data = __data.reduce((acc: any, elem: any) => {
       let { status } = elem;
       status = status === 0 ? "pending" : status === 1 ? "running" : "closed";
-      return (
+      if (
         elem.user.name.toLowerCase().indexOf(search.toLowerCase()) !== -1 ||
         elem.user.matric.toLowerCase().indexOf(search.toLowerCase()) !== -1 ||
         elem.user.department.department
@@ -228,8 +227,10 @@ const Assessment = ({
           .toLowerCase()
           .indexOf(search.toLowerCase()) !== -1 ||
         status.toLowerCase().indexOf(search.toLowerCase()) !== -1
-      );
-    });
+      )
+        return [...acc, elem];
+      return acc;
+    }, []);
   }
   __data = _.orderBy(__data, "status");
   const biodata = (function biodatas(): any {
@@ -580,7 +581,7 @@ const Assessment = ({
                     );
                   }
                   if (i === page - 2 || i === page + 2) {
-                    return <>&hellip;</>;
+                    return <span key={`pagination_link_${i}`}>&hellip;</span>;
                   }
                   return "";
                 })}
