@@ -140,7 +140,6 @@ export const updateExamStatus = (exam_id: string, exam_status: any) => {
   return async (dispatch: any) => {
     try {
       dispatch(beginApiCall());
-      debugger;
       const exam = await Api.updateExamstatus(exam_id, exam_status);
       return dispatch(updateExamStatusSuccess(exam));
     } catch (error) {
