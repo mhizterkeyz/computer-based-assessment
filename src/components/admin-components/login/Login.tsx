@@ -29,11 +29,13 @@ const Login = (props: any) => {
       await props.SignInAdmin(inputs);
     } catch (error) {
       if (error.name === "Unauthorized") {
-        toast.error(`Error: ${error.message}`);
+        toast.error(`Invalid Username or password`, { position: "top-center" });
         setBusy(false);
         return setInputs({ ...inputs, password: "", invalid: true });
       }
-      toast.error(`Network error: ${error.message}`);
+      toast.error(`Network error: ${error.message}`, {
+        position: "top-center",
+      });
       setBusy(false);
     }
   };
