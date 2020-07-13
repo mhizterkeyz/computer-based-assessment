@@ -70,19 +70,6 @@ const Assessment = ({
 
   useEffect(() => {
     setExam((exam) => ({ ...exam, ...exams[examination._id] }));
-    let stud =
-      exams[examination._id].bioData.find(
-        (elem: any) => elem.user._id === student.studentId
-      ) || {};
-    stud.faculty = (stud.user && stud.user.faculty.faculty) || student.faculty;
-    stud.department =
-      (stud.user && stud.user.department.department) || student.faculty;
-    stud.studentId = (stud.user && stud.user._id) || student.studentId;
-
-    setStudent((i) => ({
-      ...i,
-      ...stud,
-    }));
   }, [examination, exams]);
 
   useEffect(() => {
@@ -91,8 +78,7 @@ const Assessment = ({
         try {
           await loadUpResults(exam._id);
         } catch (error) {
-          toast.configure();
-          toast.error(error.message);
+          toast.error(error.message, { position: "top-center" });
         }
       })();
     }
@@ -141,49 +127,71 @@ const Assessment = ({
 
   const startCloseAssessmentCheck = () => {
     if (exam.status === 0) {
-      toast.configure();
-      toast.warning("No available result yet, Start Assessment first");
+      toast.warning("No available result yet, Start Assessment first", { position: "top-center" });
       return;
     }
 
     if (exam.status === 1) {
-      toast.configure();
-      toast.warning("You have to close this Assessment first");
+      toast.warning("You have to close this Assessment first", { position: "top-center" });
       return;
     }
   };
 
-  const handleDownloadPDF = () => {
-    startCloseAssessmentCheck();
-  };
+  // const handleDownloadPDF = () => {
+  //   startCloseAssessmentCheck();
+  // };
+
+  if (Object.values(results).length > 0)
+    console.log(
+      Object.values(results)
+        .sort(matricDescendingSortFn)
+        .sort(facultyAlphabeticalSortFn)
+        .sort(departmentAlphabeticalSortFn)
+      // .sort(levelSortFn)
+    );
 
   const handleUpload = () => {
     startCloseAssessmentCheck();
   };
 
+  const setRunningAssessment = async () => {
+    await updateExamStatus(exam._id, { status: 1 });
+    setExam({ ...exam, status: 1 });
+  };
+
   const handleStartAssessment = async () => {
     try {
-      toast.configure();
-      await updateExamStatus(exam._id, { status: 1 });
-      setExam({ ...exam, status: 1 });
-      toast.success("Assessment started");
+      setRunningAssessment();
+      toast.success("Assessment started", {
+        position: "top-center",
+      });
     } catch (error) {
-      toast.configure();
-      toast.error(error.message);
+      toast.error(error.message, { position: "top-center" });
     }
   };
 
   const handleCloseAssessment = async () => {
     try {
-      toast.configure();
       await updateExamStatus(exam._id, { status: 2 });
       await loadUpResults(exam._id);
       setExam({ ...exam, status: 2 });
-      toast.success("Assessment Closed");
+      toast.success("Assessment Closed", {
+        position: "top-center",
+      });
       setModalData({ ...modalData, show: false });
     } catch (error) {
-      toast.configure();
-      toast.error(error.message);
+      toast.error(error.message, { position: "top-center" });
+    }
+  };
+
+  const handleReopenAssessment = async () => {
+    try {
+      setRunningAssessment();
+      toast.success("Assessment Reopened!", {
+        position: "top-center",
+      });
+    } catch (error) {
+      toast.error(error.message, { position: "top-center" });
     }
   };
 
@@ -285,11 +293,13 @@ const Assessment = ({
           timeIncrease: extendTime,
           userId: student.studentId,
         })) &&
-        toast.success("Operation successful") &&
+        toast.success("Operation successful", {
+          position: "top-center",
+        }) &&
         handleModalClose()
       );
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.message, { position: "top-center" });
     }
   };
   const handleShowExtendModal = () => {
@@ -514,7 +524,17 @@ const Assessment = ({
                     style={{ fontFamily: "Poppins, icomoon" }}
                   />
                 </form>
-                <div>
+                <div className="d-flex justify-content-between">
+                  {exam.status === 2 ? (
+                    <button
+                      className="mr-3 btn btn-primary"
+                      // disabled={exam.status !== 0}
+                      onClick={handleReopenAssessment}
+                    >
+                      Reopen Assesment
+                    </button>
+                  ) : null}
+
                   <button
                     className="mr-3 btn btn-primary"
                     disabled={exam.status !== 0}
@@ -561,27 +581,16 @@ const Assessment = ({
                 >
                   Prev
                 </span>
-                {paginationArray.map((i: number) => {
-                  if (
-                    i === 0 ||
-                    i === paginationArray.length - 1 ||
-                    i + 1 === page ||
-                    i - 1 === page
-                  ) {
-                    return (
-                      <span
-                        onClick={() => setPage(i)}
-                        className={`btn link ${i === page ? "active" : ""}`}
-                        key={`pagination_link_${i}`}
-                      >
-                        {i + 1}
-                      </span>
-                    );
-                  }
-                  if (i === page - 2 || i === page + 2) {
-                    return <>&hellip;</>;
-                  }
-                  return "";
+                {paginationArray.map((elem: number, i: number) => {
+                  return (
+                    <span
+                      onClick={() => setPage(elem)}
+                      className={`btn link ${elem === page ? "active" : ""}`}
+                      key={`pagination_link_${i}`}
+                    >
+                      {elem + 1}
+                    </span>
+                  );
                 })}
                 <span
                   onClick={() => setPage(next)}

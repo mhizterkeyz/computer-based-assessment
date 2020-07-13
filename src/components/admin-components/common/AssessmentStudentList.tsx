@@ -66,10 +66,12 @@ export const StudentInfo = ({
           data: { status: 0 },
           examId: props.examId,
           biodataId: student._id,
-        })) && toast.success("Operation successful")
+        })) && toast.success("Operation successful",{
+          position: "top-center"
+        })
       );
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.message, { position: "top-center" });
     }
   };
 

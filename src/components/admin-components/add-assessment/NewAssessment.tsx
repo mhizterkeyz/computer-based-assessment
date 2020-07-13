@@ -129,10 +129,14 @@ const NewAssessment = (props: any) => {
         },
         instructions: "",
       });
-      toast.success("Exam added successfully!");
+      toast.success("Exam added successfully!",{
+        position: "top-center"
+      });
       props.history.push("history");
     } catch (error) {
-      toast.error(`Try that again: ${error.message}`);
+      toast.error(`Try that again: ${error.message}`,{
+        position: "top-center"
+      });
     }
   };
 

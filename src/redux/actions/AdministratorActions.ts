@@ -97,6 +97,7 @@ export function SignInAdmin({ username, password }: any) {
   return async (dispatch: any) => {
     try {
       dispatch(beginApiCall());
+      debugger;
       const administrator = await Api.loginAdministrator({
         username,
         password,

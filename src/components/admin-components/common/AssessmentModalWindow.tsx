@@ -28,11 +28,13 @@ export const AddStudentModalWindow = ({
       delete toSubmit.faculty;
       return (
         (await props.addBiodata({ toSend: toSubmit, examId: props.examId })) &&
-        toast.success("Student added successfully") &&
+        toast.success("Student added successfully",{
+          position: "top-center"
+        }) &&
         handleModalClose()
       );
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.message, { position: "top-center" });
     }
   };
 

@@ -101,7 +101,7 @@ const QuestionPage = (props: any) => {
         try {
           await loadStudentExamination();
         } catch (error) {
-          toast.error(`Error: ${error.message}`);
+          toast.error(`Error: ${error.message}`, { position: "top-center" });
         }
       })();
     }
@@ -141,7 +141,7 @@ const QuestionPage = (props: any) => {
             return window.location.reload();
           }
         } catch (error) {
-          toast.error("Error: " + error.message);
+          toast.error("Error: " + error.message, { position: "top-center" });
         }
       })();
 
@@ -235,7 +235,7 @@ const QuestionPage = (props: any) => {
       }
       throw new Error("an unexpected error has occurred");
     } catch (error) {
-      toast.error(`Error: ${error.message}`);
+      toast.error(`Error: ${error.message}`, { position: "top-center" });
     }
   };
 
@@ -310,7 +310,7 @@ const QuestionPage = (props: any) => {
                       );
                       return (
                         <div key={`${question._id}_opt_${opt}`}>
-                          <label>
+                          <label style={{ textTransform: "capitalize" }}>
                             {opt.toUpperCase()}.
                             <input
                               type="radio"

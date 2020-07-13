@@ -21,8 +21,10 @@ const parseResponseError = ({ res, status, statusText }: any) => {
 
 export const loginAdministrator = async ({ username, password }: any) => {
   const req = await api.body({ username, password }).post(`${apiUrl}/signin`);
+  debugger;
   const { statusText, status } = req;
   const res = await req.json();
+  debugger;
   parseResponseError({ res, status, statusText });
   localStorage["jwt"] = res.data.accessToken;
   localStorage["route"] = "administrator";

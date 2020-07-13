@@ -2,13 +2,13 @@ header {
   margin-block-start: 2rem;
   text-align: center;
 
-  >div {
+  > div {
     border-radius: 15px;
     // padding: 1rem;
   }
-  img {
-    // margin-inline-end: 54px;
-  }
+  // img {
+  //   // margin-inline-end: 54px;
+  // }
 
   h1,
   h2 {
@@ -45,7 +45,6 @@ footer {
     color: #4f4f4f;
   }
 }
-
 
 section.login {
   width: 95%;
@@ -97,9 +96,9 @@ section.login {
       color: #333333;
     }
 
-    input:focus {
-      // opacity: 0.33;
-    }
+    // input:focus {
+    //   // opacity: 0.33;
+    // }
 
     input[type="submit"] {
       font-weight: 600;
@@ -110,11 +109,20 @@ section.login {
       margin-block-start: 2.6rem;
       color: #ffffff;
       border: none;
-      background: #4180FE;
+      background: #4180fe;
       border-radius: 4px;
     }
   }
 }
- .btn {
-   border-radius: 0;
- }
+.btn {
+  border-radius: 0;
+}
+
+.Toastify__toast-container--top-center {
+  text-align: center !important;
+}
+
+.Toastify__toast {
+  border-radius: 12px !important;
+  box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.1);
+}

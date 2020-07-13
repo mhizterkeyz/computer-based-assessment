@@ -39,8 +39,7 @@ const FacultyPage = ({
         try {
           await getFaculty();
         } catch (error) {
-          toast.configure();
-          toast.error(`Error: ${error.message}`);
+          toast.error(`Error: ${error.message}`, { position: "top-center" });
         }
       })();
     }
@@ -186,9 +185,11 @@ const Faculty = ({
             onClick={async () => {
               try {
                 await onDeleteClick(faculty._id);
-                toast.success("Faculty deleted");
+                toast.success("Faculty deleted",{
+        position: "top-center"
+      });
               } catch (error) {
-                toast.error(error.message);
+                toast.error(error.message, { position: "top-center" });
               }
             }}
             className="btn btn-light faculty__btn"
@@ -212,9 +213,11 @@ const Faculty = ({
                 onClick={async () => {
                   try {
                     await onDepartmentDelete(dept._id, faculty._id);
-                    toast.success("Department deleted");
+                    toast.success("Department deleted",{
+                      position: "top-center"
+                    });
                   } catch (error) {
-                    toast.error(error.message);
+                    toast.error(error.message, { position: "top-center" });
                   }
                 }}
                 className="btn btn-light ml-auto faculty__btn"

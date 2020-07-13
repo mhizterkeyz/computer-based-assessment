@@ -13,7 +13,9 @@ const BioData = (props: any) => {
       const obj = await getBioData(file);
       addRow(obj);
     } catch (error) {
-      toast.error(`Error: ${error.message}`);
+      toast.error(`Error: ${error.message}`,{
+        position: "top-center"
+      });
     }
   };
   const addRow = (

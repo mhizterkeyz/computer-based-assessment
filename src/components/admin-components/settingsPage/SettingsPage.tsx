@@ -38,14 +38,14 @@ const Admin = ({ name, username, email, deleteAdministrator, _id }: any) => {
         onClick={async () => {
           try {
             await deleteAdministrator(_id);
-            toast.configure();
-            toast.success(`${name} deleted successfully`);
+            toast.success(`${name} deleted successfully`,{
+              position: "top-center"
+            });
             setTimeout(() => {
               window.location.reload();
             }, 500);
           } catch (error) {
-            toast.configure();
-            toast.error(error.message);
+            toast.error(error.message, { position: "top-center" });
           }
         }}
       >
@@ -92,7 +92,9 @@ const SettingsPage = (props: any) => {
       try {
         return (
           (await props.updateAccount(updatedProfile)) &&
-          toast.success("Account updated") &&
+          toast.success("Account updated",{
+            position: "top-center"
+          }) &&
           handleModalClose()
         );
       } catch (error) {

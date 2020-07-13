@@ -39,7 +39,7 @@ const InstructionPage = () => {
         }
         throw new Error("An unexpected error has occurred");
       } catch (error) {
-        toast.error(`Error: ${error.message}`);
+        toast.error(`Error: ${error.message}`, { position: "top-center" });
       }
     })();
   }, []);

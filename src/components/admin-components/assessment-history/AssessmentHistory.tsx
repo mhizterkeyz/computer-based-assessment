@@ -25,7 +25,9 @@ const AssessmentHistory = (props: any) => {
         try {
           await loadUpExams();
         } catch (error) {
-          toast.error(`Error: ${error.message}`);
+          toast.error(`Error: ${error.message}`,{
+            position: "top-center"
+          });
         }
       })();
     }

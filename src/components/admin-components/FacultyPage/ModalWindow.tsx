@@ -23,19 +23,18 @@ export const AddFacultyWindow = ({
             .indexOf(input.faculty.toLowerCase().split(" ")[0]) !== -1
       ).length > 0
     ) {
-      toast.configure();
-      toast.warning(`${input.faculty} Faculty Exists`);
+      toast.warning(`${input.faculty} Faculty Exists`, { position: "top-center" });
       return;
     }
 
     try {
       await createFaculty(input.faculty);
-      toast.configure();
-      toast.success(`${input.faculty} Faculty was Successfully Added`);
+      toast.success(`${input.faculty} Faculty was Successfully Added`, {
+        position: "top-center",
+      });
       handleModalClose();
     } catch (error) {
-      toast.configure();
-      toast.error(error.message);
+      toast.error(error.message, { position: "top-center" });
     }
   };
 
@@ -82,26 +81,24 @@ export const AddDepartmentWindow = ({
     const { name, value } = ev.target;
     setInput({ ...input, [name]: value });
   };
-  const handleCreateDepartment = async () => {  
+  const handleCreateDepartment = async () => {
     if (
       faculty.departments.filter((a: any) => a.department === input.department)
         .length > 0
     ) {
-      toast.configure();
-      toast.warning(`${input.department} Department Exists`);
+      toast.warning(`${input.department} Department Exists`, { position: "top-center" });
       return;
     }
 
     try {
       await createDepartment(faculty._id, input.department);
-      toast.configure();
       toast.success(
-        `${input.department} Department was Successfully Added to ${faculty.faculty} Faculty`
+        `${input.department} Department was Successfully Added to ${faculty.faculty} Faculty`,
+        { position: "top-center" }
       );
       handleModalClose();
     } catch (error) {
-      toast.configure();
-      toast.error(error.message);
+      toast.error(error.message, { position: "top-center" });
     }
   };
 

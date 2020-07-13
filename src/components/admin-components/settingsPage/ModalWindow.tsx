@@ -133,14 +133,14 @@ export const AddAdminModalWindow = ({
           (async () => {
             try {
               await createAdministrator(input);
-              toast.configure();
-              toast.success("Admin Successfully Created");
+              toast.success("Admin Successfully Created", {
+                position: "top-center",
+              });
               setTimeout(() => {
                 window.location.reload();
               }, 500);
             } catch (error) {
-              toast.configure();
-              toast.error(error.message);
+              toast.error(error.message, { position: "top-center" });
             }
           })();
         }}
@@ -220,14 +220,14 @@ export const GeneratePinModalWindow = ({
             try {
               const count = parseInt(input.count);
               await createPin({ count });
-              toast.configure();
-              toast.success("Pin Successfully Created");
+              toast.success("Pin Successfully Created", {
+                position: "top-center",
+              });
               setTimeout(() => {
                 history.push("/admin/print-pin");
               }, 500);
             } catch (error) {
-              toast.configure();
-              toast.error(error.message);
+              toast.error(error.message, { position: "top-center" });
             }
           })();
         }}

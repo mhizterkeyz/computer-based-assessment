@@ -175,7 +175,9 @@ const Questions = (props: any) => {
         },
       });
     } catch (error) {
-      toast.error(`Error: ${error.message}`);
+      toast.error(`Error: ${error.message}`,{
+        position: "top-center"
+      });
     }
     ev.target.value = "";
   };
@@ -202,7 +204,9 @@ const Questions = (props: any) => {
       const img = await getQuestions(file);
       addRow(img);
     } catch (error) {
-      toast.error(`Error: ${error.message}`);
+      toast.error(`Error: ${error.message}`,{
+        position: "top-center"
+      });
     }
   };
 

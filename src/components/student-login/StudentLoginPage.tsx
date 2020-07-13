@@ -49,11 +49,13 @@ const StudentLoginPage = (props: any) => {
       await props.loadStudent(inputs);
     } catch (error) {
       if (error.name === "Unauthorized") {
-        toast.error(`Error: ${error.message}`);
+        toast.error(`Invalid Matric.no or PIN.`, { position: "top-center" });
         setBusy(false);
         return setInputs({ ...inputs, password: "", invalid: true });
       }
-      toast.error(`Network Error: ${error.message}`);
+      toast.error(`Network Error: ${error.message}`, {
+        position: "top-center",
+      });
       setBusy(false);
     }
   };
