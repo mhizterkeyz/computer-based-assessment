@@ -200,7 +200,7 @@
     border: 1px solid #c4c4c4;
     box-sizing: border-box;
     border-radius: 15px;
-    padding: 22px 36px;
+    padding: 22px 20px;
     margin-bottom: 3rem;
   }
   &__legend {
@@ -231,7 +231,7 @@
     background: #ecf2fc;
     border: 1px solid #c4c4c4;
     box-sizing: border-box;
-    border-radius: 15px;
+    border-radius: 5px;
     padding: 10px;
     margin-bottom: 2rem;
   }
@@ -258,8 +258,11 @@
   }
 
   &__student-data {
-    padding-left: 10px !important;
-    padding-right: 10px !important;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+  }
+  &__student-data--label {
+    font-weight: 500;
   }
 
   &__add-data {
@@ -274,6 +277,6 @@
     border: 0;
     font-size: 12px;
     color: #fff;
-    background: #4180FE;
+    background: #4180fe;
   }
 }

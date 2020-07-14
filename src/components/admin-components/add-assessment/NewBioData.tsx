@@ -37,8 +37,8 @@ const BioData = (props: any) => {
       const obj = await getBioData(file);
       addRow(obj);
     } catch (error) {
-      toast.error(`Error: ${error.message}`,{
-        position: "top-center"
+      toast.error(`Error: ${error.message}`, {
+        position: "top-center",
       });
     }
   };
@@ -138,7 +138,7 @@ const BioData = (props: any) => {
             >
               prev
             </span>
-            <span className="ml-2 mr-2">{`${page}/${pages}`}</span>
+            <span className="ml-2 mr-2">{`${page} of ${inputs.bioData.length}`}</span>
             <span
               onClick={(ev) => {
                 const next = page + 1 > pages ? pages : page + 1;
@@ -155,19 +155,28 @@ const BioData = (props: any) => {
           {bioData.map((elem: any, index: number) => {
             return (
               <div
-                className="row"
-                style={{ position: "relative" }}
+                className="d-flex justify-content-between"
                 key={`biodata_row_${index}`}
               >
-                <span style={{ position: "absolute", left: "-10px" }}>
+                {/* <span style={{ position: "absolute", left: "-10px", marginRight: "18px" }}>
                   {(page - 1) * 5 + index}.
-                </span>
-                <div className="col-2 d-flex flex-column new-assessment__student-data">
-                  <label>Matric No:</label>
+                </span> */}
+                <div className="d-flex flex-column new-assessment__student-data">
+                  <div
+                    className="new-assessment__student-data--label"
+                    style={{ marginBottom: "45px" }}
+                  ></div>
+                  <div>{(page - 1) * 5 + index + 1}.</div>
+                </div>
+                <div className="d-flex flex-column new-assessment__student-data">
+                  <label className="new-assessment__student-data--label">
+                    Matric No:
+                  </label>
                   <input
                     type="text"
                     value={bioData[index].matric}
                     name="matric"
+                    style={{ width: 90 }}
                     onChange={(ev) =>
                       handleBioData(
                         (page - 1) * 5 + index,
@@ -178,12 +187,15 @@ const BioData = (props: any) => {
                     className="new-assessment__course-input"
                   />
                 </div>
-                <div className="col-3 d-flex flex-column new-assessment__student-data">
-                  <label>Name:</label>
+                <div className="d-flex flex-column new-assessment__student-data">
+                  <label className="new-assessment__student-data--label">
+                    Name:
+                  </label>
                   <input
                     value={bioData[index].name}
                     type="text"
                     name="name"
+                    style={{ width: 300 }}
                     onChange={(ev) =>
                       handleBioData(
                         (page - 1) * 5 + index,
@@ -194,8 +206,10 @@ const BioData = (props: any) => {
                     className="new-assessment__course-input"
                   />
                 </div>
-                <div className="col-3 d-flex flex-column new-assessment__student-data">
-                  <label>Department:</label>
+                <div className="d-flex flex-column new-assessment__student-data">
+                  <label className="new-assessment__student-data--label">
+                    Department:
+                  </label>
                   <input
                     type="text"
                     value={bioData[index].department}
@@ -211,8 +225,10 @@ const BioData = (props: any) => {
                   />
                 </div>
 
-                <div className="col-2 d-flex flex-column new-assessment__student-data">
-                  <label>Level:</label>
+                <div className="d-flex flex-column new-assessment__student-data">
+                  <label className="new-assessment__student-data--label">
+                    Level:
+                  </label>
                   <select
                     name="level"
                     onChange={(ev) =>
@@ -233,8 +249,10 @@ const BioData = (props: any) => {
                   </select>
                 </div>
 
-                <div className="col-1 d-flex flex-column new-assessment__student-data">
-                  <label>CA:</label>
+                <div className="d-flex flex-column new-assessment__student-data">
+                  <label className="new-assessment__student-data--label">
+                    CA:
+                  </label>
                   <input
                     type="number"
                     onChange={(ev) =>
@@ -244,32 +262,24 @@ const BioData = (props: any) => {
                         ev.target.value
                       )
                     }
-                    style={{ paddingRight: "0px", paddingLeft: "7px" }}
+                    style={{ width: 60 }}
                     value={bioData[index].ca}
                     name="ca"
                     className="new-assessment__course-input"
                   />
                 </div>
-                <div className="col-1 d-flex" style={{ alignItems: "center" }}>
-                  <p
-                    className="btn btn-danger"
-                    style={{
-                      width: "30px",
-                      height: "30px",
-                      borderRadius: "50%",
-                      display: "inline-flex",
-                      alignItems: "center",
-                      padding: "none",
-                      justifyContent: "center",
-                    }}
+                <div className="d-flex" style={{ alignItems: "center" }}>
+                  <span
+                    className="btn btn-outline-danger"
+                    style={{ borderRadius: 5, fontSize: 12 }}
                     onClick={() => {
                       const arr = inputs.bioData;
                       arr.splice((page - 1) * 5 + index, 1);
                       setInputs({ ...inputs, bioData: arr });
                     }}
                   >
-                    &minus;
-                  </p>
+                    delete
+                  </span>
                 </div>
               </div>
             );
