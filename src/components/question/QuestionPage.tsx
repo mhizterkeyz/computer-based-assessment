@@ -101,7 +101,8 @@ const QuestionPage = (props: any) => {
         try {
           await loadStudentExamination();
         } catch (error) {
-          toast.error(`Error: ${error.message}`, { position: "top-center" });
+          // toast.error(`Error: ${error.message}`, { position: "top-center" });
+          console.log(error.message);
         }
       })();
     }
