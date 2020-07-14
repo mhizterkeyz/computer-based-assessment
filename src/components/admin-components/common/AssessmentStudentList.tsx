@@ -16,7 +16,7 @@ export const StudentList = ({ user, status, showStudent, _id }: any) => {
         );
       }}
     >
-      <span>{user.name}</span>
+      <span style={{ textTransform: "capitalize" }}>{user.name}</span>
       <span style={{ textTransform: "uppercase" }}>{user.matric}</span>
       <span style={{ textTransform: "capitalize" }}>
         {user.department.department}
@@ -66,9 +66,14 @@ export const StudentInfo = ({
           data: { status: 0 },
           examId: props.examId,
           biodataId: student._id,
-        })) && toast.success("Operation successful",{
-          position: "top-center"
-        })
+        })) &&
+        toast.success(
+          `${student.user.matric} can now retake his/her assessment`,
+          {
+            position: "top-center",
+            delay: 10000,
+          }
+        )
       );
     } catch (error) {
       toast.error(error.message, { position: "top-center" });
@@ -107,7 +112,16 @@ export const StudentInfo = ({
           </object>
         </span>
 
-        <h3 className="text-center">{student.user.name}</h3>
+        <h3
+          className="text-center"
+          style={{
+            textTransform: "capitalize",
+            marginTop: 12,
+            marginBottom: 20,
+          }}
+        >
+          {student.user.name}
+        </h3>
       </div>
       <hr />
       <div className="details">

@@ -142,7 +142,7 @@ div.student-section {
 
     .dta-head {
       display: grid;
-      grid-template-columns: 25% 12% 24% 16% 12%;
+      grid-template-columns: 30% 10% 20% 20% 12%;
       grid-gap: 2%;
       color: #ffffff;
       background: #4180fe;
@@ -158,7 +158,7 @@ div.student-section {
 
     .dta-body {
       display: grid;
-      grid-template-columns: 25% 12% 24% 16% 12%;
+      grid-template-columns: 30% 10% 20% 20% 12%;
       grid-gap: 2%;
       color: #4f4f4f;
       background: #fff;
@@ -241,7 +241,7 @@ div.student-section {
       height: 2rem;
     }
 
-    .cancel-btn:focus{
+    .cancel-btn:focus {
       outline: 0;
       box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
     }
@@ -305,35 +305,31 @@ div.student-section {
   cursor: pointer;
 }
 
-// status style
-.status-running {
-  color: #008a52;
+@mixin status {
   font-weight: 500;
-  background: #eafff0;
   border-radius: 22px;
   padding: 1px 1rem;
+  font-size: 12px;
   text-align: center;
-  // max-width: 10% !important;
+  width: 78px;
+}
+// status style
+.status-running {
+  @include status;
+  color: #008a52;
+  background: #eafff0;
 }
 
 .status-closed {
+  @include status;
   color: #e8880a;
-  font-weight: 500;
   background: #fcecec;
-  border-radius: 22px;
-  padding: 1px 1rem;
-  text-align: center;
-  // max-width: 10% !important;
 }
 
 .status-pending {
+  @include status;
   color: #cf534b;
-  font-weight: 500;
   background: #fff2df;
-  border-radius: 22px;
-  padding: 1px 1rem;
-  text-align: center;
-  // max-width: 10% !important;
 }
 
 .show-student {

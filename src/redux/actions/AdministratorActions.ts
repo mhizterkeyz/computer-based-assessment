@@ -201,6 +201,7 @@ export const createPin = (count: any) => {
   };
 };
 
+
 export const getAdministrators = (updateCall: boolean = false) => {
   return async (dispatch: any) => {
     try {

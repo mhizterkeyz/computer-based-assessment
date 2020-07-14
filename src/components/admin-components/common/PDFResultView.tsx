@@ -36,6 +36,7 @@ const ResultRowData = ({
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",
+        borderTop: "1px solid #000",
         borderBottom: "1px solid #000",
         borderLeft: "1px solid #000",
         borderRight: "1px solid #000",
@@ -123,15 +124,6 @@ export const PDFResultView = ({
             >
               {examTitle} (2019/2020)
             </Text>
-
-            {/* <Text
-              style={[
-                styles.title,
-                { textTransform: "uppercase", marginBottom: 30 },
-              ]}
-            >
-              (2019/2020 Session)
-            </Text> */}
           </View>
 
           <Text style={[styles.faculty, { textTransform: "uppercase" }]}>
@@ -170,6 +162,24 @@ export const PDFResultView = ({
             <span style={{ borderLeft: "1px solid #000" }} />
             <Text style={[styles.table_head, { width: "6%" }]}>Grade</Text>
           </View>
+
+          {results
+            .filter((result: any) => result.faculty === fac)
+            .map((result: any, index: number) => (
+              <ResultRowData {...result} key={index} sn={index} />
+            ))}
+
+          {results
+            .filter((result: any) => result.faculty === fac)
+            .map((result: any, index: number) => (
+              <ResultRowData {...result} key={index} sn={index} />
+            ))}
+
+          {results
+            .filter((result: any) => result.faculty === fac)
+            .map((result: any, index: number) => (
+              <ResultRowData {...result} key={index} sn={index} />
+            ))}
 
           {results
             .filter((result: any) => result.faculty === fac)
@@ -281,7 +291,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     textTransform: "capitalize",
     paddingHorizontal: 4,
-    paddingVertical: 6,
+    paddingVertical: 7.543,
   },
   personel: {
     display: "flex",
