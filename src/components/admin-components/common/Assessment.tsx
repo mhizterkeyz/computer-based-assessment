@@ -126,12 +126,16 @@ const Assessment = ({
 
   const startCloseAssessmentCheck = () => {
     if (exam.status === 0) {
-      toast.warning("No available result yet, Start Assessment first", { position: "top-center" });
+      toast.warning("No available result yet, Start Assessment first", {
+        position: "top-center",
+      });
       return;
     }
 
     if (exam.status === 1) {
-      toast.warning("You have to close this Assessment first", { position: "top-center" });
+      toast.warning("You have to close this Assessment first", {
+        position: "top-center",
+      });
       return;
     }
   };
@@ -234,8 +238,8 @@ const Assessment = ({
   __data = _.orderBy(__data, "status");
   const biodata = (function biodatas(): any {
     let data: any = [];
-    let count = page * 20 + 20 > __data.length ? __data.length : page * 20 + 20;
-    for (let i = page * 20; i < count; i++) {
+    let count = page * 5 + 5 > __data.length ? __data.length : page * 5 + 5;
+    for (let i = page * 5; i < count; i++) {
       data.push(__data[i]);
     }
     return data;
@@ -243,7 +247,7 @@ const Assessment = ({
 
   const paginationArray = (() => {
     const arr = [];
-    for (let i = 0; i <= Math.floor(__data.length / 20); i++) {
+    for (let i = 0; i <= Math.floor(__data.length / 5); i++) {
       arr.push(i);
     }
     return arr;
@@ -294,6 +298,9 @@ const Assessment = ({
       toast.error(error.message, { position: "top-center" });
     }
   };
+
+  console.log(results);
+
   const handleShowExtendModal = () => {
     setModalData({
       show: true,
@@ -557,7 +564,7 @@ const Assessment = ({
                 <span className="">Matric. No</span>
                 <span className="">Department</span>
                 <span className="">Faculty</span>
-                <span className="">Status</span>
+                <span className="">Status </span>
               </div>
 
               {biodata.map((dta: any, ind: number) => (

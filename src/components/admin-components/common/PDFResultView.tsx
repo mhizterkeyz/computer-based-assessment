@@ -98,41 +98,44 @@ export const PDFResultView = ({
 
   return (
     <Document>
-      <Page style={styles.body}>
-        <Image style={styles.image} src={ksu_logo} />
-
-        <Text style={[styles.title, { textTransform: "uppercase" }]}>
-          Prince Abubakar Audu University, Anyigba
-        </Text>
-        <View
-          style={{
-            marginTop: 20,
-            // position: "absolute",
-            // top: 400,
-            // left: 30,
-          }}
-        >
-          <Text
-            style={[
-              styles.title,
-              { textTransform: "uppercase", fontSize: 25, marginBottom: 6 },
-            ]}
-          >
-            {examTitle}
-          </Text>
-          <Text style={[styles.title, { textTransform: "uppercase" }]}>
-            E-Examination
-          </Text>
-          <Text style={[styles.title, { textTransform: "uppercase" }]}>
-            (2019/2020 Session)
-          </Text>
-        </View>
-      </Page>
-
       {faculty.map((fac: string, index: number) => (
         <Page style={styles.body} key={index}>
+          <Image style={styles.image} src={ksu_logo} />
+
+          <Text style={[styles.title, { textTransform: "uppercase" }]}>
+            Prince Abubakar Audu University, Anyigba
+          </Text>
+          <View>
+            <Text style={[styles.title, { textTransform: "uppercase" }]}>
+              E-Examination
+            </Text>
+
+            <Text
+              style={[
+                styles.title,
+                {
+                  textTransform: "uppercase",
+                  fontSize: 16,
+                  marginTop: 10,
+                  marginBottom: 30,
+                },
+              ]}
+            >
+              {examTitle} (2019/2020)
+            </Text>
+
+            {/* <Text
+              style={[
+                styles.title,
+                { textTransform: "uppercase", marginBottom: 30 },
+              ]}
+            >
+              (2019/2020 Session)
+            </Text> */}
+          </View>
+
           <Text style={[styles.faculty, { textTransform: "uppercase" }]}>
-            {fac}
+            Faculty:{"  "} {fac}
           </Text>
           <View
             style={{
@@ -201,7 +204,7 @@ export const PDFResultView = ({
           <Text
             style={styles.pageNumber}
             render={({ pageNumber, totalPages }) =>
-              `${pageNumber - 1} / ${totalPages - 1}`
+              `${pageNumber} / ${totalPages}`
             }
             fixed
           />
@@ -248,17 +251,17 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: "Poppins",
     fontStyle: "normal",
-    fontWeight: 600,
-    fontSize: 20,
+    // fontWeight: 500,
+    fontSize: 12,
     textAlign: "center",
-    marginBottom: 20,
+    // marginBottom: 20,
   },
   faculty: {
     fontFamily: "Poppins",
     fontStyle: "normal",
-    fontWeight: 600,
-    fontSize: 14,
-    textAlign: "center",
+    // fontWeight: 500,
+    fontSize: 12,
+    // textAlign: "center",
     marginBottom: 10,
   },
   table_head: {
