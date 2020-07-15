@@ -132,7 +132,7 @@ const QuestionPage = (props: any) => {
       //  Quick check to make sure you're supposed to be here...
       (async () => {
         try {
-          const req = await answerExam({});
+          const req = await answerExam(exam.answered);
           if (req.status === 200) {
             return;
           }
@@ -160,6 +160,7 @@ const QuestionPage = (props: any) => {
         seconds,
       }));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [studentExamination, loadStudentExamination, examSet]);
 
   if (studentExamination.hasOwnProperty("examNotFound")) {

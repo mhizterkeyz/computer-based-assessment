@@ -80,13 +80,6 @@ export const getExams = async () => {
 };
 
 export const answerExam = async (answers: any) => {
-  answers = Object.values(answers).reduce(
-    (acc: any, cur: any) => ({
-      ...acc,
-      [cur.questionId]: { questionId: cur.questionId, answer: cur.answer },
-    }),
-    {}
-  );
   const req = await api
     .headers({ Authorization: "Bearer " + localStorage["jwt"] })
     .body({ answers })
