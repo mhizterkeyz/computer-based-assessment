@@ -26,6 +26,12 @@ const Examination = ({
   let date = new Date(exam.createdAt);
   let decDate = `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`;
 
+  const titleCase = (str: string) =>
+    str
+      .split(" ")
+      .map((w) => w[0].toUpperCase() + w.substr(1).toLowerCase())
+      .join(" ");
+
   return (
     <div
       className="dta-body"
@@ -33,8 +39,8 @@ const Examination = ({
         return onClickShowExamination(true, exam);
       }}
     >
-      <span className="">
-        {exam.course} - {exam.title}
+      <span className="" style={{}}>
+        {exam.course.toUpperCase()} - {titleCase(exam.title)}
       </span>
       {/* TODO Format Date properly */}
       <span className="">{decDate}</span>

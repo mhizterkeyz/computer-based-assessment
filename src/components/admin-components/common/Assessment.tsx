@@ -434,7 +434,7 @@ const Assessment = ({
                     document={
                       <PDFResultView
                         results={Object.values(results)
-                          .sort(matricDescendingSortFn)
+                          // .sort(matricDescendingSortFn)
                           .sort(facultyAlphabeticalSortFn)
                           .sort(departmentAlphabeticalSortFn)}
                         examTitle={`${exam.course} - ${exam.title}`}
@@ -488,12 +488,6 @@ const Assessment = ({
                       <Workbook.Column label="Grade" value="grade" />
                     </Workbook.Sheet>
                   </Workbook>
-                  {/* <button
-                className="btn btn-success ml-3"
-                onClick={handleDownloadExcel}
-              >
-                Download Result (Excel)
-              </button> */}
                 </div>
               </>
             ) : (

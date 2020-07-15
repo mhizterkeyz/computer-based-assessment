@@ -241,6 +241,9 @@ const QuestionPage = (props: any) => {
     }
   };
 
+  const capitalizeFirstLetter = (string: string) =>
+    string.charAt(0).toUpperCase() + string.slice(1);
+
   return (
     <>
       <Modal show={modalData.show} handleClose={handleModalClose}>
@@ -302,7 +305,10 @@ const QuestionPage = (props: any) => {
                       return "";
                     })}
                 </div>
-                <p>{question.question && question.question}</p>
+                <p>
+                  {capitalizeFirstLetter(question.question) &&
+                    capitalizeFirstLetter(question.question)}
+                </p>
 
                 <form className="d-flex flex-column">
                   {question.options &&

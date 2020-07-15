@@ -169,24 +169,6 @@ export const PDFResultView = ({
               <ResultRowData {...result} key={index} sn={index} />
             ))}
 
-          {results
-            .filter((result: any) => result.faculty === fac)
-            .map((result: any, index: number) => (
-              <ResultRowData {...result} key={index} sn={index} />
-            ))}
-
-          {results
-            .filter((result: any) => result.faculty === fac)
-            .map((result: any, index: number) => (
-              <ResultRowData {...result} key={index} sn={index} />
-            ))}
-
-          {results
-            .filter((result: any) => result.faculty === fac)
-            .map((result: any, index: number) => (
-              <ResultRowData {...result} key={index} sn={index} />
-            ))}
-
           <View style={styles.personel}>
             <div
               style={{
