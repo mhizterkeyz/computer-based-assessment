@@ -1,89 +1,134 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { connect } from "react-redux";
 
 import "./AssessmentHistory.scss";
 import { loadUpExams } from "../../../redux/actions/AdministratorActions";
+import { getExams } from "../../../api/AdministratorCalls";
 import Preloader from "../../Preloader";
 import Examination from "./Examination";
-import Assessment from "../common/Assessment";
 import { toast } from "react-toastify";
 import _ from "lodash";
 
 const AssessmentHistory = (props: any) => {
-  const [assessment, setAssessment] = useState({ show: false, exam: "" });
-  const [page, setPage] = useState(0);
-  const [search, setSearch] = useState("");
-  const [ahhh, setAhhh] = useState([]);
-  let { exams, loadUpExams } = props;
+  const [search, setSearch] = useState({
+    searchString: "",
+    searchResult: {},
+    searchCount: 0,
+    search: false,
+  });
+  const [exams, setexams] = useState({});
+  const [preReq, setPreReq] = useState({
+    calledLoadUp: false,
+  });
+  let { exams: stateExams, loadUpExams } = props;
+
   useEffect(() => {
-    if (Object.keys(exams).length < 1) {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    stateExams = Object.values(stateExams)
+      .sort((a: any, b: any) => {
+        const d1: any = new Date(a.createdAt);
+        const d2: any = new Date(b.createdAt);
+        return d1 - d2;
+      })
+      .reduce((acc: any, cur: any) => ({ ...acc, [cur._id]: cur }), {});
+    if (Object.keys(stateExams).length < 1 || !preReq.calledLoadUp) {
+      setPreReq((i) => ({ ...i, calledLoadUp: true }));
       (async () => {
         try {
-          await loadUpExams();
+          await loadUpExams(false, 1);
         } catch (error) {
-          toast.error(`Error: ${error.message}`,{
-            position: "top-center"
+          toast.error(`Error: ${error.message}`, {
+            position: "top-center",
           });
         }
       })();
     }
-    setAhhh(_.orderBy(Object.values(exams), "status"));
-  }, [exams, loadUpExams]);
+    setexams(search.search ? search.searchResult : stateExams);
+  }, [
+    stateExams,
+    loadUpExams,
+    props.location.search,
+    preReq.calledLoadUp,
+    search.search,
+    search.searchResult,
+  ]);
   useEffect(() => {
-    if (search.length > 0) {
-      const searchResult: any = Object.values(
-        _.orderBy(Object.values(exams), "status")
-      ).reduce((acc: any, cur: any) => {
-        let { status, createdAt } = cur;
-        let date = new Date(createdAt);
-        createdAt = `${date.getDate()}-${date.getMonth()}-${date.getFullYear}`;
-        status = status === 0 ? "pending" : status === 1 ? "running" : "closed";
+    window.onscroll = async function (ev: any) {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
         if (
-          cur.title.toLowerCase().indexOf(search.toLowerCase()) !== -1 ||
-          createdAt.toLowerCase().indexOf(search.toLowerCase()) !== -1 ||
-          status.toLowerCase().indexOf(search.toLowerCase()) !== -1
+          Object.keys(exams).length > 0 &&
+          props.count > Object.keys(exams).length &&
+          !search.search
         ) {
-          return [...acc, cur];
+          let t = Object.keys(exams).length / 5;
+          const a = parseInt(t.toString().split(".")[1]) > 0 ? 1 : 0;
+          t = Math.floor(t) + a + 1;
+          try {
+            await loadUpExams(true, t);
+          } catch (error) {
+            // Failed to work...
+            // The user will have to scroll up and to get the rest
+          }
+        } else if (
+          Object.keys(exams).length > 0 &&
+          search.search &&
+          search.searchCount > Object.keys(exams).length
+        ) {
+          try {
+            let t = Object.keys(exams).length / 5;
+            const a = parseInt(t.toString().split(".")[1]) > 0 ? 1 : 0;
+            t = Math.floor(t) + a + 1;
+            const res = await getExams(t, search.searchString);
+            const searchResult: any = Object.values(res.exams).reduce(
+              (acc: any, cur: any) => ({ ...acc, [cur._id]: cur }),
+              {}
+            );
+            setSearch((i) => ({
+              ...i,
+              searchResult: { ...search.searchResult, ...searchResult },
+              searchCount: res.count,
+            }));
+          } catch (error) {
+            //Do nothing. same as above
+          }
         }
-        return acc;
-      }, []);
-      setAhhh(searchResult);
-    }
-  }, [search, exams]);
+      }
+    };
+    return () => {
+      window.onscroll = null;
+    };
+  }, [props.count, exams, loadUpExams, search]);
+  const delayedSearch = useCallback(
+    _.debounce(async () => {
+      if (search.searchString.length > 0) {
+        try {
+          const res = await getExams(1, search.searchString);
+          const searchResult: any = Object.values(res.exams).reduce(
+            (acc: any, cur: any) => ({ ...acc, [cur._id]: cur }),
+            {}
+          );
+          setSearch((i) => ({
+            ...i,
+            searchResult,
+            search: true,
+            searchCount: res.count,
+          }));
+        } catch (error) {
+          toast.error(`Error: ${error.message}`, {
+            position: "top-center",
+          });
+        }
+      } else {
+        setSearch((i) => ({ ...i, search: false }));
+      }
+    }, 3000),
+    [search.searchString]
+  );
+  useEffect(() => {
+    delayedSearch();
 
-  const onClickShowExamination = (show: boolean, exam: any) => {
-    setAssessment({ ...assessment, show: show, exam: exam });
-  };
-
-  const paginationArray = (() => {
-    const arr = [];
-    for (let i = 0; i <= Math.floor(Object.keys(ahhh).length / 10); i++) {
-      arr.push(i);
-    }
-    return arr;
-  })();
-
-  const prev = page - 1 <= 0 ? 0 : page - 1;
-  const next =
-    page + 1 >= Object.keys(ahhh).length / 10
-      ? Math.floor(Object.keys(ahhh).length / 10)
-      : page + 1;
-  const orderedExams = (function biodatas(): any {
-    let data: any = [];
-    let count =
-      page * 10 + 10 > Object.keys(ahhh).length
-        ? Object.keys(ahhh).length
-        : page * 10 + 10;
-    for (let i = page * 10; i < count; i++) {
-      data.push(
-        Object.values(ahhh).reduce((acc: any, cur: any, index: number) => {
-          if (index === i) return cur;
-          return acc;
-        }, {})
-      );
-    }
-    return data;
-  })();
+    return delayedSearch.cancel;
+  }, [search.searchString, delayedSearch]);
 
   return (
     <>
@@ -91,87 +136,51 @@ const AssessmentHistory = (props: any) => {
         <Preloader />
       ) : (
         <>
-          {assessment.show ? (
-            <Assessment exam={assessment.exam} match={props.match} />
-          ) : (
-            <section className="mt-5 assessment-history">
-              <form className="text-right">
-                <input
-                  className="btn"
-                  type="search"
-                  value={search}
-                  onChange={(ev: any) => {
-                    ev.preventDefault();
-                    return setSearch(ev.target.value);
-                  }}
-                  placeholder="&#xe902; Search Examination"
-                  style={{ fontFamily: "Poppins, icomoon" }}
-                />
-              </form>
-              <div className="dta-head">
-                <span className="">Examination</span>
-                <span className="">Date Added</span>
-                <span className="text-center">Status</span>
+          <section className="mt-5 assessment-history">
+            <form className="text-right">
+              <input
+                className="btn"
+                type="search"
+                value={search.searchString}
+                onChange={(ev: any) => {
+                  ev.preventDefault();
+                  return setSearch({
+                    ...search,
+                    searchString: ev.target.value,
+                  });
+                }}
+                placeholder="&#xe902; Search Examination"
+                style={{ fontFamily: "Poppins, icomoon" }}
+              />
+            </form>
+            <div className="dta-head">
+              <span className="">Examination</span>
+              <span className="">Date Added</span>
+              <span className="text-center">Status</span>
+            </div>
+            {Object.values(exams).length === 0 ? (
+              <div className="text-center mt-5 no-running-exam">
+                There are no available assessments
               </div>
-              {Object.values(orderedExams).length === 0 ? (
-                <div className="text-center mt-5 no-running-exam">
-                  There are no available assessments
-                </div>
-              ) : (
-                Object.values(orderedExams).map((exam: any, i: number) => (
-                  <Examination
-                    exam={exam}
-                    onClickShowExamination={onClickShowExamination}
-                    key={`examination_history_${i}`}
-                  />
-                ))
-              )}
-
-              <div className="pagination">
-                <span
-                  onClick={() => setPage(prev)}
-                  className={`btn link prev-next ${
-                    page <= 0 ? "disabled" : ""
-                  }`}
-                >
-                  Prev
-                </span>
-                {paginationArray.map((i: number) => {
-                  if (
-                    i === 0 ||
-                    i === page ||
-                    i === paginationArray.length - 1 ||
-                    i + 1 === page ||
-                    i - 1 === page
-                  ) {
-                    return (
-                      <span
-                        onClick={() => setPage(i)}
-                        className={`btn link ${i === page ? "active" : ""}`}
-                        key={`pagination_link_${i}`}
-                      >
-                        {i + 1}
-                      </span>
-                    );
-                  }
-                  if (i === page - 2 || i === page + 2) {
-                    return <span key={`pagination_link_${i}`}>&hellip;</span>;
-                  }
-                  return "";
-                })}
-                <span
-                  onClick={() => setPage(next)}
-                  className={`btn link prev-next ${
-                    page >= Math.floor(Object.keys(exams).length / 10)
-                      ? "disabled"
-                      : ""
-                  }`}
-                >
-                  Next
-                </span>
-              </div>
-            </section>
-          )}
+            ) : (
+              Object.values(exams).map((exam: any, i: number) => (
+                <Examination exam={exam} key={`examination_history_${i}`} />
+              ))
+            )}
+            <div
+              className="count-check text-center mt-5 pb-5"
+              style={{
+                opacity: 0.6,
+                fontSize: 11,
+              }}
+            >
+              {props.count === Object.keys(exams).length ||
+              (search.search &&
+                search.searchCount === Object.keys(exams).length)
+                ? "that's all"
+                : "loading data ..."}
+            </div>
+          </section>
         </>
       )}
     </>
@@ -181,6 +190,7 @@ const AssessmentHistory = (props: any) => {
 function mapStateToProps(state: any) {
   return {
     exams: state.exams,
+    count: state.counts.exams,
     loading: state.apiCallsInProgress > 0,
   };
 }

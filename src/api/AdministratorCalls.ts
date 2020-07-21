@@ -21,10 +21,8 @@ const parseResponseError = ({ res, status, statusText }: any) => {
 
 export const loginAdministrator = async ({ username, password }: any) => {
   const req = await api.body({ username, password }).post(`${apiUrl}/signin`);
-  debugger;
   const { statusText, status } = req;
   const res = await req.json();
-  debugger;
   parseResponseError({ res, status, statusText });
   localStorage["jwt"] = res.data.accessToken;
   localStorage["route"] = "administrator";
@@ -60,29 +58,90 @@ export const verifyAdministrator = async () => {
     throw error;
   }
 };
+// const slugify = (data: string): string => {
+//   data = data.replace(" ", "-").toLowerCase();
+//   if (data.includes(" ")) {
+//     return slugify(data);
+//   }
+//   return data;
+// };
+export const getExams = async (page = 1, search = "") => {
+  const url =
+    search.length > 0
+      ? `${apiUrl}/exams?page=${page}&&search=${search}`
+      : `${apiUrl}/exams?page=${page}`;
+  const req = await api.get(url);
+  const { statusText, status } = req;
+  const res = await req.json();
+  parseResponseError({ res, status, statusText });
 
-export const getExams = async () => {
-  try {
-    const req = await api.get(`${apiUrl}/exams`);
-    const { statusText, status } = req;
-    const res = await req.json();
-    parseResponseError({ res, status, statusText });
-    return res.data.reduce(
-      (acc: any, cur: any) => ({ ...acc, [cur._id]: cur }),
-      {}
-    );
-  } catch (error) {
-    throw error;
-  }
+  let exams = res.data.exams.reduce((acc: any, cur: any, i: number) => {
+    return { ...acc, [cur._id]: cur };
+  }, {});
+  return { exams, count: res.data.count };
 };
 
-export const updateExamstatus = async (exam_id: string, exam_status: any) => {
+export const getOneExam = async (id: string) => {
+  const req = await api.get(`${apiUrl}/exams/${id}`);
+  const { statusText, status } = req;
+  const res = await req.json();
+  parseResponseError({ res, status, statusText });
+  return {
+    exams: { [res.data.exam._id]: res.data.exam },
+    count: res.data.count,
+  };
+};
+
+export const getExamQuestion = async (id: string, page = 1) => {
+  const req = await api.get(`${apiUrl}/exams/${id}/questions?page=${page}`);
+  const { statusText, status } = req;
+  const res = await req.json();
+  parseResponseError({ res, status, statusText });
+  const questions = res.data.questions.reduce(
+    (acc: any, cur: any) => ({ ...acc, [page]: cur }),
+    {}
+  );
+  return {
+    exams: {
+      [id]: {
+        questions,
+      },
+    },
+    count: res.data.count,
+  };
+};
+
+export const getOneBioData = async (id: string, page = 1, search = "") => {
+  const url =
+    search.length > 0
+      ? `${apiUrl}/exams/${id}/biodatas?page=${page}&&search=${search}`
+      : `${apiUrl}/exams/${id}/biodatas?page=${page}`;
+  const req = await api.get(url);
+  const { statusText, status } = req;
+  const res = await req.json();
+  parseResponseError({ res, status, statusText });
+  const biodatas = res.data.biodata.reduce(
+    (acc: any, cur: any) => ({ ...acc, [cur._id]: cur }),
+    {}
+  );
+  return {
+    biodatas: {
+      [id]: biodatas,
+    },
+    count: res.data.count,
+    done: res.data.done,
+    running: res.data.running,
+    pending: res.data.pending,
+  };
+};
+
+export const updateExam = async (exam_id: string, data: any) => {
   try {
-    const req = await api.body(exam_status).put(`${apiUrl}/exams/${exam_id}`);
+    const req = await api.body(data).put(`${apiUrl}/exams/${exam_id}`);
     const { statusText, status } = req;
     const res = await req.json();
     parseResponseError({ res, status, statusText });
-    return res.data;
+    return { exams: { [res.data._id]: res.data } };
   } catch (error) {
     throw error;
   }
@@ -97,7 +156,43 @@ export const submitExam = async (data: any) => {
     const { statusText, status } = req;
     const res = await req.json();
     parseResponseError({ res, status, statusText });
-    return { [res.data._id]: res.data };
+    return {
+      exams: {
+        [res.data.exam._id]: {
+          ...res.data.exam,
+          questions: res.data.questions
+            .sort((a: any, b: any) => {
+              const d1: any = new Date(a.createdAt);
+              const d2: any = new Date(b.createdAt);
+              return d1 - d2;
+            })
+            .reduce(
+              (acc: any, cur: any, i: number) => ({ ...acc, [i + 1]: cur }),
+              {}
+            ),
+        },
+      },
+      count: res.data.examCount,
+      biodatas: {
+        [res.data.exam._id]: res.data.bioData.reduce(
+          (acc: any, cur: any) => ({ ...acc, [cur._id]: cur }),
+          {}
+        ),
+      },
+      biodataCount: {
+        biodatas: {
+          [res.data.exam._id]: {
+            count: res.data.bioData.length,
+            done: 0,
+            pending: res.data.bioData.length,
+            running: 0,
+          },
+        },
+      },
+      questionsCount: {
+        questions: { [res.data.exam._id]: res.data.questions.length },
+      },
+    };
   } catch (error) {
     throw error;
   }

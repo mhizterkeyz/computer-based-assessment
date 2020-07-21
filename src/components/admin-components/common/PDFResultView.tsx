@@ -60,7 +60,7 @@ const ResultRowData = ({
       <Text style={[styles.table_body, { width: "6%" }]}>{level}</Text>
       <span style={{ borderLeft: "1px solid #000" }} />
       <Text style={[styles.table_body, { width: "24%" }]}>
-        {department.length > 20
+        {department && department.length > 20
           ? department.slice(0, 17).concat("", "...")
           : department}
       </Text>

@@ -15,7 +15,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Header from "./components/Header";
 import { student as studentInterface } from "./components/model/student";
 import { verifyStudent } from "./redux/actions/studentAction";
-import LiveUpdater from "./LiveUpdater";
+// import LiveUpdater from "./LiveUpdater";
 
 function App({
   student,
@@ -49,13 +49,14 @@ function App({
       </Router>
     );
   }
-
   if (!student.hasOwnProperty("matric") || student.matric === "") {
     return (
       <Router>
         <Switch>
           <Route path="/admin" component={Administrator} />
-          <Route to="/student-login" render={() => <StudentLoginPage />} />
+          <Route
+            render={(routeProps) => <StudentLoginPage {...routeProps} />}
+          />
         </Switch>
         <ToastContainer autoClose={3000} hideProgressBar={true} />
       </Router>
@@ -85,7 +86,7 @@ function App({
           )}
         />
       </Switch>
-      <LiveUpdater></LiveUpdater>
+      {/* <LiveUpdater></LiveUpdater> */}
       <ToastContainer hideProgressBar={true} autoClose={3000} />
     </Router>
   );

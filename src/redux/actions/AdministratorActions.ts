@@ -97,7 +97,6 @@ export function SignInAdmin({ username, password }: any) {
   return async (dispatch: any) => {
     try {
       dispatch(beginApiCall());
-      debugger;
       const administrator = await Api.loginAdministrator({
         username,
         password,
@@ -123,12 +122,13 @@ export function VerifyAdministrator(updateCall: boolean = false) {
   };
 }
 
-export const loadUpExams = (updateCall: boolean = false) => {
+export const loadUpExams = (updateCall: boolean = false, page = 1) => {
   return async (dispatch: any) => {
     try {
       !updateCall && dispatch(beginApiCall());
-      const exam = await Api.getExams();
-      return dispatch(getExamsSuccess(exam));
+      const data = await Api.getExams(page);
+      dispatch({ type: types.UPDATE_COUNTS, count: { exams: data.count } });
+      return dispatch(getExamsSuccess(data.exams));
     } catch (error) {
       !updateCall && dispatch(apiCallError());
       throw error;
@@ -136,12 +136,80 @@ export const loadUpExams = (updateCall: boolean = false) => {
   };
 };
 
-export const updateExamStatus = (exam_id: string, exam_status: any) => {
+export const loadUpQuestions = (
+  id: string,
+  page = 1,
+  updateCall: boolean = false
+) => {
+  return async (dispatch: any) => {
+    try {
+      !updateCall && dispatch(beginApiCall());
+      const data = await Api.getExamQuestion(id, page);
+      dispatch({
+        type: types.UPDATE_COUNTS,
+        count: { questions: { [id]: data.count } },
+      });
+      return dispatch(getExamsSuccess(data.exams));
+    } catch (error) {
+      !updateCall && dispatch(apiCallError());
+      throw error;
+    }
+  };
+};
+
+export const loadSingleExam = (id: string, updateCall: boolean = false) => {
+  return async (dispatch: any) => {
+    try {
+      !updateCall && dispatch(beginApiCall());
+      const data = await Api.getOneExam(id);
+      dispatch({ type: types.UPDATE_COUNTS, count: { exams: data.count } });
+      return dispatch(getExamsSuccess(data.exams));
+    } catch (error) {
+      !updateCall && dispatch(apiCallError());
+      throw error;
+    }
+  };
+};
+
+export const loadSingleBiodata = (
+  id: string,
+  page = 1,
+  updateCall: boolean = false
+) => {
+  return async (dispatch: any) => {
+    try {
+      !updateCall && dispatch(beginApiCall());
+      const data = await Api.getOneBioData(id, page);
+      dispatch({
+        type: types.UPDATE_COUNTS,
+        count: {
+          biodatas: {
+            [id]: {
+              count: data.count,
+              done: data.done,
+              pending: data.pending,
+              running: data.running,
+            },
+          },
+        },
+      });
+      return dispatch({
+        type: types.GET_BIODATA_SUCCESS,
+        biodatas: data.biodatas,
+      });
+    } catch (error) {
+      !updateCall && dispatch(apiCallError());
+      throw error;
+    }
+  };
+};
+
+export const updateExam = (exam_id: string, data: any) => {
   return async (dispatch: any) => {
     try {
       dispatch(beginApiCall());
-      const exam = await Api.updateExamstatus(exam_id, exam_status);
-      return dispatch(updateExamStatusSuccess(exam));
+      const res = await Api.updateExam(exam_id, data);
+      return dispatch(getExamsSuccess(res.exams));
     } catch (error) {
       dispatch(apiCallError());
       throw error;
@@ -149,12 +217,24 @@ export const updateExamStatus = (exam_id: string, exam_status: any) => {
   };
 };
 
-export const createExam = (data: any) => {
+export const createExam = (dta: any) => {
   return async (dispatch: any) => {
     try {
       dispatch(beginApiCall());
-      const exam = await Api.submitExam(data);
-      return dispatch(createExamSuccess(exam));
+      const data = await Api.submitExam(dta);
+      dispatch({
+        type: types.UPDATE_COUNTS,
+        count: {
+          exams: data.count,
+          ...data.biodataCount,
+          ...data.questionsCount,
+        },
+      });
+      dispatch(getExamsSuccess(data.exams));
+      return dispatch({
+        type: types.GET_BIODATA_SUCCESS,
+        biodatas: data.biodatas,
+      });
     } catch (error) {
       dispatch(apiCallError());
       throw error;
@@ -165,11 +245,9 @@ export const createExam = (data: any) => {
 export const loadUpResults = (exam_id: string) => {
   return async (dispatch: any) => {
     try {
-      dispatch(beginApiCall());
       const results = await Api.getResults(exam_id);
       return dispatch(getResultSuccess(results));
     } catch (error) {
-      dispatch(apiCallError());
       throw error;
     }
   };
@@ -201,7 +279,6 @@ export const createPin = (count: any) => {
   };
 };
 
-
 export const getAdministrators = (updateCall: boolean = false) => {
   return async (dispatch: any) => {
     try {
@@ -220,7 +297,7 @@ export const createAdministrator = (newAdministrator: any) => {
     try {
       dispatch(beginApiCall());
       const admin = await Api.createAdministrators(newAdministrator);
-      return dispatch(createAdministratorsSuccess(admin));
+      return dispatch(createAdministratorsSuccess({ [admin._id]: admin }));
     } catch (error) {
       dispatch(apiCallError());
       throw error;
@@ -230,8 +307,8 @@ export const createAdministrator = (newAdministrator: any) => {
 
 export function deleteAdministrator(admin_id: string) {
   return function (dispatch: any) {
-    dispatch(deleteAdministratorOptimistic(admin_id));
-    return Api.deleteAdministrator(admin_id);
+    Api.deleteAdministrator(admin_id);
+    return dispatch(deleteAdministratorOptimistic(admin_id));
   };
 }
 
@@ -239,7 +316,20 @@ export const getFaculty = (updateCall: boolean = false) => {
   return async (dispatch: any) => {
     try {
       !updateCall && dispatch(beginApiCall());
-      const faculty = await Api.getFaculty();
+      let faculty = await Api.getFaculty();
+      faculty = faculty.reduce(
+        (acc: any, cur: any) => ({
+          ...acc,
+          [cur._id]: {
+            ...cur,
+            departments: cur.departments.reduce(
+              (ac: any, cu: any) => ({ ...ac, [cu._id]: cu }),
+              {}
+            ),
+          },
+        }),
+        {}
+      );
       return dispatch(getFacultySuccess(faculty));
     } catch (error) {
       !updateCall && dispatch(apiCallError());
@@ -250,19 +340,12 @@ export const getFaculty = (updateCall: boolean = false) => {
 
 export const deleteDepartment = (department: string, faculty_id: string) => {
   return async (dispatch: any) => {
-    try {
-      await Api.deleteDepartment(department, faculty_id);
-      dispatch(beginApiCall());
-      const faculty = await Api.getFaculty();
-      dispatch(getFacultySuccess(faculty));
-      dispatch(apiCallError());
-    } catch (error) {
-      dispatch(beginApiCall());
-      const faculty = await Api.getFaculty();
-      dispatch(getFacultySuccess(faculty));
-      dispatch(apiCallError());
-      throw error;
-    }
+    await Api.deleteDepartment(department, faculty_id);
+    dispatch({
+      type: "DEPARTMENT_DELETED",
+      department,
+      faculty: faculty_id,
+    });
   };
 };
 
@@ -270,8 +353,9 @@ export const createFaculty = (faculty: string) => {
   return async (dispatch: any) => {
     try {
       dispatch(beginApiCall());
-      const facultyDta = await Api.createFaculty(faculty);
-      return dispatch(createFacultySuccess(facultyDta));
+      let facultyDta = await Api.createFaculty(faculty);
+      facultyDta.departments = {};
+      return dispatch(createFacultySuccess({ [facultyDta._id]: facultyDta }));
     } catch (error) {
       dispatch(apiCallError());
       throw error;
@@ -281,8 +365,8 @@ export const createFaculty = (faculty: string) => {
 
 export const deleteFaculty = (faculty_id: string) => {
   return async (dispatch: any) => {
-    dispatch(deleteFacultyOptimistic(faculty_id));
-    return await Api.deleteFaculty(faculty_id);
+    await Api.deleteFaculty(faculty_id);
+    return dispatch(deleteFacultyOptimistic(faculty_id));
   };
 };
 
@@ -291,7 +375,11 @@ export const createDepartment = (faculty_id: string, department: string) => {
     try {
       dispatch(beginApiCall());
       const departmentDta = await Api.createDepartment(faculty_id, department);
-      return dispatch(createDepartmentSuccess(departmentDta));
+      return dispatch(
+        createDepartmentSuccess({
+          [faculty_id]: { departments: { [departmentDta._id]: departmentDta } },
+        })
+      );
     } catch (error) {
       dispatch(apiCallError());
       throw error;
@@ -304,7 +392,21 @@ export const addBiodata = (data: any) => {
     try {
       dispatch(beginApiCall());
       const biodatas = await Api.addBiodata(data);
-      return dispatch(addBiodataSuccess(biodatas, data.examId));
+      dispatch({
+        type: types.UPDATE_COUNTS,
+        count: {
+          biodatas: {
+            [data.examId]: {
+              count: data.count + 1,
+              pending: data.pending + 1,
+            },
+          },
+        },
+      });
+      return dispatch({
+        type: types.GET_BIODATA_SUCCESS,
+        biodatas: { [data.examId]: { [biodatas._id]: biodatas } },
+      });
     } catch (error) {
       dispatch(apiCallError());
       throw error;
@@ -317,9 +419,10 @@ export const updateBiodata = (data: any) => {
     try {
       dispatch(beginApiCall());
       const biodatas = await Api.updateSingleBiodata(data);
-      return dispatch(
-        updateBiodataSuccess(biodatas, data.examId, data.biodataId)
-      );
+      return dispatch({
+        type: types.GET_BIODATA_SUCCESS,
+        biodatas: { [data.examId]: { [biodatas._id]: biodatas } },
+      });
     } catch (error) {
       dispatch(apiCallError());
       throw error;

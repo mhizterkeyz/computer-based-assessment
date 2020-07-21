@@ -336,6 +336,17 @@ div.student-section {
   section.student-info {
     display: block !important;
   }
+  &.lock-student {
+    .tbl {
+      width: 70% !important;
+    }
+    section.student-info {
+      width: 25% !important;
+      top: 10%;
+      right: 4%;
+      position: fixed !important;
+    }
+  }
 }
 
 .no-running-exam {

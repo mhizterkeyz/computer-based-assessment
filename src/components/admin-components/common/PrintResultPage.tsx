@@ -29,25 +29,6 @@ const Result = ({
 };
 
 const PrintResult = ({ results }: any) => {
-  console.log(results);
-  const data1 = [
-    {
-      foo: "123",
-      bar: "456",
-      baz: "789",
-    },
-    {
-      foo: "abc",
-      bar: "dfg",
-      baz: "hij",
-    },
-    {
-      foo: "aaa",
-      bar: "bbb",
-      baz: "ccc",
-    },
-  ];
-
   return (
     <section className="assessment-result">
       <div>

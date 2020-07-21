@@ -1,13 +1,8 @@
 import React from "react";
 import "./AssessmentHistory.scss";
+import { Link } from "react-router-dom";
 
-const Examination = ({
-  exam,
-  onClickShowExamination,
-}: {
-  exam: any;
-  onClickShowExamination: (show: boolean, exam: any) => void;
-}) => {
+const Examination = ({ exam }: { exam: any }) => {
   let status = {
     class: "",
     name: "",
@@ -33,11 +28,10 @@ const Examination = ({
       .join(" ");
 
   return (
-    <div
+    <Link
       className="dta-body"
-      onClick={() => {
-        return onClickShowExamination(true, exam);
-      }}
+      to={`/admin/exams/${exam._id}`}
+      style={{ textDecoration: "none", color: "inherit" }}
     >
       <span className="" style={{}}>
         {exam.course.toUpperCase()} - {titleCase(exam.title)}
@@ -46,7 +40,7 @@ const Examination = ({
       <span className="">{decDate}</span>
       {/* <span className="">7th June 2020</span> */}
       <span className={status.class}>{status.name}</span>
-    </div>
+    </Link>
   );
 };
 

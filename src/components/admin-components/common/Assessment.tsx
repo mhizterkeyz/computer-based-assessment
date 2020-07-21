@@ -1,20 +1,16 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { connect } from "react-redux";
+import _ from "lodash";
+import { Link } from "react-router-dom";
 // @ts-ignore
 import Workbook from "react-excel-workbook";
 
 import "./Assessment.scss";
-import {
-  loadUpResults,
-  updateExamStatus,
-} from "../../../redux/actions/AdministratorActions";
 import { StudentList, StudentInfo } from "./AssessmentStudentList";
 import { toast } from "react-toastify";
 import Modal from "../../Modal";
-import _ from "lodash";
 import PreviewQuestions from "./PreviewQuestions";
-import { AddStudentModalWindow } from "./AssessmentModalWindow";
+import AddStudentModalWindow from "./AssessmentModalWindow";
 import {
   facultyAlphabeticalSortFn,
   departmentAlphabeticalSortFn,
@@ -23,24 +19,57 @@ import {
 import {
   getFaculty,
   updateBiodata,
+  loadSingleExam,
+  loadSingleBiodata,
+  loadUpQuestions,
+  loadUpResults,
+  updateExam,
 } from "../../../redux/actions/AdministratorActions";
 import { TextField } from "./InputField";
-import { extendStudentTime } from "../../../api/AdministratorCalls";
+import {
+  extendStudentTime,
+  getOneBioData,
+} from "../../../api/AdministratorCalls";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { PDFResultView } from "./PDFResultView";
+import Preloader from "../../Preloader";
 
-const Assessment = ({
-  exam: examination,
-  loadUpResults,
-  updateExamStatus,
-  faculty,
-  loading,
-  getFaculty,
-  match,
-  results,
-  exams,
-  ...props
-}: any) => {
+const queryParser = (data: string) => {
+  data = data.replace("?", "");
+  let arr = data.split("&&");
+  return arr.reduce((acc: any, cur: any) => {
+    let arr2 = cur.split("=");
+    return {
+      ...acc,
+      [arr2[0]]: isNaN(parseInt(arr2[1])) ? arr2[1] : parseInt(arr2[1]),
+    };
+  }, {});
+};
+
+const Assessment = (props: any) => {
+  const {
+    results,
+    faculty,
+    match,
+    loadSingleExam,
+    loadSingleBiodata,
+    loadUpQuestions,
+    loadUpResults,
+    getFaculty,
+    updateExam,
+  } = props;
+  const { id } = match.params;
+  const [exam, setExam] = useState({
+    docStatus: false,
+    status: 0,
+    bioData: {},
+    course: "",
+    title: "",
+    _id: "",
+    questions: {
+      "1": undefined,
+    },
+  });
   const [student, setStudent] = useState({
     show: false,
     user: "",
@@ -50,29 +79,68 @@ const Assessment = ({
     _id: "",
     studentId: "",
   });
-  const [exam, setExam] = useState({
-    status: 0,
-    bioData: [],
-    course: "",
-    title: "",
-    _id: "",
-    questions: [],
-  });
   const [extendTime, setExtendTime] = useState(0);
   const [modalData, setModalData] = useState({
     show: false,
     display: <></>,
   });
-  const [page, setPage] = useState(0);
-  const [search, setSearch] = useState("");
-  const [preview, setPreview] = useState(false);
+  const [search, setSearch] = useState({
+    searchString: "",
+    searchResult: {},
+    searchCount: 0,
+    running: 0,
+    pending: 0,
+    done: 0,
+    search: false,
+  });
+  const [query, setQuery] = useState({
+    page: 1,
+  });
 
   useEffect(() => {
-    setExam((exam) => ({ ...exam, ...exams[examination._id] }));
-  }, [examination, exams]);
-
+    let exams = props.exams[id] || {};
+    if (!Object.keys(exams).length) {
+      (async () => {
+        try {
+          await loadSingleExam(id);
+        } catch (error) {
+          toast.error(`Error: ${error.message}`, {
+            position: "top-center",
+          });
+        }
+      })();
+    }
+    setExam((i) => ({ ...i, ...exams }));
+  }, [props.exams, id, loadSingleExam]);
   useEffect(() => {
-    if (Object.values(results).length < 1 && exam.status === 2) {
+    let bioData = props.biodatas[id];
+    if (!bioData) {
+      (async () => {
+        try {
+          await loadSingleBiodata(id);
+        } catch (error) {
+          toast.error(`Error: ${error.message}`, {
+            position: "top-center",
+          });
+        }
+      })();
+      return () => {};
+    }
+    setExam(
+      search.search
+        ? (i) => ({ ...i, bioData: search.searchResult })
+        : (i) => ({ ...i, bioData: bioData })
+    );
+  }, [
+    id,
+    loadSingleBiodata,
+    props.biodatas,
+    search.search,
+    search.searchResult,
+  ]);
+  useEffect(() => {
+    const count = (props.count[id] && props.count[id].count) || 0;
+    if (Object.values(results).length < count && exam.status === 2) {
       (async () => {
         try {
           await loadUpResults(exam._id);
@@ -81,8 +149,7 @@ const Assessment = ({
         }
       })();
     }
-  }, [exam]);
-
+  }, [exam, results, loadUpResults, props.count, id]);
   useEffect(() => {
     if (student.show) {
       document.querySelector(".student-section")?.classList.add("show-student");
@@ -92,6 +159,143 @@ const Assessment = ({
         ?.classList.remove("show-student");
     }
   }, [student]);
+  useEffect(() => {
+    if (Object.keys(faculty).length < 1) {
+      (async () => {
+        try {
+          await getFaculty();
+        } catch (error) {
+          console.log(error);
+        }
+      })();
+    }
+  }, [faculty, getFaculty]);
+  const delayedSearch = useCallback(
+    _.debounce(async () => {
+      if (search.searchString.length > 0) {
+        try {
+          const res = await getOneBioData(id, 1, search.searchString);
+          const searchResult: any = Object.values(res.biodatas)[0];
+          setSearch((i) => ({
+            ...i,
+            searchResult,
+            search: true,
+            ...res,
+            searchCount: res.count,
+          }));
+        } catch (error) {
+          toast.error(`Error: ${error.message}`, {
+            position: "top-center",
+          });
+        }
+      } else {
+        setSearch((i) => ({ ...i, search: false }));
+      }
+    }, 3000),
+    [search.searchString]
+  );
+  useEffect(() => {
+    delayedSearch();
+
+    return delayedSearch.cancel;
+  }, [search.searchString, delayedSearch]);
+  useEffect(() => {
+    const dataCheck = async (ev: any) => {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+        if (
+          ((Object.keys(exam.bioData).length > 0 &&
+            props.count[id] &&
+            props.count[id].count) ||
+            0) > Object.keys(exam.bioData).length &&
+          !search.search
+        ) {
+          let t = Object.keys(exam.bioData).length / 5;
+          const a = parseInt(t.toString().split(".")[1]) > 0 ? 1 : 0;
+          t = Math.floor(t) + a + 1;
+          try {
+            await loadSingleBiodata(id, t, true);
+          } catch (error) {
+            // Failed to work...
+            // The user will have to scroll up and to get the rest
+          }
+        } else if (
+          search.search &&
+          search.searchCount > Object.keys(exam.bioData).length
+        ) {
+          try {
+            let t = search.searchCount / 5;
+            const a = parseInt(t.toString().split(".")[1]) > 0 ? 1 : 0;
+            t = Math.floor(t) + a;
+            const res = await getOneBioData(id, t, search.searchString);
+            const searchResult: any = Object.values(res.biodatas)[0];
+            setSearch((i) => ({
+              ...i,
+              searchResult: { ...i.searchResult, ...searchResult },
+              search: true,
+              ...res,
+              searchCount: res.count,
+            }));
+          } catch (error) {
+            //Do nothing. same as above
+          }
+        }
+      }
+    };
+    window.addEventListener("scroll", dataCheck);
+    return () => {
+      window.removeEventListener("scroll", dataCheck);
+    };
+  }, [props.count, exam.bioData, search, id, loadSingleBiodata]);
+  useEffect(() => {
+    const count = props.questions[id] || 0;
+    const query = queryParser(props.location.search);
+    const page =
+      !isNaN(parseInt(query.page)) &&
+      parseInt(query.page) > 0 &&
+      parseInt(query.page) <= count
+        ? parseInt(query.page)
+        : 1;
+    setQuery((i) => ({ ...i, page }));
+  }, [props.location.search, props.questions, id]);
+  useEffect(() => {
+    // @ts-ignore
+    const question: any = exam.questions[query.page];
+    if (!question) {
+      (async () => {
+        try {
+          await loadUpQuestions(id, query.page, true);
+        } catch (error) {
+          toast.error(`Error: ${error.message}`, {
+            position: "top-center",
+          });
+        }
+      })();
+    } else return () => {};
+  }, [
+    props.location.search,
+    query.page,
+    id,
+    loadUpQuestions,
+    exam.questions,
+    props.questions,
+  ]);
+  useEffect(() => {
+    const scrollCheck = () => {
+      if (window.scrollY >= 521 && student.show) {
+        document
+          .querySelector(".student-section")
+          ?.classList.add("lock-student");
+      } else {
+        document
+          .querySelector(".student-section")
+          ?.classList.remove("lock-student");
+      }
+    };
+    window.addEventListener("scroll", scrollCheck);
+    return () => {
+      window.removeEventListener("scroll", scrollCheck);
+    };
+  }, [student.show]);
 
   const showStudent = (
     user: any,
@@ -111,19 +315,6 @@ const Assessment = ({
       studentId,
     });
   };
-
-  const studentsPendingExam = exam.bioData.filter((dta: any) => {
-    return dta.status === 0;
-  });
-
-  const studentsWritingExam = exam.bioData.filter((dta: any) => {
-    return dta.status === 1;
-  });
-
-  const studentsFinishedExam = exam.bioData.filter((dta: any) => {
-    return dta.status === 2;
-  });
-
   const startCloseAssessmentCheck = () => {
     if (exam.status === 0) {
       toast.warning("No available result yet, Start Assessment first", {
@@ -131,7 +322,6 @@ const Assessment = ({
       });
       return;
     }
-
     if (exam.status === 1) {
       toast.warning("You have to close this Assessment first", {
         position: "top-center",
@@ -139,58 +329,27 @@ const Assessment = ({
       return;
     }
   };
-
-  // const handleDownloadPDF = () => {
-  //   startCloseAssessmentCheck();
-  // };
-
   const handleUpload = () => {
     startCloseAssessmentCheck();
   };
-
-  const setRunningAssessment = async () => {
-    await updateExamStatus(exam._id, { status: 1 });
-    setExam({ ...exam, status: 1 });
-  };
-
-  const handleStartAssessment = async () => {
+  const handleAssessmentStatus = async (
+    status = 1,
+    message = "Assessment started"
+  ) => {
     try {
-      setRunningAssessment();
-      toast.success("Assessment started", {
+      await updateExam(id, { status });
+      toast.success(`${message}`, {
         position: "top-center",
       });
+      return true;
     } catch (error) {
-      toast.error(error.message, { position: "top-center" });
-    }
-  };
-
-  const handleCloseAssessment = async () => {
-    try {
-      await updateExamStatus(exam._id, { status: 2 });
-      await loadUpResults(exam._id);
-      setExam({ ...exam, status: 2 });
-      toast.success("Assessment Closed", {
+      toast.error(`Error: ${error.message}`, {
         position: "top-center",
       });
-      setModalData({ ...modalData, show: false });
-    } catch (error) {
-      toast.error(error.message, { position: "top-center" });
+      return false;
     }
   };
-
-  const handleReopenAssessment = async () => {
-    try {
-      setRunningAssessment();
-      toast.success("Assessment Reopened!", {
-        position: "top-center",
-      });
-    } catch (error) {
-      toast.error(error.message, { position: "top-center" });
-    }
-  };
-
   const handleModalClose = () => setModalData({ ...modalData, show: false });
-
   const onClickConfirmCloseAssessment = () => {
     setModalData({
       show: true,
@@ -201,13 +360,17 @@ const Assessment = ({
             Closing the Assessment will end all Examination <br />
             Continue by clicking on Close.
           </p>
-
           <div className="">
             <button className="btn" onClick={handleModalClose}>
               Don't Close
             </button>
-
-            <button className="btn ml-2" onClick={handleCloseAssessment}>
+            <button
+              className="btn ml-2"
+              onClick={() =>
+                handleAssessmentStatus(2, "Assessment closed") &&
+                handleModalClose()
+              }
+            >
               Close
             </button>
           </div>
@@ -215,60 +378,6 @@ const Assessment = ({
       ),
     });
   };
-  let __data = exam.bioData;
-  if (search.length > 0) {
-    __data = __data.reduce((acc: any, elem: any) => {
-      let { status } = elem;
-      status = status === 0 ? "pending" : status === 1 ? "running" : "closed";
-      if (
-        elem.user.name.toLowerCase().indexOf(search.toLowerCase()) !== -1 ||
-        elem.user.matric.toLowerCase().indexOf(search.toLowerCase()) !== -1 ||
-        elem.user.department.department
-          .toLowerCase()
-          .indexOf(search.toLowerCase()) !== -1 ||
-        elem.user.faculty.faculty
-          .toLowerCase()
-          .indexOf(search.toLowerCase()) !== -1 ||
-        status.toLowerCase().indexOf(search.toLowerCase()) !== -1
-      )
-        return [...acc, elem];
-      return acc;
-    }, []);
-  }
-  __data = _.orderBy(__data, "status");
-  const biodata = (function biodatas(): any {
-    let data: any = [];
-    let count = page * 5 + 5 > __data.length ? __data.length : page * 5 + 5;
-    for (let i = page * 5; i < count; i++) {
-      data.push(__data[i]);
-    }
-    return data;
-  })();
-
-  const paginationArray = (() => {
-    const arr = [];
-    for (let i = 0; i <= Math.floor(__data.length / 5); i++) {
-      arr.push(i);
-    }
-    return arr;
-  })();
-
-  const prev = page - 1 <= 0 ? 0 : page - 1;
-  const next =
-    page + 1 >= __data.length / 20 ? Math.floor(__data.length / 20) : page + 1;
-
-  useEffect(() => {
-    if (Object.keys(faculty).length < 1) {
-      (async () => {
-        try {
-          await getFaculty();
-        } catch (error) {
-          console.log(error);
-        }
-      })();
-    }
-  }, [getFaculty, faculty]);
-
   const onClickShowAddStudentModal = () => {
     setModalData({
       show: true,
@@ -277,17 +386,20 @@ const Assessment = ({
           handleModalClose={handleModalClose}
           faculty={faculty}
           examId={exam._id}
+          counts={{
+            count: (props.count[id] && props.count[id].count) || 0,
+            pending: (props.count[id] && props.count[id].count) || 0,
+          }}
         />
       ),
     });
   };
-
   const handleTimeExtend = async () => {
     try {
       return (
         (await extendStudentTime({
           timeIncrease: extendTime,
-          userId: student.studentId,
+          userId: student._id,
         })) &&
         toast.success("Operation successful", {
           position: "top-center",
@@ -298,9 +410,6 @@ const Assessment = ({
       toast.error(error.message, { position: "top-center" });
     }
   };
-
-  console.log(results);
-
   const handleShowExtendModal = () => {
     setModalData({
       show: true,
@@ -318,7 +427,6 @@ const Assessment = ({
             <button onClick={handleModalClose} className="btn btn-primary">
               Cancel
             </button>
-
             <button
               onClick={handleTimeExtend}
               type="submit"
@@ -332,12 +440,30 @@ const Assessment = ({
     });
   };
 
+  if (!exam.docStatus || props.loading) {
+    // Return page loading or 404 page
+
+    return props.loading ? <Preloader /> : <>No exam with that ID</>;
+  }
+  if (
+    props.location.pathname === `/admin/exams/${exam._id}/questions` ||
+    props.location.pathname === "/admin/running-asssesment/questions"
+  ) {
+    return (
+      <PreviewQuestions
+        examQuestions={exam.questions}
+        examId={exam._id}
+        questionCount={props.questions[id] || 0}
+        page={query.page}
+        location={props.location}
+      />
+    );
+  }
   return (
     <>
       <Modal show={modalData.show} handleClose={handleModalClose}>
         {modalData.display}
       </Modal>
-
       <h2 className="text-center">
         <span style={{ textTransform: "uppercase" }}>{exam.course}</span> -{" "}
         <span style={{ textTransform: "capitalize" }}>{exam.title}</span> <br />{" "}
@@ -357,267 +483,251 @@ const Assessment = ({
             : "Closed"}
         </span>
       </h2>
-      {preview ? (
-        <PreviewQuestions
-          setPreview={setPreview}
-          examId={exam._id}
-          examQuestions={exam.questions}
-          match={match}
-        />
-      ) : (
-        <>
-          <section className="d-flex justify-content-center">
-            <div className="d-flex dash-detail">
-              <i className="icon-assessment">
-                <span className="path1"></span>
-                <span className="path2"></span>
-              </i>
-              <div className="ml-3 total-assessment">
-                <h3>{exam.bioData.length}</h3>
-                <h4>Students</h4>
-              </div>
-            </div>
+      {/* Quick Info Section */}
 
-            <div className="d-flex dash-detail">
-              <i className="icon-pending">
-                <span className="path1"></span>
-                <span className="path2"></span>
-              </i>
-              <div className="ml-3 total-pending">
-                <h3>{studentsPendingExam.length}</h3>
-                <h4>Students pending</h4>
-              </div>
-            </div>
+      <section className="d-flex justify-content-center">
+        <div className="d-flex dash-detail">
+          <i className="icon-assessment">
+            <span className="path1"></span>
+            <span className="path2"></span>
+          </i>
+          <div className="ml-3 total-assessment">
+            <h3>
+              {search.search
+                ? search.searchCount
+                : (props.count[props.match.params.id] &&
+                    props.count[props.match.params.id].count) ||
+                  0}
+            </h3>
+            <h4>Students</h4>
+          </div>
+        </div>
+        <div className="d-flex dash-detail">
+          <i className="icon-pending">
+            <span className="path1"></span>
+            <span className="path2"></span>
+          </i>
+          <div className="ml-3 total-pending">
+            <h3>
+              {search.search
+                ? search.pending
+                : (props.count[props.match.params.id] &&
+                    props.count[props.match.params.id].pending) ||
+                  0}
+            </h3>
+            <h4>Students pending</h4>
+          </div>
+        </div>
+        <div className="d-flex dash-detail">
+          <i className="icon-closed">
+            <span className="path1"></span>
+            <span className="path2"></span>
+          </i>
+          <div className="ml-3 total-closed">
+            <h3>
+              {search.search
+                ? search.done
+                : (props.count[props.match.params.id] &&
+                    props.count[props.match.params.id].done) ||
+                  0}
+            </h3>
+            <h4>Students finished</h4>
+          </div>
+        </div>
+        <div className="d-flex dash-detail">
+          <i className="icon-running">
+            <span className="path1"></span>
+            <span className="path2"></span>
+          </i>
+          <div className="ml-3 total-running">
+            <h3>
+              {search.search
+                ? search.running
+                : (props.count[props.match.params.id] &&
+                    props.count[props.match.params.id].running) ||
+                  0}
+            </h3>
+            <h4>Students online</h4>
+          </div>
+        </div>
+      </section>
 
-            <div className="d-flex dash-detail">
-              <i className="icon-closed">
-                <span className="path1"></span>
-                <span className="path2"></span>
-              </i>
-              <div className="ml-3 total-closed">
-                <h3>{studentsFinishedExam.length}</h3>
-                <h4>Students finished</h4>
-              </div>
-            </div>
+      {/* End: Quick Info Section */}
 
-            <div className="d-flex dash-detail">
-              <i className="icon-running">
-                <span className="path1"></span>
-                <span className="path2"></span>
-              </i>
-              <div className="ml-3 total-running">
-                <h3>{studentsWritingExam.length}</h3>
-                <h4>Students online</h4>
-              </div>
-            </div>
-          </section>
+      {/* Action Buttons Section */}
 
-          <div className="d-flex align-items-center justify-content-between mb-5 mt-5 assessment-actions">
+      <div className="d-flex align-items-center justify-content-between mb-5 mt-5 assessment-actions">
+        <Link
+          className="btn btn-primary"
+          to={`${props.location.pathname}/questions`}
+        >
+          Preview Questions
+        </Link>
+        {exam.status === 2 ? (
+          <>
+            <button
+              className="btn btn-success"
+              onClick={handleUpload}
+              disabled={exam.status < 2 ? true : false}
+            >
+              Upload Result
+            </button>
+            <div>
+              <PDFDownloadLink
+                document={
+                  <PDFResultView
+                    results={Object.values(results)
+                      // .sort(matricDescendingSortFn)
+                      .sort(facultyAlphabeticalSortFn)
+                      .sort(departmentAlphabeticalSortFn)}
+                    examTitle={`${exam.course} - ${exam.title}`}
+                  />
+                }
+                fileName={`${exam.course}-${exam.title}.pdf`}
+                className={`btn btn-success ${
+                  Object.keys(results).length <
+                  ((props.count[id] && props.count[id].count) || 0)
+                    ? "disabled"
+                    : ""
+                }`}
+                style={{ color: "#fff" }}
+              >
+                {({ blob, url, loading, error }) =>
+                  loading ? "Loading PDF Result..." : "Download Result (PDF)"
+                }
+              </PDFDownloadLink>
+              <Workbook
+                filename={`${exam.course}-${exam.title}.xlsx`}
+                element={
+                  <button
+                    className="btn btn-success ml-3"
+                    disabled={
+                      Object.keys(results).length <
+                      ((props.count[id] && props.count[id].count) || 0)
+                    }
+                  >
+                    Download Result (Spreadsheet)
+                  </button>
+                }
+              >
+                <Workbook.Sheet
+                  data={Object.values(results)
+                    .sort(matricDescendingSortFn)
+                    .sort(facultyAlphabeticalSortFn)
+                    .sort(departmentAlphabeticalSortFn)}
+                  name="Sheet A"
+                >
+                  <Workbook.Column label="Name" value="name" />
+                  <Workbook.Column label="Matric No." value="matric" />
+                  <Workbook.Column label="Level" value="level" />
+                  <Workbook.Column label="Department" value="department" />
+                  <Workbook.Column label="Faculty" value="faculty" />
+                  <Workbook.Column label="CA. Score" value="ca" />
+                  <Workbook.Column label="Examination" value="exam" />
+                  <Workbook.Column label="Total" value="total" />
+                  <Workbook.Column label="Grade" value="grade" />
+                </Workbook.Sheet>
+              </Workbook>
+            </div>
+          </>
+        ) : (
+          <></>
+        )}
+      </div>
+
+      {/* End: Action Buttons Section */}
+
+      <div className="student-section">
+        {/* Action Buttons 2 */}
+
+        <section className="tbl">
+          <div className="d-flex justify-content-between align-items-center ctrl-actions">
             <button
               className="btn btn-primary"
-              onClick={() => setPreview(true)}
+              onClick={onClickShowAddStudentModal}
             >
-              Preview Questions
+              Add Student
             </button>
-            {exam.status === 2 ? (
-              <>
+            <form>
+              <input
+                className="btn"
+                type="search"
+                value={search.searchString}
+                onChange={(ev: any) => {
+                  ev.preventDefault();
+                  return setSearch({
+                    ...search,
+                    searchString: ev.target.value,
+                  });
+                }}
+                placeholder="&#xe902; Search Student"
+                style={{ fontFamily: "Poppins, icomoon" }}
+              />
+            </form>
+            <div className="d-flex justify-content-between">
+              {exam.status === 2 ? (
                 <button
-                  className="btn btn-success"
-                  onClick={handleUpload}
-                  disabled={exam.status < 2 ? true : false}
+                  className="mr-3 btn btn-primary"
+                  // disabled={exam.status !== 0}
+                  onClick={() =>
+                    handleAssessmentStatus(1, "Assessment reopened!")
+                  }
                 >
-                  Upload Result
+                  Reopen Assesment
                 </button>
-
-                <div>
-                  <PDFDownloadLink
-                    document={
-                      <PDFResultView
-                        results={Object.values(results)
-                          // .sort(matricDescendingSortFn)
-                          .sort(facultyAlphabeticalSortFn)
-                          .sort(departmentAlphabeticalSortFn)}
-                        examTitle={`${exam.course} - ${exam.title}`}
-                      />
-                    }
-                    fileName={`${exam.course}-${exam.title}.pdf`}
-                    className="btn btn-success"
-                    style={{ color: "#fff" }}
-                    // disabled={exam.status < 2 ? true : false}
-                  >
-                    {({ blob, url, loading, error }) =>
-                      loading
-                        ? "Loading PDF Result..."
-                        : "Download Result (PDF)"
-                    }
-                  </PDFDownloadLink>
-                  {/* <button
-                className="btn btn-success"
-                onClick={handleDownloadPDF}
-                disabled={exam.status < 2 ? true : false}
+              ) : null}
+              <button
+                className="mr-3 btn btn-primary"
+                disabled={exam.status !== 0}
+                onClick={() => handleAssessmentStatus()}
               >
-                Download Result (PDF)
-              </button> */}
-
-                  <Workbook
-                    filename={`${exam.course}-${exam.title}.xlsx`}
-                    element={
-                      <button
-                        className="btn btn-success ml-3"
-                        disabled={exam.status < 2 ? true : false}
-                      >
-                        Download Result (Spreadsheet)
-                      </button>
-                    }
-                  >
-                    <Workbook.Sheet
-                      data={Object.values(results)
-                        .sort(matricDescendingSortFn)
-                        .sort(facultyAlphabeticalSortFn)
-                        .sort(departmentAlphabeticalSortFn)}
-                      name="Sheet A"
-                    >
-                      <Workbook.Column label="Name" value="name" />
-                      <Workbook.Column label="Matric No." value="matric" />
-                      <Workbook.Column label="Level" value="level" />
-                      <Workbook.Column label="Department" value="department" />
-                      <Workbook.Column label="Faculty" value="faculty" />
-                      <Workbook.Column label="CA. Score" value="ca" />
-                      <Workbook.Column label="Examination" value="exam" />
-                      <Workbook.Column label="Total" value="total" />
-                      <Workbook.Column label="Grade" value="grade" />
-                    </Workbook.Sheet>
-                  </Workbook>
-                </div>
-              </>
-            ) : (
-              <></>
-            )}
+                Start Assesment
+              </button>
+              <button
+                className="btn btn-danger"
+                disabled={exam.status === 0 || exam.status === 2}
+                onClick={onClickConfirmCloseAssessment}
+              >
+                Close Assessment
+              </button>
+            </div>
           </div>
-
-          <div className="student-section">
-            <section className="tbl">
-              <div className="d-flex justify-content-between align-items-center ctrl-actions">
-                <button
-                  className="btn btn-primary"
-                  onClick={onClickShowAddStudentModal}
-                >
-                  Add Student
-                </button>
-                <form>
-                  <input
-                    className="btn"
-                    type="search"
-                    value={search}
-                    onChange={(ev: any) => {
-                      ev.preventDefault();
-                      return setSearch(ev.target.value);
-                    }}
-                    placeholder="&#xe902; Search Student"
-                    style={{ fontFamily: "Poppins, icomoon" }}
-                  />
-                </form>
-                <div className="d-flex justify-content-between">
-                  {exam.status === 2 ? (
-                    <button
-                      className="mr-3 btn btn-primary"
-                      // disabled={exam.status !== 0}
-                      onClick={handleReopenAssessment}
-                    >
-                      Reopen Assesment
-                    </button>
-                  ) : null}
-
-                  <button
-                    className="mr-3 btn btn-primary"
-                    disabled={exam.status !== 0}
-                    onClick={handleStartAssessment}
-                  >
-                    Start Assesment
-                  </button>
-                  {/* <button
-                    className="mr-3 btn btn-success"
-                    onClick={handleViewResult}
-
-                    // disabled={exam.status < 2}
-                  >
-                    View Assesment Result
-                  </button> */}
-                  <button
-                    className="btn btn-danger"
-                    disabled={exam.status === 0 || exam.status === 2}
-                    onClick={onClickConfirmCloseAssessment}
-                  >
-                    Close Assessment
-                  </button>
-                </div>
-              </div>
-
-              <div className="dta-head ">
-                <span className="">Student</span>
-                <span className="">Matric. No</span>
-                <span className="">Department</span>
-                <span className="">Faculty</span>
-                <span className="">Status </span>
-              </div>
-
-              {biodata.map((dta: any, ind: number) => (
-                <StudentList key={ind} {...dta} showStudent={showStudent} />
-              ))}
-
-              <div className="pagination">
-                <span
-                  onClick={() => setPage(prev)}
-                  className={`btn link prev-next ${
-                    page <= 0 ? "disabled" : ""
-                  }`}
-                >
-                  Prev
-                </span>
-                {paginationArray.map((i: number) => {
-                  if (
-                    i === 0 ||
-                    i === page ||
-                    i === paginationArray.length - 1 ||
-                    i + 1 === page ||
-                    i - 1 === page
-                  ) {
-                    return (
-                      <span
-                        onClick={() => setPage(i)}
-                        className={`btn link ${i === page ? "active" : ""}`}
-                        key={`pagination_link_${i}`}
-                      >
-                        {i + 1}
-                      </span>
-                    );
-                  }
-                  if (i === page - 2 || i === page + 2) {
-                    return <span key={`pagination_link_${i}`}>&hellip;</span>;
-                  }
-                  return "";
-                })}
-                <span
-                  onClick={() => setPage(next)}
-                  className={`btn link prev-next ${
-                    page >= Math.floor(__data.length / 10) ? "disabled" : ""
-                  }`}
-                >
-                  Next
-                </span>
-              </div>
-            </section>
-
-            <StudentInfo
-              student={student}
-              setStudent={setStudent}
-              updateBiodata={props.updateBiodata}
-              examId={exam._id}
-              handleShowExtendModal={handleShowExtendModal}
-            />
+          <div className="dta-head ">
+            <span className="">Student</span>
+            <span className="">Matric. No</span>
+            <span className="">Department</span>
+            <span className="">Faculty</span>
+            <span className="">Status </span>
           </div>
-        </>
-      )}
+          {Object.values(exam.bioData).map((dta: any, ind: number) => (
+            <StudentList key={ind} {...dta} showStudent={showStudent} />
+          ))}
+        </section>
+
+        {/* End: Action Buttons 2 */}
+
+        <StudentInfo
+          student={student}
+          setStudent={setStudent}
+          updateBiodata={props.updateBiodata}
+          examId={exam._id}
+          handleShowExtendModal={handleShowExtendModal}
+        />
+      </div>
+      <div
+        className="count-check text-center mt-5 pb-5"
+        style={{
+          opacity: 0.6,
+          fontSize: 11,
+        }}
+      >
+        {((props.count[id] && props.count[id].count) || 0) ===
+          Object.keys(exam.bioData).length ||
+        (search.search &&
+          search.searchCount === Object.keys(exam.bioData).length)
+          ? "that's all"
+          : "loading data ..."}
+      </div>
     </>
   );
 };
@@ -627,15 +737,21 @@ function mapStateToProps(state: any) {
     results: state.results,
     faculty: state.faculty,
     exams: state.exams,
+    biodatas: state.biodatas,
+    count: state.counts.biodatas,
+    questions: state.counts.questions,
     loading: state.apiCallsInProgress > 0,
   };
 }
 
 const mapDispatchToProps = {
   loadUpResults,
-  updateExamStatus,
+  updateExam,
   getFaculty,
   updateBiodata,
+  loadSingleExam,
+  loadSingleBiodata,
+  loadUpQuestions,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Assessment);

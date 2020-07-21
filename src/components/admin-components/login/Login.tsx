@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import assesment_SVG from "../../../svg/undraw_exams_g4ow 1.svg";
 import Header from "../../Header";
@@ -13,9 +13,11 @@ const Login = (props: any) => {
   });
   const [busy, setBusy] = useState(false);
 
-  if (window.location.pathname !== "/admin") {
-    props.history.push("/admin");
-  }
+  useEffect(() => {
+    if (props.location.pathname !== "/admin") {
+      props.history.push("/admin");
+    }
+  }, [props.location.pathname, props.history]);
 
   const handleInputs = (ev: any) => {
     const { name, value } = ev.target;

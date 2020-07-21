@@ -17,20 +17,14 @@ const StudentCred = ({
         <>
           <div className="text-center">
             <span className="image-cropper">
-              <object
-                data={
+              <img
+                src={
                   `http://${window.location.hostname}:8000/api/static/` +
                   props.matric +
                   ".png"
                 }
-                type="image/jpg"
-                style={{width: "100%"}}
-              >
-                <img
-                  src={`http://${window.location.hostname}:8000/api/static/default.png`}
-                  alt="student"
-                />
-              </object>
+                alt="student"
+              />
             </span>
             <h2>{props.name}</h2>
           </div>

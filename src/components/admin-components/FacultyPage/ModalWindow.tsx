@@ -16,14 +16,16 @@ export const AddFacultyWindow = ({
 
   const handleCreateFaculty = async () => {
     if (
-      faculty.filter(
+      Object.values(faculty).filter(
         (a: any) =>
           a.faculty
             .toLowerCase()
             .indexOf(input.faculty.toLowerCase().split(" ")[0]) !== -1
       ).length > 0
     ) {
-      toast.warning(`${input.faculty} Faculty Exists`, { position: "top-center" });
+      toast.warning(`${input.faculty} Faculty Exists`, {
+        position: "top-center",
+      });
       return;
     }
 
@@ -83,10 +85,13 @@ export const AddDepartmentWindow = ({
   };
   const handleCreateDepartment = async () => {
     if (
-      faculty.departments.filter((a: any) => a.department === input.department)
-        .length > 0
+      Object.values(faculty.departments).filter(
+        (a: any) => a.department === input.department
+      ).length > 0
     ) {
-      toast.warning(`${input.department} Department Exists`, { position: "top-center" });
+      toast.warning(`${input.department} Department Exists`, {
+        position: "top-center",
+      });
       return;
     }
 

@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { useHistory, Redirect } from "react-router-dom";
+import React, { useEffect } from "react";
 
 import "./SubmitPage.scss";
 
@@ -16,7 +15,7 @@ const SubmitPage = (props: { deleteStudent: () => Promise<any> }) => {
     return () => clearTimeout(id);
   });
 
-  return  (
+  return (
     <section className="m-auto submit">
       <div>
         <h3>

@@ -1,19 +1,20 @@
-import React, { useState, FormEvent } from "react";
+import React, { useState, FormEvent, useEffect } from "react";
 import "./StudentLoginPage.scss";
 import assesment_SVG from "../../svg/undraw_exams_g4ow 1.svg";
 import Header from "../Header";
 import { connect } from "react-redux";
 import { loadStudent } from "../../redux/actions/studentAction";
-import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 // import Header from '../Header';
 // import Footer from '../Footer';
 
 const StudentLoginPage = (props: any) => {
-  const history = useHistory();
-  if (window.location.pathname !== "/") {
-    history.push("/");
-  }
+  useEffect(() => {
+    if (props.location.pathname !== "/") {
+      props.history.push("/");
+    }
+  }, [props.location.pathname, props.history]);
+
   const [inputs, setInputs] = useState({
     "matric-no": "",
     password: "",

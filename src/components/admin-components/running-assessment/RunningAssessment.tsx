@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { loadUpExams } from "../../../redux/actions/AdministratorActions";
 import { connect } from "react-redux";
 import Assessment from "../common/Assessment";
@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 import Preloader from "../../Preloader";
 
 const RunningAssessment = (props: any) => {
-  const [student, setStudent] = useState({ show: false, matric: "13MS1027" });
   const { exams, loadUpExams } = props;
 
   useEffect(() => {
@@ -19,7 +18,7 @@ const RunningAssessment = (props: any) => {
         }
       })();
     }
-  }, []);
+  }, [exams, loadUpExams]);
 
   let runningExam: any;
   if (!props.loading) {
@@ -27,20 +26,6 @@ const RunningAssessment = (props: any) => {
       (exam: any) => exam.status === 1
     );
   }
-
-  useEffect(() => {
-    if (student.show) {
-      document.querySelector(".student-section")?.classList.add("show-student");
-    } else {
-      document
-        .querySelector(".student-section")
-        ?.classList.remove("show-student");
-    }
-  }, [student]);
-
-  const showStudent = (matric: string) => {
-    setStudent({ show: !student.show, matric: matric });
-  };
 
   return (
     <>
@@ -55,7 +40,14 @@ const RunningAssessment = (props: any) => {
           ) : (
             // <div>examinations running </div>
             runningExam.map((exam: any, index: number) => {
-              return <Assessment exam={exam} key={index} />;
+              return (
+                <Assessment
+                  exam={exam}
+                  key={index}
+                  match={{ params: { id: exam._id } }}
+                  location={props.location}
+                />
+              );
             })
           )}
         </>

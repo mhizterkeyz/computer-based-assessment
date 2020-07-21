@@ -4,8 +4,7 @@ import "./QuestionPage.scss";
 import display_img from "../../image/Rectangle-19.png";
 import timer_icon from "../../svg/access_alarms_24px_outlined.svg";
 import Modal from "../Modal";
-import { loadStudentExamination } from "../../redux/actions/examAction";
-import { answerExam, submitExam } from "../../api/studentApi";
+import { answerExam, submitExam, getExams } from "../../api/studentApi";
 import { connect } from "react-redux";
 import Preloader from "../Preloader";
 import StudentCred from "./StudentCred";
@@ -53,82 +52,86 @@ const ConfirmSubmit = ({ handleModalClose }: ConfirmSubmitProps) => {
 };
 
 const QuestionPage = (props: any) => {
+  const [loading, setLoading] = useState(false);
   const [counter, setCounter] = useState({
     minutes: 0,
     seconds: 0,
+    interval: 1000,
+  });
+  const [exam, setExam] = useState({
+    done: false,
+    title: "",
+    course: "",
+    timeLeft: 0,
+    displayTime: 0,
+    timeAllowed: 0,
+    examNotFound: false,
+    examLoaded: false,
+    questions: {},
+    answered: {},
+  });
+  const [data, setData] = useState({
+    question: {},
+    prev: "",
+    next: "",
   });
   const [modalData, setModalData] = useState({
     show: false,
     display: <></>,
   });
-  const [examSet, setExamSet] = useState(false);
-  const [exam, setExam] = useState({
-    questions: {
-      "question-1": {
-        question_no: "question-1",
-        questionId: "jsam",
-        _id: "question-1",
-        type: true, //true: multichoice, false: freeanswer
-        question: "",
-        options: {
-          a: "",
-          b: "",
-          c: "",
-          d: "",
-        },
-      },
-    },
-    answered: {},
-  });
-  const [live, setLive] = useState(true);
-  const [timerInterval, setTimerInterval] = useState(1000);
-  const { studentExamination, loadStudentExamination } = props;
 
   useEffect(() => {
-    (async () => {
-      try {
-        await loadStudentExamination(true);
-      } catch (error) {
-        // Live updates failed, do nothing
-      }
-    })();
-    const inte = setInterval(() => setLive(!live), 5000);
-    return () => clearInterval(inte);
-  }, [live, loadStudentExamination]);
+    if (exam.done) {
+      props.history.push("/exam/submit");
+      return () => {};
+    }
+  }, [exam.done, props.history]);
   useEffect(() => {
-    if (Object.keys(studentExamination).length < 1) {
+    if (exam.examNotFound) {
+      delete localStorage["route"];
+      props.history.push("/");
+      return () => {};
+    }
+    if (!exam.examLoaded) {
       (async () => {
+        setLoading(true);
         try {
-          await loadStudentExamination();
+          const examination = await getExams();
+          if (examination.examNotFound)
+            return setExam((i) => ({ ...i, examNotFound: true }));
+          const questions = examination.questions.reduce(
+            (acc: any, cur: any, i: number) => ({
+              ...acc,
+              [`question-${i + 1}`]: {
+                ...cur,
+                questionId: cur._id,
+                question_no: `question-${i + 1}`,
+              },
+            }),
+            {}
+          );
+          const answered = examination.answered.reduce(
+            (acc: any, cur: any) => ({ ...acc, [cur.questionId]: cur }),
+            {}
+          );
+          delete examination.questions;
+          delete examination.answered;
+          setExam((i) => ({
+            ...i,
+            questions,
+            answered,
+            examLoaded: true,
+            ...examination,
+          }));
         } catch (error) {
-          // toast.error(`Error: ${error.message}`, { position: "top-center" });
-          console.log(error.message);
+          toast.error("Error: " + error.message, { position: "top-center" });
         }
+        setLoading(false);
       })();
     }
-    if (Object.keys(studentExamination).length > 1 && !examSet) {
-      const questions = studentExamination.questions.reduce(
-        (acc: any, cur: any, i: any) => ({
-          ...acc,
-          [`question-${i + 1}`]: { ...cur, question_no: `question-${i + 1}` },
-        }),
-        {}
-      );
-      const answered = studentExamination.answered.reduce(
-        (acc: any, cur: any) => ({
-          ...acc,
-          [cur.questionId]: {
-            ...cur,
-            value: cur.answer,
-            _id: cur.questionId,
-          },
-        }),
-        {}
-      );
-      setExam({ questions, answered });
-      setExamSet(true);
-    }
-    if (Object.keys(studentExamination).length > 1) {
+  }, [exam.examLoaded, exam.examNotFound, props.history]);
+  useEffect(() => {
+    if (exam.examLoaded) {
       //  Quick check to make sure you're supposed to be here...
       (async () => {
         try {
@@ -145,31 +148,24 @@ const QuestionPage = (props: any) => {
           toast.error("Error: " + error.message, { position: "top-center" });
         }
       })();
+      const { timeAllowed, displayTime, timeLeft } = exam;
 
-      let p = studentExamination.timeLeft / studentExamination.timeAllowed;
-      let dp = (p * studentExamination.displayTime - 1).toFixed(2);
+      let p = timeLeft / timeAllowed;
+      let dp = (p * displayTime - 1).toFixed(2);
       let [min = 0, sec = 0] = dp.split(".");
       let minutes = parseInt(min + "");
       let seconds = Math.floor((parseInt(sec + "") / 99) * 60);
-      setTimerInterval(
-        (1000 * studentExamination.timeAllowed) / studentExamination.displayTime
-      );
       setCounter((i) => ({
         ...i,
         minutes,
         seconds,
+        interval: (1000 * timeAllowed) / displayTime,
       }));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [studentExamination, loadStudentExamination, examSet]);
-
-  if (studentExamination.hasOwnProperty("examNotFound")) {
-    props.history.push("/exam/submit");
-  }
-
-  const { minutes, seconds } = counter;
-
+  }, [exam]);
   useEffect(() => {
+    if (!exam.examLoaded) return () => {};
+    const { seconds, minutes, interval } = counter;
     const myInterval = setInterval(() => {
       if (seconds > 0) {
         setCounter({
@@ -181,7 +177,7 @@ const QuestionPage = (props: any) => {
 
       if (seconds <= 0) {
         if (minutes <= 0) {
-          props.history.push("/exam/submit");
+          setExam((i) => ({ ...i, done: true }));
           clearInterval(myInterval);
         } else {
           setCounter({
@@ -191,59 +187,60 @@ const QuestionPage = (props: any) => {
           });
         }
       }
-    }, timerInterval);
+    }, interval);
 
     return () => clearInterval(myInterval);
-  }, [minutes, seconds, counter, props.history, timerInterval]);
-
-  const { question, prev, next }: any = Object.values(exam.questions).reduce(
-    (acc, cur, ind, arr) => {
-      const prev =
-        ind - 1 < 0
-          ? arr[arr.length - 1].question_no || "/exam"
-          : arr[ind - 1].question_no || "/exam";
-      const next =
-        ind + 1 >= arr.length
-          ? arr[0].question_no || "/exam"
-          : arr[ind + 1].question_no || "/exam";
-      if (cur.question_no === props.match.params.question)
-        return { question: cur, prev, next };
-      return acc;
-    },
-    { question: exam.questions["question-1"], prev: "", next: "question-2" }
-  );
+  }, [counter, props.history, exam.examLoaded]);
+  useEffect(() => {
+    const { questions } = exam;
+    const question =
+      //  @ts-ignore
+      questions[props.match.params.question] || questions["question-1"];
+    const ind = props.match.params.question
+      ? parseInt(props.match.params.question.split("-")[1]) || 1
+      : 1;
+    const prev = ind - 1 < 1 ? `question-1` : `question-${ind - 1}`;
+    const next =
+      ind + 1 > Object.keys(questions).length
+        ? `question-${Object.keys(questions).length}`
+        : `question-${ind + 1}`;
+    setData({ question, prev, next });
+  }, [exam, props.match.params.question]);
 
   const handleModalClose = () => setModalData({ ...modalData, show: false });
-
   const handleChoose = async (ev: any) => {
     const { value } = ev.target;
-    let answered = {
+    const answered = {
       ...exam.answered,
+      // @ts-ignore
       [question.questionId]: {
-        value,
-        _id: question._id,
         answer: value,
+        // @ts-ignore
         questionId: question.questionId,
       },
     };
-    setExam({ ...exam, answered });
+    setExam({
+      ...exam,
+      answered,
+    });
     try {
       const req = await answerExam(answered);
       if (req.status === 200) {
-        return;
+        return setExam((i) => ({ ...i, timeLeft: req.data.timeLeft }));
       }
       if (req.status === 404) {
-        return props.history.push("/exam/submit");
+        return setExam((i) => ({ ...i, done: true }));
       }
       throw new Error("an unexpected error has occurred");
     } catch (error) {
       toast.error(`Error: ${error.message}`, { position: "top-center" });
     }
   };
-
   const capitalizeFirstLetter = (string: string) =>
     string.charAt(0).toUpperCase() + string.slice(1);
 
+  const { question, prev, next } = data;
+  const { minutes, seconds } = counter;
   return (
     <>
       <Modal show={modalData.show} handleClose={handleModalClose}>
@@ -255,84 +252,109 @@ const QuestionPage = (props: any) => {
             Preloader,
             minutes,
             display_img,
-            loading: props.loading,
+            loading,
             timer_icon,
             seconds,
           }}
           {...props.student}
         />
-
         <section className="col-8 question">
-          {props.loading ? (
+          {loading ? (
             <h3>Loading Questions...</h3>
           ) : (
-            // <h3>
-            //   Course - <span>Nigeria People and culture (GST 103)</span>
-            // </h3>
             <h2 className="text-center mb-2">
-              <span style={{ textTransform: "uppercase" }}>GST 103</span> -{" "}
-              <span style={{ textTransform: "capitalize" }}>
-                Nigeria People and culture
-              </span>
+              <span style={{ textTransform: "uppercase" }}>{exam.course}</span>{" "}
+              -{" "}
+              <span style={{ textTransform: "capitalize" }}>{exam.title}</span>
             </h2>
           )}
-
           <div className="question-body">
-            {props.loading ? (
+            {loading ? (
               <Preloader />
             ) : (
               <>
                 <h4 className="text-center mb-4">
                   {" "}
-                  {question.question_no &&
+                  {question &&
+                    //  @ts-ignore
+                    question.question_no &&
+                    //  @ts-ignore
                     question.question_no.toUpperCase().replace("-", " ")}
                 </h4>
                 <div className="d-flex justify-content-center">
-                  {question.images &&
-                    question.images.map((elem: string, i: number) => {
-                      if (elem && elem.includes(".png"))
-                        return (
-                          <img
-                            src={
-                              `http://${window.location.hostname}:8000/api/static/` +
-                              elem
-                            }
-                            alt="Question's figure"
-                            key={"image_" + i}
-                            style={{ maxWidth: "100%" }}
-                          />
-                        );
-                      return "";
-                    })}
+                  {
+                    //  @ts-ignore
+                    question.images &&
+                      //  @ts-ignore
+                      question.images.map((elem: string, i: number) => {
+                        if (elem && elem.includes(".png"))
+                          return (
+                            <img
+                              src={
+                                `http://${window.location.hostname}:8000/api/static/` +
+                                elem
+                              }
+                              alt="Question's figure"
+                              key={"image_" + i}
+                              style={{ maxWidth: "100%" }}
+                            />
+                          );
+                        return "";
+                      })
+                  }
                 </div>
                 <p>
-                  {capitalizeFirstLetter(question.question) &&
-                    capitalizeFirstLetter(question.question)}
+                  {capitalizeFirstLetter(
+                    //  @ts-ignore
+                    question.question || ""
+                  ) &&
+                    capitalizeFirstLetter(
+                      //  @ts-ignore
+                      question.question || ""
+                    )}
                 </p>
 
                 <form className="d-flex flex-column">
-                  {question.options &&
-                    Object.keys(question.options).map((opt) => {
-                      const val: any = Object.values(exam.answered).find(
-                        (elem: any) => elem.questionId === question.questionId
-                      );
-                      return (
-                        <div key={`${question._id}_opt_${opt}`}>
-                          <label style={{ textTransform: "capitalize" }}>
-                            {opt.toUpperCase()}.
-                            <input
-                              type="radio"
-                              checked={val && val.value === opt}
-                              name="answer"
-                              defaultValue={opt}
-                              className="ml-3 mr-2"
-                              onChange={handleChoose}
-                            />
-                            {question.options[opt]}
-                          </label>
-                        </div>
-                      );
-                    })}
+                  {
+                    //  @ts-ignore
+                    question.options &&
+                      Object.keys(
+                        //  @ts-ignore
+                        question.options
+                      ).map((opt) => {
+                        return (
+                          <div
+                            key={`${
+                              //  @ts-ignore
+                              question._id
+                            }_opt_${opt}`}
+                          >
+                            <label style={{ textTransform: "capitalize" }}>
+                              {opt.toUpperCase()}.
+                              <input
+                                type="radio"
+                                checked={
+                                  //  @ts-ignore
+                                  ((exam.answered[question.questionId] &&
+                                    //  @ts-ignore
+                                    exam.answered[question.questionId]
+                                      .answer) ||
+                                    "") === opt
+                                }
+                                name="answer"
+                                defaultValue={opt}
+                                className="ml-3 mr-2"
+                                onChange={handleChoose}
+                              />
+                              {
+                                //  @ts-ignore
+                                question.options[opt]
+                              }
+                            </label>
+                          </div>
+                        );
+                      })
+                  }
                 </form>
 
                 <div className="d-flex justify-content-between ctrl-btn">
@@ -366,19 +388,25 @@ const QuestionPage = (props: any) => {
               </>
             )}
           </div>
-
-          {props.loading ? (
+          {loading ? (
             <></>
           ) : (
             <div className="mt-3 mb-5 question-btn">
               {Object.values(exam.questions).map((elem, key) => (
                 <Link
                   className={`btn ${
+                    //  @ts-ignore
                     exam.answered.hasOwnProperty(elem.questionId)
                       ? "answered"
                       : ""
-                  } ${elem.questionId === question.questionId ? "focus" : ""}`}
-                  to={`/exam/${elem.question_no}`}
+                  } ${
+                    //  @ts-ignore
+                    elem.questionId === question.questionId ? "focus" : ""
+                  }`}
+                  to={`/exam/${
+                    //  @ts-ignore
+                    elem.question_no
+                  }`}
                   key={key}
                 >
                   <span>{key + 1}</span>
@@ -392,16 +420,9 @@ const QuestionPage = (props: any) => {
   );
 };
 
-function mapStateToProps(state: any) {
-  return {
-    studentExamination: state.studentExamination,
-    student: state.student,
-    loading: state.apiCallsInProgress > 0,
-  };
-}
+const mapStateToProps = (state: any, ownProps: any) => ({
+  ...ownProps,
+  student: state.student,
+});
 
-const mapDispatchToProps = {
-  loadStudentExamination,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(QuestionPage);
+export default connect(mapStateToProps)(QuestionPage);

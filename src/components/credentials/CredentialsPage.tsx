@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Redirect, useHistory } from "react-router-dom";
 import "./CredentialsPage.scss";
-import display_img from "../../image/Rectangle-19.png";
 
 interface CredentialsProps {
   name: string;
@@ -44,17 +43,15 @@ const CredentialsPage = ({
         <h3>Welcome, {name} !</h3>
         <div className="row d-flex flex-column justify-content-center align-items-center">
           <div className="mr-5 mb-3">
-            <object
-              data={`http://${window.location.hostname}:8000/api/static/` + matric_no + ".png"}
-              type="image/jpg"
-              style={{maxWidth: "10rem", borderRadius: "50%"}}
-              >
-              <img
-                src={`http://${window.location.hostname}:8000/api/static/default.png`}
-                alt="student avatar"
-                style={{maxWidth: "100%", borderRadius: "50%"}}
-              />
-            </object>
+            <img
+              src={
+                `http://${window.location.hostname}:8000/api/static/` +
+                matric_no +
+                ".png"
+              }
+              alt="student avatar"
+              style={{ maxWidth: "100%", borderRadius: "50%" }}
+            />
           </div>
           <div className="details">
             <Credentials detail="Matric. no" data={matric_no} />
@@ -63,8 +60,8 @@ const CredentialsPage = ({
           </div>
         </div>
         <p>
-          Confirm this Information to be your Information and <br /> Click on the
-          proceed button.
+          Confirm this Information to be your Information and <br /> Click on
+          the proceed button.
         </p>
 
         <div className="text-center">

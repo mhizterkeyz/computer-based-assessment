@@ -136,9 +136,7 @@ export const AddAdminModalWindow = ({
               toast.success("Admin Successfully Created", {
                 position: "top-center",
               });
-              setTimeout(() => {
-                window.location.reload();
-              }, 500);
+              handleModalClose();
             } catch (error) {
               toast.error(error.message, { position: "top-center" });
             }

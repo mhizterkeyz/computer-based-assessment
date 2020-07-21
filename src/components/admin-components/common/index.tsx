@@ -14,14 +14,29 @@ import PrintPin from "./PrintPinPage";
 import PrintResult from "./PrintResultPage";
 import FacultyPage from "../FacultyPage/FacultyPage";
 import NewAssessment from "../add-assessment/NewAssessment";
-import LiveUpdater from "./LiveUpdater";
+import Assessment from "./Assessment";
+// import LiveUpdater from "./LiveUpdater";
 
-const Index = ({ administrator, VerifyAdministrator }: any) => {
+const Index = ({ administrator, VerifyAdministrator, ...props }: any) => {
   useEffect(() => {
+    if (
+      props.location.pathname === "/admin" &&
+      Object.keys(administrator).length > 1 &&
+      administrator.hasOwnProperty("username") &&
+      administrator.username !== ""
+    ) {
+      props.history.push("/admin/exams");
+      return () => {};
+    }
     if (Object.keys(administrator).length < 1) {
       VerifyAdministrator();
     }
-  }, [VerifyAdministrator, administrator]);
+  }, [
+    VerifyAdministrator,
+    administrator,
+    props.location.pathname,
+    props.history,
+  ]);
 
   if (Object.keys(administrator).length < 1) {
     /**
@@ -51,7 +66,6 @@ const Index = ({ administrator, VerifyAdministrator }: any) => {
       </>
     );
   }
-
   return (
     <Router>
       <Header />
@@ -65,9 +79,11 @@ const Index = ({ administrator, VerifyAdministrator }: any) => {
         <Route path={"/admin/print-pin"} component={PrintPin} />
         <Route path={"/admin/print-result"} component={PrintResult} />
         <Route path={"/admin/new-assessment"} component={NewAssessment} />
+        <Route path={"/admin/exams/:id"} component={Assessment}></Route>
+        <Route path={"/admin/exams"} component={AssessmentHistory} />
         <Route component={AssessmentHistory} />
       </Switch>
-      <LiveUpdater></LiveUpdater>
+      {/* <LiveUpdater></LiveUpdater> */}
       <ToastContainer autoClose={3000} hideProgressBar={true} />
     </Router>
   );

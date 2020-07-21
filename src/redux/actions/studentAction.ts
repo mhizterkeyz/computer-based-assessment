@@ -1,17 +1,16 @@
 import * as types from "./actionTypes";
 import * as studentApi from "../../api/studentApi";
-import { student } from "../../components/model/student";
 import { beginApiCall, apiCallError } from "./apiStatusActions";
 
 // export function createCourse(course) {
 //   return { type: types.CREATE_COURSE, course };
 // };
 
-export function loadStudentSuccess(student: student) {
+export function loadStudentSuccess(student: any) {
   return { type: types.LOAD_STUDENT_SUCCESS, student };
 }
 
-export function verifyStudentSuccess(student: student) {
+export function verifyStudentSuccess(student: any) {
   return { type: types.VERIFY_STUDENT_SUCCESS, student };
 }
 

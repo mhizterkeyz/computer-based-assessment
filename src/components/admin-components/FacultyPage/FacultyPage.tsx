@@ -13,7 +13,6 @@ import {
 import { connect } from "react-redux";
 import { toast } from "react-toastify";
 import Preloader from "../../Preloader";
-import { department } from "../../model/student";
 import {
   facultyAlphabeticalSortFn,
   departmentAlphabeticalSortFn,
@@ -154,7 +153,7 @@ const Faculty = ({
   onDeleteClick: (id: string) => Promise<any>;
   onDepartmentDelete: (department: string, faculty: string) => Promise<any>;
 }) => {
-  const departments = faculty.departments;
+  const departments = Object.values(faculty.departments);
 
   return (
     <>
@@ -185,9 +184,9 @@ const Faculty = ({
             onClick={async () => {
               try {
                 await onDeleteClick(faculty._id);
-                toast.success("Faculty deleted",{
-        position: "top-center"
-      });
+                toast.success("Faculty deleted", {
+                  position: "top-center",
+                });
               } catch (error) {
                 toast.error(error.message, { position: "top-center" });
               }
@@ -201,7 +200,7 @@ const Faculty = ({
 
       <div className="faculty__department-panel">
         <h3 className="faculty__title">Departments</h3>
-        {departments
+        {Object.values(departments)
           .sort(departmentAlphabeticalSortFn)
           .map((dept: any, index: number) => (
             <span
@@ -213,8 +212,8 @@ const Faculty = ({
                 onClick={async () => {
                   try {
                     await onDepartmentDelete(dept._id, faculty._id);
-                    toast.success("Department deleted",{
-                      position: "top-center"
+                    toast.success("Department deleted", {
+                      position: "top-center",
                     });
                   } catch (error) {
                     toast.error(error.message, { position: "top-center" });

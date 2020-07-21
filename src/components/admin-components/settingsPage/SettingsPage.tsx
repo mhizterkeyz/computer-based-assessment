@@ -38,12 +38,9 @@ const Admin = ({ name, username, email, deleteAdministrator, _id }: any) => {
         onClick={async () => {
           try {
             await deleteAdministrator(_id);
-            toast.success(`${name} deleted successfully`,{
-              position: "top-center"
+            toast.success(`${name} deleted successfully`, {
+              position: "top-center",
             });
-            setTimeout(() => {
-              window.location.reload();
-            }, 500);
           } catch (error) {
             toast.error(error.message, { position: "top-center" });
           }
@@ -78,7 +75,7 @@ const SettingsPage = (props: any) => {
 
   const handleUpdate = async (profile: any, cb: any) => {
     let updatedProfile;
-    if (profile.password !== profile.cpassword) {
+    if (profile.password.length > 0 && profile.password !== profile.cpassword) {
       if (cb) {
         cb({ onPasswordMismatch: "Your password is not the same" });
       }
@@ -87,15 +84,15 @@ const SettingsPage = (props: any) => {
         name: profile.name,
         username: profile.username,
         email: profile.email,
-        ...((profile.password && { password: profile.password }) || {}),
+        ...((profile.password.length > 0 && { password: profile.password }) ||
+          {}),
       };
       try {
         return (
           (await props.updateAccount(updatedProfile)) &&
-          toast.success("Account updated",{
-            position: "top-center"
-          }) &&
-          handleModalClose()
+          toast.success("Account updated", {
+            position: "top-center",
+          })
         );
       } catch (error) {
         cb({ onSaveError: error.message });

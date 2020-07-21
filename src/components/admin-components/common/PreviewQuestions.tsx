@@ -1,36 +1,35 @@
-import React, { useState } from "react";
+import React from "react";
+import { Link } from "react-router-dom";
 
 interface ConfirmSubmitProps {
   handleModalClose: () => void;
 }
 
 const PreviewQuestions = ({ setPreview, examQuestions, ...props }: any) => {
-  const [questionNo, setQuestionNo] = useState("question-1");
+  examQuestions = Object.keys(examQuestions)
+    .sort((a: any, b: any) => {
+      const d1: any = new Date(examQuestions[a].createdAt);
+      const d2: any = new Date(examQuestions[b].createdAt);
+      return d1 - d2;
+    })
+    .reduce(
+      (acc: any, cur: any, i: any) => ({
+        ...acc,
+        [cur]: { ...examQuestions[cur], question_no: `question-${cur}` },
+      }),
+      {}
+    );
+  let page = parseInt(props.page) || 1;
+  const question: any = examQuestions[page] || examQuestions[1];
+  const prev = page - 1 < 1 ? 1 : page - 1;
+  const next = page + 1 > props.questionCount ? props.questionCount : page + 1;
 
-  examQuestions = examQuestions.reduce(
-    (acc: any, cur: any, i: any) => ({
-      ...acc,
-      [`question-${i + 1}`]: { ...cur, question_no: `question-${i + 1}` },
-    }),
-    {}
-  );
-  const { question, prev, next }: any = Object.values(examQuestions).reduce(
-    (acc: any, cur: any, ind: any, arr: any) => {
-      const prev =
-        ind - 1 < 0 ? arr[0].question_no || "" : arr[ind - 1].question_no || "";
-      const next =
-        ind + 1 >= arr.length
-          ? arr[arr.length - 1].question_no || ""
-          : arr[ind + 1].question_no || "";
-      if (cur.question_no === questionNo) return { question: cur, prev, next };
-      return acc;
-    },
-    {
-      question: examQuestions["question-1"],
-      prev: "",
-      next: "question-2",
+  const paginationArray = (function spawnArr(n = 0, a: any = []): any {
+    for (let i = 0; i < n; i++) {
+      a.push(i);
     }
-  );
+    return a;
+  })(props.questionCount);
   return (
     <>
       <main>
@@ -40,10 +39,7 @@ const PreviewQuestions = ({ setPreview, examQuestions, ...props }: any) => {
               className="text-center mb-4"
               style={{ textTransform: "capitalize" }}
             >
-              {(question &&
-                question.question_no &&
-                question.question_no.replace("-", " ")) ||
-                ""}
+              {`Question ${page}`}
             </h4>
             <div className="d-flex justify-content-center">
               {question &&
@@ -88,39 +84,40 @@ const PreviewQuestions = ({ setPreview, examQuestions, ...props }: any) => {
 
             <div className="d-flex justify-content-between ctrl-btn">
               <div className="">
-                <span
+                <Link
                   className="btn mr-4 prev btn-primary"
-                  onClick={() => setQuestionNo(prev)}
+                  to={`${props.location.pathname}?page=${prev}`}
                 >
                   Previous
-                </span>
-                <span
+                </Link>
+                <Link
                   className="btn next btn-primary"
-                  onClick={() => setQuestionNo(next)}
+                  to={`${props.location.pathname}?page=${next}`}
                 >
                   Next
-                </span>
+                </Link>
               </div>
               <div className="text-right">
-                <button className="btn" onClick={() => setPreview(false)}>
+                <Link
+                  className="btn"
+                  to={props.location.pathname.replace("/questions", "")}
+                >
                   Back to Assessment view
-                </button>
+                </Link>
               </div>
             </div>
           </div>
 
           <div className="mt-3 mb-5 question-btn">
-            {Object.values(examQuestions).map((elem: any, key) => {
+            {paginationArray.map((elem: any, key: any) => {
               return (
-                <span
-                  className={`btn answered ${
-                    elem.question_no === question.question_no ? "focus" : ""
-                  }`}
-                  onClick={() => setQuestionNo(elem.question_no)}
+                <Link
+                  className={`btn answered ${page === key + 1 ? "focus" : ""}`}
+                  to={`/admin/exams/${props.examId}/questions?page=${key + 1}`}
                   key={key}
                 >
                   <span>{key + 1}</span>
-                </span>
+                </Link>
               );
             })}
           </div>

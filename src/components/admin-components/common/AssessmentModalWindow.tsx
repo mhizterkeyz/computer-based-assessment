@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { TextField, SelectField } from "./InputField";
-import { facultyAlphabeticalSortFn, departmentAlphabeticalSortFn } from "./sortHelperFn";
+import {
+  facultyAlphabeticalSortFn,
+  departmentAlphabeticalSortFn,
+} from "./sortHelperFn";
 import { connect } from "react-redux";
 import { addBiodata } from "../../../redux/actions/AdministratorActions";
 
-export const AddStudentModalWindow = ({
+const AddStudentModalWindow = ({
   handleModalClose,
   faculty,
   ...props
@@ -22,14 +25,19 @@ export const AddStudentModalWindow = ({
     const { name, value } = ev.target;
     setInput({ ...input, [name]: value });
   };
-  const handleSubmit = async () => {
+  const handleSubmit = async (ev: any) => {
+    ev.preventDefault();
     try {
       const toSubmit = input;
       delete toSubmit.faculty;
       return (
-        (await props.addBiodata({ toSend: toSubmit, examId: props.examId })) &&
-        toast.success("Student added successfully",{
-          position: "top-center"
+        (await props.addBiodata({
+          toSend: toSubmit,
+          examId: props.examId,
+          ...props.counts,
+        })) &&
+        toast.success("Student added successfully", {
+          position: "top-center",
         }) &&
         handleModalClose()
       );
@@ -130,13 +138,11 @@ export const AddStudentModalWindow = ({
         />
 
         <div className="">
-          <button className="btn btn-primary" onClick={handleModalClose}>
+          <div className="btn btn-primary" onClick={handleModalClose}>
             Cancel
-          </button>
+          </div>
 
-          <button type="submit" className="btn btn-primary ml-2">
-            Add
-          </button>
+          <button className="btn btn-primary ml-2">Add</button>
         </div>
       </form>
     </div>

@@ -67,13 +67,10 @@ export const StudentInfo = ({
           examId: props.examId,
           biodataId: student._id,
         })) &&
-        toast.success(
-          `${student.user.matric} can now retake his/her assessment`,
-          {
-            position: "top-center",
-            delay: 10000,
-          }
-        )
+        toast.success(`${student.user.matric} can now retake the assessment`, {
+          position: "top-center",
+          delay: 10000,
+        })
       );
     } catch (error) {
       toast.error(error.message, { position: "top-center" });
@@ -81,7 +78,7 @@ export const StudentInfo = ({
   };
 
   return (
-    <section className="student-info">
+    <section className="student-info d-none">
       <span
         className={
           student.status === 0
@@ -100,16 +97,10 @@ export const StudentInfo = ({
 
       <div className="d-flex flex-column align-items-center">
         <span className="image-cropper">
-          <object
-            data={`http://${window.location.hostname}:8000/api/static/${student.user.matric}.png`}
-            type="image/jpg"
-            style={{ width: "100%" }}
-          >
-            <img
-              src={`http://${window.location.hostname}:8000/api/static/default.png`}
-              alt="student"
-            />
-          </object>
+          <img
+            src={`http://${window.location.hostname}:8000/api/static/${student.user.matric}.png`}
+            alt="student"
+          />
         </span>
 
         <h3

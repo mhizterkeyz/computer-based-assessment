@@ -1,10 +1,11 @@
 import * as types from "../actions/actionTypes";
 import initialState from "./initialState";
+import _ from "lodash";
 
 export default function (state: any = initialState.exams, action: any) {
   switch (action.type) {
     case types.GET_EXAMS_SUCCESS:
-      return action.exams;
+      return _.merge({}, state, action.exams);
     case types.CREATE_EXAM_SUCCESS:
       return { ...state, ...action.exams };
     case types.ADD_BIODATA_SUCCESS:

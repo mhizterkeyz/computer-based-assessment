@@ -10,8 +10,7 @@ const navItems = [
   },
   {
     name: "Assessment\xa0List",
-    url: "/admin",
-    exact: true,
+    url: "/admin/exams",
   },
   {
     name: "Running\xa0Assessment",
@@ -42,7 +41,7 @@ const Navigation = (props: {
   );
 };
 
-const Header = () => {
+const Header = (props: any) => {
   return (
     <>
       <header className="d-flex justify-content-between align-items-center">
@@ -53,6 +52,7 @@ const Header = () => {
             {navItems.map((item, index) => (
               <Navigation
                 {...item}
+                {...props}
                 key={`head_${Math.floor(Math.random() * 1000000) * index}`}
               />
             ))}
@@ -69,7 +69,6 @@ const Header = () => {
       >
         <i className="icon-settings_power_24px_outlined" /> Logout
       </button>
-
     </>
   );
 };

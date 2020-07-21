@@ -25,7 +25,7 @@ const InstructionPage = () => {
             ...req.data,
             courseTitle: req.data.title,
             instruction: req.data.instructions,
-            timeAllowed: req.data.displayTime,
+            timeAllowed: req.data.displayTime || 0,
           });
           return;
         }

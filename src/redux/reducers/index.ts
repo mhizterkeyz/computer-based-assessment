@@ -9,6 +9,8 @@ import otherAdministrator from "./otherAdministratorReducer";
 import results from "./resultReducer";
 import faculty from "./facultyReducer";
 import department from "./departmentReducer";
+import counts from "./countReducer";
+import biodatas from "./biodataReducer";
 
 export const rootReducer = combineReducers({
   student,
@@ -20,7 +22,9 @@ export const rootReducer = combineReducers({
   results,
   otherAdministrator,
   faculty,
-  department
+  department,
+  counts,
+  biodatas,
 });
 
 // export default rootReducer;
