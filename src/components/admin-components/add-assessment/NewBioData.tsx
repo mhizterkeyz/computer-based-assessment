@@ -92,6 +92,10 @@ const BioData = (props: any) => {
     parseInt((inputs.bioData.length / 5).toFixed(2).split(".")[1] + "") > 0
       ? 1
       : 0;
+  const pageEnd =
+    page * 5 > inputs.bioData.length ? inputs.bioData.length : page * 5;
+  const pageStart =
+    inputs.bioData.length === 0 ? 0 : page * 5 - 4 < 1 ? 1 : page * 5 - 4;
   return (
     <fieldset className="new-assessment__fieldset">
       <legend className="new-assessment__legend">Students information</legend>
@@ -138,7 +142,7 @@ const BioData = (props: any) => {
             >
               prev
             </span>
-            <span className="ml-2 mr-2">{`${page} of ${inputs.bioData.length}`}</span>
+            <span className="ml-2 mr-2">{`${pageStart} - ${pageEnd} of ${inputs.bioData.length}`}</span>
             <span
               onClick={(ev) => {
                 const next = page + 1 > pages ? pages : page + 1;
