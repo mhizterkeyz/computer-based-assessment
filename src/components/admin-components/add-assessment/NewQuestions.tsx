@@ -103,7 +103,6 @@ const Questions = (props: any) => {
       elem.images = [];
       if (
         !elem.hasOwnProperty("question") ||
-        !elem.hasOwnProperty("type") ||
         !elem.hasOwnProperty("marks") ||
         !elem.hasOwnProperty("correct") ||
         !elem.hasOwnProperty("options")
