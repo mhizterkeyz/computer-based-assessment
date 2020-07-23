@@ -21,6 +21,7 @@ export const app = {
     return body;
   },
   post: (url: string) => {
+    app.h = { ...app.h, Authorization: `Bearer ${localStorage["jwt"] || ""}` };
     return fetch(url, {
       method: "post",
       body: app.gimme_body(),
@@ -28,9 +29,11 @@ export const app = {
     });
   },
   get: (url: string) => {
+    app.h = { ...app.h, Authorization: `Bearer ${localStorage["jwt"] || ""}` };
     return fetch(url, { method: "get", headers: app.h });
   },
   put: (url: string) => {
+    app.h = { ...app.h, Authorization: `Bearer ${localStorage["jwt"] || ""}` };
     return fetch(url, {
       method: "put",
       body: app.gimme_body(),
@@ -38,6 +41,7 @@ export const app = {
     });
   },
   delete: (url: string) => {
+    app.h = { ...app.h, Authorization: `Bearer ${localStorage["jwt"] || ""}` };
     return fetch(url, {
       method: "delete",
       body: app.gimme_body(),
