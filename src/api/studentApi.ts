@@ -39,6 +39,7 @@ export const verifyStudent = async () => {
   try {
     const def = {
       matric: "",
+      loaded: true,
     };
     const route = localStorage["route"];
     const jwt = localStorage["jwt"];
@@ -56,7 +57,7 @@ export const verifyStudent = async () => {
       delete localStorage["route"];
       return def;
     }
-    return res.data;
+    return { ...res.data, loaded: true };
   } catch (error) {
     throw error;
   }

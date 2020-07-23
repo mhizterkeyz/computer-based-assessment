@@ -1,4 +1,5 @@
 export interface student {
+  loaded: boolean;
   accessToken: string;
   createdAt: string;
   department: department;
@@ -10,7 +11,7 @@ export interface student {
   updatedAt: Date;
   __v?: number;
   _id: string;
-};
+}
 
 export interface department {
   status: boolean;
@@ -18,7 +19,7 @@ export interface department {
   department: string;
   faculty: string;
   createdAt: Date;
-};
+}
 
 export interface faculty {
   status: boolean;
@@ -26,11 +27,10 @@ export interface faculty {
   faculty: string;
   createdAt: string;
   updatedAt: string;
-};
+}
 
 interface exam {
   inProgress: boolean;
   answered: [];
   questions: [];
-};
-
+}

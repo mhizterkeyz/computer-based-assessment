@@ -15,6 +15,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Header from "./components/Header";
 import { student as studentInterface } from "./components/model/student";
 import { verifyStudent } from "./redux/actions/studentAction";
+import Preloader from "./components/Preloader";
 // import LiveUpdater from "./LiveUpdater";
 
 function App({
@@ -25,25 +26,23 @@ function App({
   verifyStudent: () => Promise<any>;
 }) {
   useEffect(() => {
-    if (Object.keys(student).length < 1) {
-      verifyStudent();
+    if (!student.loaded) {
+      (async () => {
+        try {
+          await verifyStudent();
+        } catch (error) {
+          //  verification failed. do nothing.
+        }
+      })();
     }
   }, [verifyStudent, student]);
 
-  if (Object.keys(student).length < 1) {
-    /**
-     * This is just some make shift
-     * loading screen so that the
-     * app doesn't flicker between
-     * login screen and where you
-     * want to go anytime you're logged in
-     * and reload the page
-     */
+  if (!student.loaded) {
     return (
       <Router>
         <Route
           render={() => {
-            return <></>;
+            return <Preloader />;
           }}
         />
       </Router>
