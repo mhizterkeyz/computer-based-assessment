@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { loadUpExams } from "../../../redux/actions/AdministratorActions";
 import { connect } from "react-redux";
 import Assessment from "../common/Assessment";
@@ -7,18 +7,20 @@ import Preloader from "../../Preloader";
 
 const RunningAssessment = (props: any) => {
   const { exams, loadUpExams } = props;
+  const [examsLoaded, setExamLoaded] = useState(false);
 
   useEffect(() => {
-    if (Object.keys(exams).length < 1) {
+    if (!examsLoaded) {
       (async () => {
         try {
           await loadUpExams();
+          setExamLoaded(true);
         } catch (error) {
           toast.error(`Error: ${error.message}`, { position: "top-center" });
         }
       })();
     }
-  }, [exams, loadUpExams]);
+  }, [exams, loadUpExams, examsLoaded]);
 
   let runningExam: any;
   if (!props.loading) {

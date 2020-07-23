@@ -36,7 +36,6 @@ function App({
       })();
     }
   }, [verifyStudent, student]);
-
   if (!student.loaded) {
     return (
       <Router>
@@ -48,7 +47,7 @@ function App({
       </Router>
     );
   }
-  if (!student.hasOwnProperty("matric") || student.matric === "") {
+  if (!student.loggedIn) {
     return (
       <Router>
         <Switch>

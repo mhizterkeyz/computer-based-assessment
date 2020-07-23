@@ -31,11 +31,11 @@ const AssessmentHistory = (props: any) => {
         return d1 - d2;
       })
       .reduce((acc: any, cur: any) => ({ ...acc, [cur._id]: cur }), {});
-    if (Object.keys(stateExams).length < 1 || !preReq.calledLoadUp) {
-      setPreReq((i) => ({ ...i, calledLoadUp: true }));
+    if (!preReq.calledLoadUp) {
       (async () => {
         try {
           await loadUpExams(false, 1);
+          setPreReq((i) => ({ ...i, calledLoadUp: true }));
         } catch (error) {
           toast.error(`Error: ${error.message}`, {
             position: "top-center",

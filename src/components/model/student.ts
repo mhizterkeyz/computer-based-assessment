@@ -1,5 +1,6 @@
 export interface student {
   loaded: boolean;
+  loggedIn: boolean;
   accessToken: string;
   createdAt: string;
   department: department;

@@ -31,18 +31,20 @@ const FacultyPage = ({
     show: false,
     display: <></>,
   });
+  const [facultyLoaded, setFacultyLoaded] = useState(false);
 
   useEffect(() => {
-    if (Object.values(faculty).length < 1) {
+    if (!facultyLoaded) {
       (async () => {
         try {
           await getFaculty();
+          setFacultyLoaded(true);
         } catch (error) {
           toast.error(`Error: ${error.message}`, { position: "top-center" });
         }
       })();
     }
-  }, [faculty, getFaculty]);
+  }, [faculty, getFaculty, facultyLoaded]);
 
   useEffect(() => {
     let acc = document.querySelectorAll(".faculty__accordion");

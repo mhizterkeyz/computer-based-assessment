@@ -96,13 +96,19 @@ const Assessment = (props: any) => {
   const [query, setQuery] = useState({
     page: 1,
   });
+  const [preReqs, setPreReqs] = useState({
+    examLoaded: false,
+    resultsLoaded: false,
+    facultyLoaded: false,
+  });
 
   useEffect(() => {
     let exams = props.exams[id] || {};
-    if (!Object.keys(exams).length) {
+    if (!preReqs.examLoaded) {
       (async () => {
         try {
           await loadSingleExam(id);
+          setPreReqs((i) => ({ ...i, examLoaded: true }));
         } catch (error) {
           toast.error(`Error: ${error.message}`, {
             position: "top-center",
@@ -111,7 +117,7 @@ const Assessment = (props: any) => {
       })();
     }
     setExam((i) => ({ ...i, ...exams }));
-  }, [props.exams, id, loadSingleExam]);
+  }, [props.exams, id, loadSingleExam, preReqs.examLoaded]);
   useEffect(() => {
     let bioData = props.biodatas[id];
     if (!bioData) {
@@ -139,17 +145,17 @@ const Assessment = (props: any) => {
     search.searchResult,
   ]);
   useEffect(() => {
-    const count = (props.count[id] && props.count[id].count) || 0;
-    if (Object.values(results).length < count && exam.status === 2) {
+    if (!preReqs.resultsLoaded && exam.status === 2) {
       (async () => {
         try {
           await loadUpResults(exam._id);
+          setPreReqs((i) => ({ ...i, resultsLoaded: true }));
         } catch (error) {
           toast.error(error.message, { position: "top-center" });
         }
       })();
     }
-  }, [exam, results, loadUpResults, props.count, id]);
+  }, [exam, results, loadUpResults, preReqs.resultsLoaded]);
   useEffect(() => {
     if (student.show) {
       document.querySelector(".student-section")?.classList.add("show-student");
@@ -160,16 +166,17 @@ const Assessment = (props: any) => {
     }
   }, [student]);
   useEffect(() => {
-    if (Object.keys(faculty).length < 1) {
+    if (!preReqs.facultyLoaded) {
       (async () => {
         try {
           await getFaculty();
+          setPreReqs((i) => ({ ...i, facultyLoaded: true }));
         } catch (error) {
           console.log(error);
         }
       })();
     }
-  }, [faculty, getFaculty]);
+  }, [faculty, getFaculty, preReqs.facultyLoaded]);
   const delayedSearch = useCallback(
     _.debounce(async () => {
       if (search.searchString.length > 0) {

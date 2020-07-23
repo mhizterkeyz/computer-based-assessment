@@ -27,15 +27,17 @@ export const loginAdministrator = async ({ username, password }: any) => {
   localStorage["jwt"] = res.data.accessToken;
   localStorage["route"] = "administrator";
   api.headers({ Authorization: "Bearer " + localStorage["jwt"] });
-  return res.data;
+  return { loaded: true, ...res.data, loggedIn: true };
 };
 
 export const verifyAdministrator = async () => {
   try {
     const def = {
+      loggedIn: false,
       name: "",
       email: "",
       username: "",
+      loaded: true,
     };
     const route = localStorage["route"];
     const jwt = localStorage["jwt"];
@@ -53,7 +55,7 @@ export const verifyAdministrator = async () => {
       delete localStorage["route"];
       return def;
     }
-    return res.data;
+    return { loggedIn: true, ...res.data, loaded: true };
   } catch (error) {
     throw error;
   }

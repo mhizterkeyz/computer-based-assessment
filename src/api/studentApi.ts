@@ -29,7 +29,7 @@ export const login = async ({ username, password }: any) => {
     localStorage["jwt"] = res.data.accessToken;
     localStorage["route"] = "student";
     api.headers({ Authorization: "Bearer " + localStorage["jwt"] });
-    return res.data;
+    return { loaded: true, loggedIn: true, ...res.data };
   } catch (error) {
     handleError(error);
   }
@@ -40,6 +40,7 @@ export const verifyStudent = async () => {
     const def = {
       matric: "",
       loaded: true,
+      loggedIn: false,
     };
     const route = localStorage["route"];
     const jwt = localStorage["jwt"];
@@ -57,7 +58,7 @@ export const verifyStudent = async () => {
       delete localStorage["route"];
       return def;
     }
-    return { ...res.data, loaded: true };
+    return { ...res.data, loaded: true, loggedIn: true };
   } catch (error) {
     throw error;
   }

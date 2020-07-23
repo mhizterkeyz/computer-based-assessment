@@ -14,51 +14,24 @@ import PrintPin from "./PrintPinPage";
 import PrintResult from "./PrintResultPage";
 import FacultyPage from "../FacultyPage/FacultyPage";
 import NewAssessment from "../add-assessment/NewAssessment";
+import Preloader from "../../Preloader";
 import Assessment from "./Assessment";
 // import LiveUpdater from "./LiveUpdater";
 
 const Index = ({ administrator, VerifyAdministrator, ...props }: any) => {
   useEffect(() => {
-    if (
-      props.location.pathname === "/admin" &&
-      Object.keys(administrator).length > 1 &&
-      administrator.hasOwnProperty("username") &&
-      administrator.username !== ""
-    ) {
+    if (administrator.loggeIn) {
       props.history.push("/admin/exams");
       return () => {};
     }
-    if (Object.keys(administrator).length < 1) {
+    if (!administrator.loaded) {
       VerifyAdministrator();
     }
-  }, [
-    VerifyAdministrator,
-    administrator,
-    props.location.pathname,
-    props.history,
-  ]);
-
-  if (Object.keys(administrator).length < 1) {
-    /**
-     * This is just some make shift
-     * loading screen so that the
-     * app doesn't flicker between
-     * login screen and where you
-     * want to go anytime you're logged in
-     * and reload the page
-     */
-    return (
-      <Route
-        render={() => {
-          return <></>;
-        }}
-      />
-    );
+  }, [VerifyAdministrator, administrator, props.history]);
+  if (!administrator.loaded) {
+    return <Preloader />;
   }
-  if (
-    !administrator.hasOwnProperty("username") ||
-    administrator.username === ""
-  ) {
+  if (!administrator.loggedIn) {
     return (
       <>
         <Route component={Login} />
