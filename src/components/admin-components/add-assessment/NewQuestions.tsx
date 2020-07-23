@@ -83,7 +83,6 @@ const Questions = (props: any) => {
             images: [""],
             question: "",
             questionFor: [],
-            type: true,
             marks: 0,
             correct: "a",
             options: {
@@ -103,7 +102,6 @@ const Questions = (props: any) => {
       elem.images = [];
       if (
         !elem.hasOwnProperty("question") ||
-        !elem.hasOwnProperty("type") ||
         !elem.hasOwnProperty("marks") ||
         !elem.hasOwnProperty("correct") ||
         !elem.hasOwnProperty("options")
@@ -200,6 +198,7 @@ const Questions = (props: any) => {
     try {
       const file = await toBase64(files[0]);
       const img = await getQuestions(file);
+      console.log(img);
       addRow(img);
     } catch (error) {
       toast.error(`Error: ${error.message}`, {
