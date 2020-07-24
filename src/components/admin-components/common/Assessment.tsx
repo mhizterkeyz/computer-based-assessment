@@ -489,6 +489,25 @@ const Assessment = (props: any) => {
             ? "Running"
             : "Closed"}
         </span>
+        <button
+          className="btn mt-2"
+          style={{
+            color: "#007bff",
+            cursor: "pointer",
+            // border: "none",
+            // background: "transparent",
+            // width: 36,
+            // height: 36,
+            // borderRadius: "50%",
+            // display: "flex",
+            // justifyContent: "center",
+            // alignItems: "center",
+            // textAlign: "center",
+          }}
+        >
+          Edit Assesment
+          <i className="icon-edit ml-2"></i>
+        </button>
       </h2>
       {/* Quick Info Section */}
 

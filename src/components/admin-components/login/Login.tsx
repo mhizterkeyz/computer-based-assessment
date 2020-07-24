@@ -55,7 +55,7 @@ const Login = (props: any) => {
             <h3>Admin Login</h3>
             <label htmlFor="matric-no" className="mt-4">
               {" "}
-              Username/Email
+              Username / Email
             </label>
             <input
               type="text"

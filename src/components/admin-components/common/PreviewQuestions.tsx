@@ -35,12 +35,25 @@ const PreviewQuestions = ({ setPreview, examQuestions, ...props }: any) => {
       <main>
         <section className="question preview">
           <div className="question-body">
-            <h4
-              className="text-center mb-4"
-              style={{ textTransform: "capitalize" }}
-            >
-              {`Question ${page}`}
-            </h4>
+            <div className="d-flex justify-content-between align-items-center">
+              <span></span>
+              <h4
+                className=""
+                style={{ textTransform: "capitalize" }}
+              >
+                {`Question ${page}`}
+              </h4>
+              <button
+                className="btn"
+                style={{
+                  color: "#007bff",
+                  cursor: "pointer"
+                }}
+              >
+                Edit Question
+                <i className="icon-edit ml-2"></i>
+              </button>
+            </div>
             <div className="d-flex justify-content-center">
               {question &&
                 question.images &&
@@ -57,7 +70,7 @@ const PreviewQuestions = ({ setPreview, examQuestions, ...props }: any) => {
                   return "";
                 })}
             </div>
-            <p>{(question && question.question) || ""}</p>
+            <p style={{marginBlockEnd: 30}}>{(question && question.question) || ""}</p>
 
             <form className="d-flex flex-column">
               {question &&
