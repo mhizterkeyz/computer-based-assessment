@@ -21,10 +21,10 @@ const navItems = [
     name: "Faculties\xa0&\xa0Departments",
     url: "/admin/faculty-depts",
   },
-  {
-    name: "check-in",
-    url: "/admin/settings",
-  },
+  // {
+  //   name: "check-in",
+  //   url: "/admin/settings",
+  // },
   {
     name: "Settings",
     url: "/admin/settings",
@@ -62,22 +62,23 @@ const Header = (props: any) => {
             ))}
           </ul>
         </nav>
+        <button
+          className="d-flex align-items-center btn btn-primary d-print-none logout"
+          onClick={() => {
+            delete localStorage["jwt"];
+            delete localStorage["route"];
+            window.location.reload();
+          }}
+          style={{
+            fontWeight: 500,
+            fontSize: 14,
+            borderRadius: 15,
+          }}
+        >
+          <i className="icon-logout mr-1" />
+          Logout
+        </button>
       </header>
-      <button
-        className="d-flex align-items-center btn btn-primary text-right mt-3 d-print-none logout"
-        onClick={() => {
-          delete localStorage["jwt"];
-          delete localStorage["route"];
-          window.location.reload();
-        }}
-        style={{
-          fontWeight: 500,
-          fontSize: 14,
-          borderRadius: 15
-        }}
-      >
-        <i className="icon-logout mr-2"/>Logout
-      </button>
     </>
   );
 };

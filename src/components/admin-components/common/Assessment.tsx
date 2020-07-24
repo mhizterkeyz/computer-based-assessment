@@ -33,7 +33,6 @@ import {
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { PDFResultView } from "./PDFResultView";
 import Preloader from "../../Preloader";
-import EditIcon from "../../../svg/edit.svg";
 
 const queryParser = (data: string) => {
   data = data.replace("?", "");
@@ -510,7 +509,7 @@ const Assessment = (props: any) => {
               }
             }
           >
-            edit Assesment
+            Edit Assesment
             <i className="icon-edit ml-2"></i>
           </button>
         </span>
