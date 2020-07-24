@@ -22,6 +22,10 @@ const navItems = [
     url: "/admin/faculty-depts",
   },
   {
+    name: "check-in",
+    url: "/admin/settings",
+  },
+  {
     name: "Settings",
     url: "/admin/settings",
   },
@@ -66,8 +70,13 @@ const Header = (props: any) => {
           delete localStorage["route"];
           window.location.reload();
         }}
+        style={{
+          fontWeight: 500,
+          fontSize: 14,
+          borderRadius: 15
+        }}
       >
-        <i className="icon-settings_power_24px_outlined" /> Logout
+        <i className="icon-logout mr-2"/>Logout
       </button>
     </>
   );

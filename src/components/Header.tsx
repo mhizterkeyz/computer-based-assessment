@@ -1,5 +1,5 @@
 import React from 'react';
-import ksu_logo from '../image/ksu-logo.png';
+import ksu_logo from '../svg/ksu-logo.svg';
 
 const Header = () => (
   <header className="d-flex justify-content-center">

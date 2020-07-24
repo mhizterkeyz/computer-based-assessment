@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { connect } from "react-redux";
+import { toast } from "react-toastify";
+import _ from "lodash";
 
 import "./AssessmentHistory.scss";
 import { loadUpExams } from "../../../redux/actions/AdministratorActions";
 import { getExams } from "../../../api/AdministratorCalls";
 import Preloader from "../../Preloader";
 import Examination from "./Examination";
-import { toast } from "react-toastify";
-import _ from "lodash";
 
 const AssessmentHistory = (props: any) => {
   const [search, setSearch] = useState({
@@ -149,14 +149,14 @@ const AssessmentHistory = (props: any) => {
                     searchString: ev.target.value,
                   });
                 }}
-                placeholder="&#xe902; Search Examination"
+                placeholder="&#xe947; Search Examination"
                 style={{ fontFamily: "Poppins, icomoon" }}
               />
             </form>
             <div className="dta-head">
-              <span className="">Examination</span>
-              <span className="">Date Added</span>
-              <span className="text-center">Status</span>
+              <span>Examination</span>
+              <span>Date Added</span>
+              <span>Status</span>
             </div>
             {Object.values(exams).length === 0 ? (
               <div className="text-center mt-5 no-running-exam">
@@ -176,9 +176,11 @@ const AssessmentHistory = (props: any) => {
             >
               {props.count === Object.keys(exams).length ||
               (search.search &&
-                search.searchCount === Object.keys(exams).length)
-                ? "that's all"
-                : "loading data ..."}
+                search.searchCount === Object.keys(exams).length) ? (
+                <></>
+              ) : (
+                "loading data ..."
+              )}
             </div>
           </section>
         </>

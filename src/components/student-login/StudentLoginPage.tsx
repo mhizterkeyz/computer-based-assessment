@@ -73,7 +73,7 @@ const StudentLoginPage = (props: any) => {
             <h3>Login to start your exam</h3>
             <label htmlFor="matric-no" className="mt-4">
               {" "}
-              Matric Number
+              Jamb Reg No. / Matric No.
             </label>
             <input
               type="text"

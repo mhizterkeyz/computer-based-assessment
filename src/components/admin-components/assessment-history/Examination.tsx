@@ -1,6 +1,7 @@
 import React from "react";
-import "./AssessmentHistory.scss";
 import { Link } from "react-router-dom";
+
+import "./AssessmentHistory.scss";
 
 const Examination = ({ exam }: { exam: any }) => {
   let status = {
@@ -19,7 +20,7 @@ const Examination = ({ exam }: { exam: any }) => {
     status.name = "closed";
   }
   let date = new Date(exam.createdAt);
-  let decDate = `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`;
+  let decDate = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
 
   const titleCase = (str: string) =>
     str
@@ -40,6 +41,7 @@ const Examination = ({ exam }: { exam: any }) => {
       <span className="">{decDate}</span>
       {/* <span className="">7th June 2020</span> */}
       <span className={status.class}>{status.name}</span>
+     
     </Link>
   );
 };

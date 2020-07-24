@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import "./FacultyPage.scss";
-import delete_icon from "../../../svg/delete_sweep_24px_outlined.svg";
 import Modal from "../../Modal";
 import { AddFacultyWindow, AddDepartmentWindow } from "./ModalWindow";
 import {
@@ -178,6 +177,12 @@ const Faculty = ({
         <div className="d-flex ml-auto">
           <button
             className="mr-4 btn btn-light faculty__btn"
+            onClick={() => {}}
+          >
+            <i className="icon-edit" />
+          </button>{" "}
+          <button
+            className="mr-4 btn btn-light faculty__btn"
             onClick={() => onClickShowAddDepartmentModal(faculty)}
           >
             +
@@ -195,7 +200,7 @@ const Faculty = ({
             }}
             className="btn btn-light faculty__btn"
           >
-            <img src={delete_icon} alt="delete icon" />
+            <i className="icon-delete_forever" />
           </button>
         </div>
       </div>
@@ -210,21 +215,27 @@ const Faculty = ({
               key={`department_${index}`}
             >
               {dept.department}
-              <button
-                onClick={async () => {
-                  try {
-                    await onDepartmentDelete(dept._id, faculty._id);
-                    toast.success("Department deleted", {
-                      position: "top-center",
-                    });
-                  } catch (error) {
-                    toast.error(error.message, { position: "top-center" });
-                  }
-                }}
-                className="btn btn-light ml-auto faculty__btn"
-              >
-                <img src={delete_icon} alt="delete icon" />
-              </button>
+                <button
+                  className=" ml-auto btn btn-light faculty__btn"
+                  onClick={() => {}}
+                >
+                  <i className="icon-edit" />
+                </button>{" "}
+                <button
+                  onClick={async () => {
+                    try {
+                      await onDepartmentDelete(dept._id, faculty._id);
+                      toast.success("Department deleted", {
+                        position: "top-center",
+                      });
+                    } catch (error) {
+                      toast.error(error.message, { position: "top-center" });
+                    }
+                  }}
+                  className="btn btn-light ml-4 faculty__btn"
+                >
+                  <i className="icon-delete_forever" />
+                </button>
             </span>
           ))}
       </div>
