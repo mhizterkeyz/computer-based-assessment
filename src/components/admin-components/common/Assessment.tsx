@@ -33,7 +33,6 @@ import {
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { PDFResultView } from "./PDFResultView";
 import Preloader from "../../Preloader";
-import EditIcon from "../../../svg/edit.svg";
 
 const queryParser = (data: string) => {
   data = data.replace("?", "");
@@ -55,7 +54,7 @@ const Assessment = (props: any) => {
     loadSingleExam,
     loadSingleBiodata,
     loadUpQuestions,
-    loadUpResults,
+    // loadUpResults,
     getFaculty,
     updateExam,
   } = props;
@@ -145,18 +144,18 @@ const Assessment = (props: any) => {
     search.search,
     search.searchResult,
   ]);
-  useEffect(() => {
-    if (!preReqs.resultsLoaded && exam.status === 2) {
-      (async () => {
-        try {
-          await loadUpResults(exam._id);
-          setPreReqs((i) => ({ ...i, resultsLoaded: true }));
-        } catch (error) {
-          toast.error(error.message, { position: "top-center" });
-        }
-      })();
-    }
-  }, [exam, results, loadUpResults, preReqs.resultsLoaded]);
+  // useEffect(() => {
+  //   if (!preReqs.resultsLoaded && exam.status === 2) {
+  //     (async () => {
+  //       try {
+  //         await loadUpResults(exam._id);
+  //         setPreReqs((i) => ({ ...i, resultsLoaded: true }));
+  //       } catch (error) {
+  //         toast.error(error.message, { position: "top-center" });
+  //       }
+  //     })();
+  //   }
+  // }, [exam, results, loadUpResults, preReqs.resultsLoaded]);
   useEffect(() => {
     if (student.show) {
       document.querySelector(".student-section")?.classList.add("show-student");
@@ -475,71 +474,29 @@ const Assessment = (props: any) => {
       <h2 className="text-center">
         <span style={{ textTransform: "uppercase" }}>{exam.course}</span> -{" "}
         <span style={{ textTransform: "capitalize" }}>{exam.title}</span> <br />{" "}
-        <span className="d-flex flex-column justify-content-center align-items-center">
-          <span
-            className={
-              exam.status === 0
-                ? "pending status"
-                : exam.status === 1
-                ? "running status"
-                : "closed status"
-            }
-          >
-            {exam.status === 0
-              ? "Pending"
+        <span
+          className={
+            exam.status === 0
+              ? "pending status"
               : exam.status === 1
-              ? "Running"
-              : "Closed"}
-          </span>
-
-          <button
-            className="btn mt-2"
-            style={
-              {
-                color: "#007bff",
-                cursor: "pointer",
-                // border: "none",
-                // background: "transparent",
-                // width: 36,
-                // height: 36,
-                // borderRadius: "50%",
-                // display: "flex",
-                // justifyContent: "center",
-                // alignItems: "center",
-                // textAlign: "center",
-              }
-            }
-          >
-            edit Assesment
-            <i className="icon-edit ml-2"></i>
-          </button>
+              ? "running status"
+              : "closed status"
+          }
+        >
+          {exam.status === 0
+            ? "Pending"
+            : exam.status === 1
+            ? "Running"
+            : "Closed"}
         </span>
       </h2>
       {/* Quick Info Section */}
 
       <section className="d-flex justify-content-center">
         <div className="d-flex dash-detail">
-          <i className="icon-total">
+          <i className="icon-assessment">
             <span className="path1"></span>
             <span className="path2"></span>
-            <span className="path3"></span>
-            <span className="path4"></span>
-            <span className="path5"></span>
-            <span className="path6"></span>
-            <span className="path7"></span>
-            <span className="path8"></span>
-            <span className="path9"></span>
-            <span className="path10"></span>
-            <span className="path11"></span>
-            <span className="path12"></span>
-            <span className="path13"></span>
-            <span className="path14"></span>
-            <span className="path15"></span>
-            <span className="path16"></span>
-            <span className="path17"></span>
-            <span className="path18"></span>
-            <span className="path19"></span>
-            <span className="path20"></span>
           </i>
           <div className="ml-3 total-assessment">
             <h3>
@@ -549,20 +506,13 @@ const Assessment = (props: any) => {
                     props.count[props.match.params.id].count) ||
                   0}
             </h3>
-            <h4>Total Students</h4>
+            <h4>Students</h4>
           </div>
         </div>
         <div className="d-flex dash-detail">
           <i className="icon-pending">
             <span className="path1"></span>
             <span className="path2"></span>
-            <span className="path3"></span>
-            <span className="path4"></span>
-            <span className="path5"></span>
-            <span className="path6"></span>
-            <span className="path7"></span>
-            <span className="path8"></span>
-            <span className="path9"></span>
           </i>
           <div className="ml-3 total-pending">
             <h3>
@@ -576,55 +526,9 @@ const Assessment = (props: any) => {
           </div>
         </div>
         <div className="d-flex dash-detail">
-          <i className="icon-running">
+          <i className="icon-closed">
             <span className="path1"></span>
             <span className="path2"></span>
-            <span className="path3"></span>
-            <span className="path4"></span>
-            <span className="path5"></span>
-            <span className="path6"></span>
-            <span className="path7"></span>
-            <span className="path8"></span>
-            <span className="path9"></span>
-            <span className="path10"></span>
-            <span className="path11"></span>
-            <span className="path12"></span>
-            <span className="path13"></span>
-            <span className="path14"></span>
-            <span className="path15"></span>
-            <span className="path16"></span>
-            <span className="path17"></span>
-            <span className="path18"></span>
-            <span className="path19"></span>
-            <span className="path20"></span>
-          </i>
-          <div className="ml-3 total-running">
-            <h3>
-              {search.search
-                ? search.running
-                : (props.count[props.match.params.id] &&
-                    props.count[props.match.params.id].running) ||
-                  0}
-            </h3>
-            <h4>Students online</h4>
-          </div>
-        </div>
-        <div className="d-flex dash-detail">
-          <i className="icon-finished">
-            <span className="path1"></span>
-            <span className="path2"></span>
-            <span className="path3"></span>
-            <span className="path4"></span>
-            <span className="path5"></span>
-            <span className="path6"></span>
-            <span className="path7"></span>
-            <span className="path8"></span>
-            <span className="path9"></span>
-            <span className="path10"></span>
-            <span className="path11"></span>
-            <span className="path12"></span>
-            <span className="path13"></span>
-            <span className="path14"></span>
           </i>
           <div className="ml-3 total-closed">
             <h3>
@@ -635,6 +539,22 @@ const Assessment = (props: any) => {
                   0}
             </h3>
             <h4>Students finished</h4>
+          </div>
+        </div>
+        <div className="d-flex dash-detail">
+          <i className="icon-running">
+            <span className="path1"></span>
+            <span className="path2"></span>
+          </i>
+          <div className="ml-3 total-running">
+            <h3>
+              {search.search
+                ? search.running
+                : (props.count[props.match.params.id] &&
+                    props.count[props.match.params.id].running) ||
+                  0}
+            </h3>
+            <h4>Students online</h4>
           </div>
         </div>
       </section>
@@ -747,7 +667,7 @@ const Assessment = (props: any) => {
                     searchString: ev.target.value,
                   });
                 }}
-                placeholder="&#xe947; Search Student"
+                placeholder="&#xe902; Search Student"
                 style={{ fontFamily: "Poppins, icomoon" }}
               />
             </form>
@@ -811,11 +731,9 @@ const Assessment = (props: any) => {
         {((props.count[id] && props.count[id].count) || 0) ===
           Object.keys(exam.bioData).length ||
         (search.search &&
-          search.searchCount === Object.keys(exam.bioData).length) ? (
-          <></>
-        ) : (
-          "loading data ..."
-        )}
+          search.searchCount === Object.keys(exam.bioData).length)
+          ? "that's all"
+          : "loading data ..."}
       </div>
     </>
   );
