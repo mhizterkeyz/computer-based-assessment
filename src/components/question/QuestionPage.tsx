@@ -241,6 +241,10 @@ const QuestionPage = (props: any) => {
 
   const { question, prev, next } = data;
   const { minutes, seconds } = counter;
+  if (!exam.examLoaded) {
+    //  500 error should go here
+    return <></>;
+  }
   return (
     <>
       <Modal show={modalData.show} handleClose={handleModalClose}>
@@ -284,7 +288,9 @@ const QuestionPage = (props: any) => {
                 <div className="d-flex justify-content-center">
                   {
                     //  @ts-ignore
-                    question.images &&
+                    (question &&
+                      // @ts-ignore
+                      question.images &&
                       //  @ts-ignore
                       question.images.map((elem: string, i: number) => {
                         if (elem && elem.includes(".png"))
@@ -300,7 +306,8 @@ const QuestionPage = (props: any) => {
                             />
                           );
                         return "";
-                      })
+                      })) ||
+                      ""
                   }
                 </div>
                 <p>

@@ -10,9 +10,12 @@ import { addBiodata } from "../../../redux/actions/AdministratorActions";
 
 const AddStudentModalWindow = ({
   handleModalClose,
-  faculty,
+  faculty: stateFac,
   ...props
 }: any) => {
+  const faculty = Object.values(stateFac).filter(
+    (elem: any) => typeof elem === "object"
+  );
   const [input, setInput] = useState({
     faculty: null,
     department: "",
@@ -58,7 +61,8 @@ const AddStudentModalWindow = ({
 
     department =
       (department[0] &&
-        department[0].departments
+        //  @ts-ignore
+        Object.values(department[0].departments)
           .sort(departmentAlphabeticalSortFn)
           .map((dept: any) => dept.department)) ||
       department;
@@ -67,7 +71,7 @@ const AddStudentModalWindow = ({
     const check = faculty.find((elem: any) => {
       return (
         elem.faculty === input.faculty &&
-        elem.departments.find(
+        Object.values(elem.departments).find(
           (dept: any) => dept.department === input.department
         )
       );

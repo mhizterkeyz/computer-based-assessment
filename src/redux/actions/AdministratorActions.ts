@@ -316,20 +316,7 @@ export const getFaculty = (updateCall: boolean = false) => {
   return async (dispatch: any) => {
     try {
       !updateCall && dispatch(beginApiCall());
-      let faculty = await Api.getFaculty();
-      faculty = faculty.reduce(
-        (acc: any, cur: any) => ({
-          ...acc,
-          [cur._id]: {
-            ...cur,
-            departments: cur.departments.reduce(
-              (ac: any, cu: any) => ({ ...ac, [cu._id]: cu }),
-              {}
-            ),
-          },
-        }),
-        {}
-      );
+      const faculty = await Api.getFaculty();
       return dispatch(getFacultySuccess(faculty));
     } catch (error) {
       !updateCall && dispatch(apiCallError());

@@ -30,20 +30,18 @@ const FacultyPage = ({
     show: false,
     display: <></>,
   });
-  const [facultyLoaded, setFacultyLoaded] = useState(false);
 
   useEffect(() => {
-    if (!facultyLoaded) {
+    if (!faculty.loaded) {
       (async () => {
         try {
           await getFaculty();
-          setFacultyLoaded(true);
         } catch (error) {
           toast.error(`Error: ${error.message}`, { position: "top-center" });
         }
       })();
     }
-  }, [faculty, getFaculty, facultyLoaded]);
+  }, [faculty, getFaculty]);
 
   useEffect(() => {
     let acc = document.querySelectorAll(".faculty__accordion");
@@ -115,6 +113,7 @@ const FacultyPage = ({
               </button>
             </div>
             {Object.values(faculty)
+              .filter((elem: any) => typeof elem === "object")
               .sort(facultyAlphabeticalSortFn)
               .map((faculty: any, index: number) => {
                 return (
@@ -215,27 +214,27 @@ const Faculty = ({
               key={`department_${index}`}
             >
               {dept.department}
-                <button
-                  className=" ml-auto btn btn-light faculty__btn"
-                  onClick={() => {}}
-                >
-                  <i className="icon-edit" />
-                </button>{" "}
-                <button
-                  onClick={async () => {
-                    try {
-                      await onDepartmentDelete(dept._id, faculty._id);
-                      toast.success("Department deleted", {
-                        position: "top-center",
-                      });
-                    } catch (error) {
-                      toast.error(error.message, { position: "top-center" });
-                    }
-                  }}
-                  className="btn btn-light ml-4 faculty__btn"
-                >
-                  <i className="icon-delete_forever" />
-                </button>
+              <button
+                className=" ml-auto btn btn-light faculty__btn"
+                onClick={() => {}}
+              >
+                <i className="icon-edit" />
+              </button>{" "}
+              <button
+                onClick={async () => {
+                  try {
+                    await onDepartmentDelete(dept._id, faculty._id);
+                    toast.success("Department deleted", {
+                      position: "top-center",
+                    });
+                  } catch (error) {
+                    toast.error(error.message, { position: "top-center" });
+                  }
+                }}
+                className="btn btn-light ml-4 faculty__btn"
+              >
+                <i className="icon-delete_forever" />
+              </button>
             </span>
           ))}
       </div>

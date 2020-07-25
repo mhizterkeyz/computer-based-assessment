@@ -53,14 +53,13 @@ const AssessmentHistory = (props: any) => {
     search.searchResult,
   ]);
   useEffect(() => {
-    window.onscroll = async function (ev: any) {
+    let onScrollHandler = async function (ev: any) {
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-        if (
-          Object.keys(exams).length > 0 &&
-          props.count > Object.keys(exams).length &&
-          !search.search
-        ) {
-          let t = Object.keys(exams).length / 5;
+        const examLength = Object.keys(exams).filter(
+          (elem: any) => typeof elem === "object"
+        ).length;
+        if (examLength > 0 && props.count > examLength && !search.search) {
+          let t = examLength / 5;
           const a = parseInt(t.toString().split(".")[1]) > 0 ? 1 : 0;
           t = Math.floor(t) + a + 1;
           try {
@@ -70,12 +69,12 @@ const AssessmentHistory = (props: any) => {
             // The user will have to scroll up and to get the rest
           }
         } else if (
-          Object.keys(exams).length > 0 &&
+          examLength > 0 &&
           search.search &&
-          search.searchCount > Object.keys(exams).length
+          search.searchCount > examLength
         ) {
           try {
-            let t = Object.keys(exams).length / 5;
+            let t = examLength / 5;
             const a = parseInt(t.toString().split(".")[1]) > 0 ? 1 : 0;
             t = Math.floor(t) + a + 1;
             const res = await getExams(t, search.searchString);
@@ -94,8 +93,9 @@ const AssessmentHistory = (props: any) => {
         }
       }
     };
+    window.addEventListener("scroll", onScrollHandler);
     return () => {
-      window.onscroll = null;
+      window.removeEventListener("scroll", onScrollHandler);
     };
   }, [props.count, exams, loadUpExams, search]);
   const delayedSearch = useCallback(
@@ -163,9 +163,11 @@ const AssessmentHistory = (props: any) => {
                 There are no available assessments
               </div>
             ) : (
-              Object.values(exams).map((exam: any, i: number) => (
-                <Examination exam={exam} key={`examination_history_${i}`} />
-              ))
+              Object.values(exams)
+                .filter((elem: any) => typeof elem === "object")
+                .map((exam: any, i: number) => (
+                  <Examination exam={exam} key={`examination_history_${i}`} />
+                ))
             )}
             <div
               className="count-check text-center mt-5 pb-5"
@@ -174,9 +176,15 @@ const AssessmentHistory = (props: any) => {
                 fontSize: 11,
               }}
             >
-              {props.count === Object.keys(exams).length ||
+              {props.count ===
+                Object.values(exams).filter(
+                  (elem: any) => typeof elem === "object"
+                ).length ||
               (search.search &&
-                search.searchCount === Object.keys(exams).length) ? (
+                search.searchCount ===
+                  Object.values(exams).filter(
+                    (elem: any) => typeof elem === "object"
+                  ).length) ? (
                 <></>
               ) : (
                 "loading data ..."

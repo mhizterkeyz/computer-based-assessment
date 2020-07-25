@@ -45,7 +45,6 @@ const queryParser = (data: string) => {
     };
   }, {});
 };
-
 const Assessment = (props: any) => {
   const {
     results,
@@ -58,6 +57,7 @@ const Assessment = (props: any) => {
     getFaculty,
     updateExam,
   } = props;
+
   const { id } = match.params;
   const [exam, setExam] = useState({
     docStatus: false,
@@ -96,31 +96,30 @@ const Assessment = (props: any) => {
   const [query, setQuery] = useState({
     page: 1,
   });
-  const [preReqs, setPreReqs] = useState({
-    examLoaded: false,
-    resultsLoaded: false,
-    facultyLoaded: false,
+  const [triedLoading, setTriedLoading] = useState({
+    criticalFail: false,
   });
+  const { criticalFail: critical } = triedLoading;
 
   useEffect(() => {
     let exams = props.exams[id] || {};
-    if (!preReqs.examLoaded) {
+    if (!exams.loaded && !critical) {
       (async () => {
         try {
           await loadSingleExam(id);
-          setPreReqs((i) => ({ ...i, examLoaded: true }));
         } catch (error) {
           toast.error(`Error: ${error.message}`, {
             position: "top-center",
           });
+          setTriedLoading((i) => ({ ...i, criticalFail: true }));
         }
       })();
     }
     setExam((i) => ({ ...i, ...exams }));
-  }, [props.exams, id, loadSingleExam, preReqs.examLoaded]);
+  }, [props.exams, id, loadSingleExam, critical]);
   useEffect(() => {
     let bioData = props.biodatas[id];
-    if (!bioData) {
+    if (!bioData && !critical) {
       (async () => {
         try {
           await loadSingleBiodata(id);
@@ -128,17 +127,21 @@ const Assessment = (props: any) => {
           toast.error(`Error: ${error.message}`, {
             position: "top-center",
           });
+          setTriedLoading((i) => ({ ...i, criticalFail: true }));
         }
       })();
       return () => {};
     }
-    setExam(
-      search.search
-        ? (i) => ({ ...i, bioData: search.searchResult })
-        : (i) => ({ ...i, bioData: bioData })
-    );
+    if (bioData || search.search) {
+      setExam(
+        search.search
+          ? (i) => ({ ...i, bioData: search.searchResult })
+          : (i) => ({ ...i, bioData: bioData })
+      );
+    }
   }, [
     id,
+    critical,
     loadSingleBiodata,
     props.biodatas,
     search.search,
@@ -166,17 +169,16 @@ const Assessment = (props: any) => {
     }
   }, [student]);
   useEffect(() => {
-    if (!preReqs.facultyLoaded) {
+    if (!faculty.loaded) {
       (async () => {
         try {
           await getFaculty();
-          setPreReqs((i) => ({ ...i, facultyLoaded: true }));
         } catch (error) {
-          console.log(error);
+          toast.error(error.message, { autoClose: false });
         }
       })();
     }
-  }, [faculty, getFaculty, preReqs.facultyLoaded]);
+  }, [faculty, getFaculty]);
   const delayedSearch = useCallback(
     _.debounce(async () => {
       if (search.searchString.length > 0) {
@@ -202,7 +204,7 @@ const Assessment = (props: any) => {
     [search.searchString]
   );
   useEffect(() => {
-    delayedSearch();
+    search.searchString.length && delayedSearch();
 
     return delayedSearch.cancel;
   }, [search.searchString, delayedSearch]);
@@ -266,19 +268,26 @@ const Assessment = (props: any) => {
   }, [props.location.search, props.questions, id]);
   useEffect(() => {
     // @ts-ignore
-    const question: any = exam.questions[query.page];
-    if (!question) {
+    if (!triedLoading[query.page] && !critical) {
       (async () => {
+        setTriedLoading((i) => ({ ...i, [query.page]: true }));
         try {
           await loadUpQuestions(id, query.page, true);
         } catch (error) {
           toast.error(`Error: ${error.message}`, {
             position: "top-center",
           });
+          setTriedLoading((i) => ({
+            ...i,
+            [query.page]: false,
+            criticalFail: true,
+          }));
         }
       })();
-    } else return () => {};
+    }
   }, [
+    critical,
+    triedLoading,
     props.location.search,
     query.page,
     id,
@@ -446,11 +455,10 @@ const Assessment = (props: any) => {
       ),
     });
   };
-
   if (!exam.docStatus || props.loading) {
     // Return page loading or 404 page
 
-    return props.loading ? <Preloader /> : <>No exam with that ID</>;
+    return props.loading ? <Preloader /> : <></>;
   }
   if (
     props.location.pathname === `/admin/exams/${exam._id}/questions` ||
@@ -751,7 +759,9 @@ const Assessment = (props: any) => {
           Object.keys(exam.bioData).length ||
         (search.search &&
           search.searchCount === Object.keys(exam.bioData).length)
-          ? "that's all"
+          ? ((props.count[id] && props.count[id].count) || 0) === 0
+            ? "No data to show"
+            : "that's all"
           : "loading data ..."}
       </div>
     </>

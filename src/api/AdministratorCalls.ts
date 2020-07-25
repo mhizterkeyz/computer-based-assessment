@@ -2,7 +2,7 @@ import { app as api } from "./calls";
 
 const apiUrl = `http://${window.location.hostname}:8000/api/v1/administrator`;
 
-const parseResponseError = ({ res, status, statusText }: any) => {
+export const parseResponseError = ({ res, status, statusText }: any) => {
   if (status >= 400) {
     const message =
       res.message +
@@ -76,11 +76,20 @@ export const getExams = async (page = 1, search = "") => {
   const { statusText, status } = req;
   const res = await req.json();
   parseResponseError({ res, status, statusText });
-
+  let special = {};
   let exams = res.data.exams.reduce((acc: any, cur: any, i: number) => {
-    return { ...acc, [cur._id]: cur };
+    if (parseInt(cur.status) === 1) {
+      special = {
+        activeFound: true,
+        activeId: cur._id,
+      };
+    }
+    return { ...acc, [cur._id]: { ...cur, loaded: true } };
   }, {});
-  return { exams, count: res.data.count };
+  return {
+    exams: { ...special, loaded: true, ...exams },
+    count: res.data.count,
+  };
 };
 
 export const getOneExam = async (id: string) => {
@@ -88,8 +97,22 @@ export const getOneExam = async (id: string) => {
   const { statusText, status } = req;
   const res = await req.json();
   parseResponseError({ res, status, statusText });
+  let special = {};
+  if (res.data.exam && parseInt(res.data.exam.status) === 1) {
+    special = {
+      activeFound: true,
+      activeId: res.data.exam._id,
+    };
+  }
+  if (!res.data.exam) {
+    return { exams: { loaded: true } };
+  }
   return {
-    exams: { [res.data.exam._id]: res.data.exam },
+    exams: {
+      ...special,
+      loaded: true,
+      [res.data.exam._id]: { ...res.data.exam, loaded: true },
+    },
     count: res.data.count,
   };
 };
@@ -318,7 +341,22 @@ export const getFaculty = async () => {
     const { statusText, status } = req;
     const res = await req.json();
     parseResponseError({ res, status, statusText });
-    return res.data;
+    return {
+      ...res.data.reduce(
+        (acc: any, cur: any) => ({
+          ...acc,
+          [cur._id]: {
+            ...cur,
+            departments: cur.departments.reduce(
+              (ac: any, cu: any) => ({ ...ac, [cu._id]: cu }),
+              {}
+            ),
+          },
+        }),
+        {}
+      ),
+      loaded: true,
+    };
   } catch (error) {
     throw error;
   }

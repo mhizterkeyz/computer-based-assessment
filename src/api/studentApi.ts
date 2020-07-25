@@ -1,22 +1,6 @@
 import { handleError } from "./apiUtils";
 import { api_url, app as api } from "./calls";
-
-const parseResponseError = ({ res, status, statusText }: any) => {
-  if (status >= 400) {
-    const message =
-      res.message +
-      "\n" +
-      Object.values(res.data || {}).reduce((acc: any, cur: any) => {
-        if (typeof cur === "object") {
-          return acc + "\n" + JSON.stringify(cur);
-        }
-        return acc + "\n" + cur.toString();
-      }, "");
-    const err = new Error(message);
-    err.name = statusText.replace(" ", "_");
-    throw err;
-  }
-};
+import { parseResponseError } from "./AdministratorCalls";
 
 export const login = async ({ username, password }: any) => {
   try {
@@ -69,12 +53,15 @@ export const getExams = async () => {
     const req = await api
       .headers({ Authorization: "Bearer " + localStorage["jwt"] })
       .post(`${api_url}/user/exams`);
+    const { status, statusText } = req;
     const res = await req.json();
     if (req.status === 404) {
       return {
         examNotFound: true,
       };
     }
+
+    parseResponseError({ res, status, statusText });
     return res.data;
   } catch (error) {
     handleError(error);
