@@ -23,24 +23,16 @@ const AssessmentHistory = (props: any) => {
   let { exams: stateExams, loadUpExams } = props;
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    stateExams = Object.values(stateExams)
-      .sort((a: any, b: any) => {
-        const d1: any = new Date(a.createdAt);
-        const d2: any = new Date(b.createdAt);
-        return d1 - d2;
-      })
-      .reduce((acc: any, cur: any) => ({ ...acc, [cur._id]: cur }), {});
     if (!preReq.calledLoadUp) {
       (async () => {
         try {
           await loadUpExams(false, 1);
-          setPreReq((i) => ({ ...i, calledLoadUp: true }));
         } catch (error) {
           toast.error(`Error: ${error.message}`, {
             position: "top-center",
           });
         }
+        setPreReq((i) => ({ ...i, calledLoadUp: true }));
       })();
     }
     setexams(search.search ? search.searchResult : stateExams);
@@ -52,10 +44,10 @@ const AssessmentHistory = (props: any) => {
     search.search,
     search.searchResult,
   ]);
-  useEffect(() => {
-    let onScrollHandler = async function (ev: any) {
+  const onScrollHandler = useCallback(
+    async function (ev: any) {
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-        const examLength = Object.keys(exams).filter(
+        const examLength = Object.values(exams).filter(
           (elem: any) => typeof elem === "object"
         ).length;
         if (examLength > 0 && props.count > examLength && !search.search) {
@@ -92,12 +84,15 @@ const AssessmentHistory = (props: any) => {
           }
         }
       }
-    };
+    },
+    [props.count, exams, loadUpExams, search]
+  );
+  useEffect(() => {
     window.addEventListener("scroll", onScrollHandler);
     return () => {
       window.removeEventListener("scroll", onScrollHandler);
     };
-  }, [props.count, exams, loadUpExams, search]);
+  }, [onScrollHandler]);
   const delayedSearch = useCallback(
     _.debounce(async () => {
       if (search.searchString.length > 0) {

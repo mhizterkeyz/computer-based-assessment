@@ -186,36 +186,44 @@ export const submitExam = async (data: any) => {
         [res.data.exam._id]: {
           ...res.data.exam,
           questions: res.data.questions
-            .sort((a: any, b: any) => {
-              const d1: any = new Date(a.createdAt);
-              const d2: any = new Date(b.createdAt);
-              return d1 - d2;
-            })
-            .reduce(
-              (acc: any, cur: any, i: number) => ({ ...acc, [i + 1]: cur }),
-              {}
-            ),
+            ? res.data.questions
+                .sort((a: any, b: any) => {
+                  const d1: any = new Date(a.createdAt);
+                  const d2: any = new Date(b.createdAt);
+                  return d1 - d2;
+                })
+                .reduce(
+                  (acc: any, cur: any, i: number) => ({ ...acc, [i + 1]: cur }),
+                  {}
+                )
+            : {},
         },
       },
       count: res.data.examCount,
       biodatas: {
-        [res.data.exam._id]: res.data.bioData.reduce(
-          (acc: any, cur: any) => ({ ...acc, [cur._id]: cur }),
-          {}
-        ),
+        [res.data.exam._id]: res.data.bioData
+          ? res.data.bioData.reduce(
+              (acc: any, cur: any) => ({ ...acc, [cur._id]: cur }),
+              {}
+            )
+          : {},
       },
       biodataCount: {
         biodatas: {
           [res.data.exam._id]: {
-            count: res.data.bioData.length,
+            count: res.data.bioData ? res.data.bioData.length : 0,
             done: 0,
-            pending: res.data.bioData.length,
+            pending: res.data.bioData ? res.data.bioData.length : 0,
             running: 0,
           },
         },
       },
       questionsCount: {
-        questions: { [res.data.exam._id]: res.data.questions.length },
+        questions: {
+          [res.data.exam._id]: res.data.questions
+            ? res.data.questions.length
+            : 0,
+        },
       },
     };
   } catch (error) {
