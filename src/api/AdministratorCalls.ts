@@ -331,9 +331,9 @@ export const deleteAdministrator = async (admin_id: string) => {
   }
 };
 
-export const getResults = async (exam_id: string) => {
+export const getResults = async (exam_id: string, type = "") => {
   try {
-    const req = await api.get(`${apiUrl}/exams/${exam_id}/results`);
+    const req = await api.get(`${apiUrl}/exams/${exam_id}/results${type}`);
     const { statusText, status } = req;
     const res = await req.json();
     parseResponseError({ res, status, statusText });

@@ -29,6 +29,7 @@ import { TextField } from "./InputField";
 import {
   extendStudentTime,
   getOneBioData,
+  getResults,
 } from "../../../api/AdministratorCalls";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { PDFResultView } from "./PDFResultView";
@@ -99,6 +100,11 @@ const Assessment = (props: any) => {
   const [triedLoading, setTriedLoading] = useState({
     criticalFail: false,
   });
+  const [resultUrl, setResultUrl] = useState({
+    pdf: "",
+    xlsx: "",
+    loading: true,
+  });
   const { criticalFail: critical } = triedLoading;
 
   useEffect(() => {
@@ -147,6 +153,25 @@ const Assessment = (props: any) => {
     search.search,
     search.searchResult,
   ]);
+  useEffect(() => {
+    if (exam.status === 2) {
+      (async () => {
+        try {
+          setResultUrl((i) => ({ ...i, loading: true }));
+          const pdf = `http://localhost:8000/api/static/${await getResults(
+            exam._id
+          )}`;
+          const xlsx = `http://localhost:8000/api/static/${await getResults(
+            exam._id,
+            "?xlsx=1"
+          )}`;
+          setResultUrl((i) => ({ ...i, pdf, xlsx, loading: false }));
+        } catch (error) {
+          setResultUrl((i) => ({ ...i, pdf: "", xlsx: "", loading: true }));
+        }
+      })();
+    }
+  }, [exam.status, exam._id]);
   // useEffect(() => {
   //   if (!preReqs.resultsLoaded && exam.status === 2) {
   //     (async () => {
@@ -607,61 +632,26 @@ const Assessment = (props: any) => {
               Upload Result
             </button>
             <div>
-              <PDFDownloadLink
-                document={
-                  <PDFResultView
-                    results={Object.values(results)
-                      // .sort(matricDescendingSortFn)
-                      .sort(facultyAlphabeticalSortFn)
-                      .sort(departmentAlphabeticalSortFn)}
-                    examTitle={`${exam.course} - ${exam.title}`}
-                  />
-                }
-                fileName={`${exam.course}-${exam.title}.pdf`}
-                className={`btn btn-success ${
-                  Object.keys(results).length <
-                  ((props.count[id] && props.count[id].count) || 0)
-                    ? "disabled"
-                    : ""
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href={`${resultUrl.pdf}`}
+                className={`btn mr-1 btn-success ${
+                  resultUrl.loading ? "disabled" : ""
                 }`}
-                style={{ color: "#fff" }}
               >
-                {({ blob, url, loading, error }) =>
-                  loading ? "Loading PDF Result..." : "Download Result (PDF)"
-                }
-              </PDFDownloadLink>
-              <Workbook
-                filename={`${exam.course}-${exam.title}.xlsx`}
-                element={
-                  <button
-                    className="btn btn-success ml-3"
-                    disabled={
-                      Object.keys(results).length <
-                      ((props.count[id] && props.count[id].count) || 0)
-                    }
-                  >
-                    Download Result (Spreadsheet)
-                  </button>
-                }
+                Download Result (PDF)
+              </a>
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href={`${resultUrl.xlsx}`}
+                className={`btn btn-success ${
+                  resultUrl.loading ? "disabled" : ""
+                }`}
               >
-                <Workbook.Sheet
-                  data={Object.values(results)
-                    .sort(matricDescendingSortFn)
-                    .sort(facultyAlphabeticalSortFn)
-                    .sort(departmentAlphabeticalSortFn)}
-                  name="Sheet A"
-                >
-                  <Workbook.Column label="Name" value="name" />
-                  <Workbook.Column label="Matric No." value="matric" />
-                  <Workbook.Column label="Level" value="level" />
-                  <Workbook.Column label="Department" value="department" />
-                  <Workbook.Column label="Faculty" value="faculty" />
-                  <Workbook.Column label="CA. Score" value="ca" />
-                  <Workbook.Column label="Examination" value="exam" />
-                  <Workbook.Column label="Total" value="total" />
-                  <Workbook.Column label="Grade" value="grade" />
-                </Workbook.Sheet>
-              </Workbook>
+                Download Result (Spreadsheet)
+              </a>
             </div>
           </>
         ) : (
