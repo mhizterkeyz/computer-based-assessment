@@ -1,12 +1,66 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { TextField, SelectField } from "./InputField";
+import { TextField, SelectField, NumberField } from "./InputField";
 import {
   facultyAlphabeticalSortFn,
   departmentAlphabeticalSortFn,
 } from "./sortHelperFn";
 import { connect } from "react-redux";
 import { addBiodata } from "../../../redux/actions/AdministratorActions";
+
+export const AddMassScoreModal = ({ handleModalClose }: any) => {
+
+  const [input, setInput] = useState({
+   score: 0
+  });
+
+  const handleInputs = (ev: any) => {
+    const { name, value } = ev.target;
+    setInput({ ...input, [name]: value });
+  };
+
+  const handleSubmit = async (ev: any) => {
+    ev.preventDefault();
+    // try {
+    //   const toSubmit = input;
+    //   delete toSubmit.faculty;
+    //   return (
+    //     (await props.addBiodata({
+    //       toSend: toSubmit,
+    //       examId: props.examId,
+    //       ...props.counts,
+    //     })) &&
+    //     toast.success("Student added successfully", {
+    //       position: "top-center",
+    //     }) &&
+    //     handleModalClose()
+    //   );
+    // } catch (error) {
+    //   toast.error(error.message, { position: "top-center" });
+    // }
+  };
+
+  return (
+    <div className="text-center profile">
+      <h3>Add Mass Sore</h3>
+      <form onSubmit={handleSubmit}>
+        <NumberField
+          name="score"
+          label="Score (maximum of 10 marks)"
+          handleInputs={handleInputs}
+        />
+
+        <div className="">
+          <div className="btn btn-primary" onClick={handleModalClose}>
+            Cancel
+          </div>
+
+          <button className="btn btn-primary ml-2">Add</button>
+        </div>
+      </form>
+    </div>
+  );
+};
 
 const AddStudentModalWindow = ({
   handleModalClose,
@@ -128,10 +182,6 @@ const AddStudentModalWindow = ({
           handleInputs={handleInputs}
         />
 
-        {/**
-         * TODO: fix bug partaining to sudden change of faculty
-         */}
-
         <SelectField
           label="Department"
           name="department"
@@ -153,6 +203,4 @@ const AddStudentModalWindow = ({
   );
 };
 
-export default connect((state, ownProps) => ({ ...ownProps }), { addBiodata })(
-  AddStudentModalWindow
-);
+export default connect(null, { addBiodata })(AddStudentModalWindow);

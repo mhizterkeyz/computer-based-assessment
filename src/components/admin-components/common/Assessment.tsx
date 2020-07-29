@@ -10,7 +10,7 @@ import { StudentList, StudentInfo } from "./AssessmentStudentList";
 import { toast } from "react-toastify";
 import Modal from "../../Modal";
 import PreviewQuestions from "./PreviewQuestions";
-import AddStudentModalWindow from "./AssessmentModalWindow";
+import AddStudentModalWindow, { AddMassScoreModal } from "./AssessmentModalWindow";
 import {
   facultyAlphabeticalSortFn,
   departmentAlphabeticalSortFn,
@@ -31,8 +31,6 @@ import {
   getOneBioData,
   getResults,
 } from "../../../api/AdministratorCalls";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import { PDFResultView } from "./PDFResultView";
 import Preloader from "../../Preloader";
 
 const queryParser = (data: string) => {
@@ -54,7 +52,7 @@ const Assessment = (props: any) => {
     loadSingleExam,
     loadSingleBiodata,
     loadUpQuestions,
-    // loadUpResults,
+    administrator,
     getFaculty,
     updateExam,
   } = props;
@@ -85,6 +83,7 @@ const Assessment = (props: any) => {
     show: false,
     display: <></>,
   });
+
   const [search, setSearch] = useState({
     searchString: "",
     searchResult: {},
@@ -105,6 +104,8 @@ const Assessment = (props: any) => {
     xlsx: "",
     loading: true,
   });
+
+  const [editScore, setEditScore] = useState(false);
   const { criticalFail: critical } = triedLoading;
 
   useEffect(() => {
@@ -123,6 +124,7 @@ const Assessment = (props: any) => {
     }
     setExam((i) => ({ ...i, ...exams }));
   }, [props.exams, id, loadSingleExam, critical]);
+
   useEffect(() => {
     let bioData = props.biodatas[id];
     if (!bioData && !critical) {
@@ -153,6 +155,7 @@ const Assessment = (props: any) => {
     search.search,
     search.searchResult,
   ]);
+
   useEffect(() => {
     if (exam.status === 2) {
       (async () => {
@@ -172,18 +175,7 @@ const Assessment = (props: any) => {
       })();
     }
   }, [exam.status, exam._id]);
-  // useEffect(() => {
-  //   if (!preReqs.resultsLoaded && exam.status === 2) {
-  //     (async () => {
-  //       try {
-  //         await loadUpResults(exam._id);
-  //         setPreReqs((i) => ({ ...i, resultsLoaded: true }));
-  //       } catch (error) {
-  //         toast.error(error.message, { position: "top-center" });
-  //       }
-  //     })();
-  //   }
-  // }, [exam, results, loadUpResults, preReqs.resultsLoaded]);
+
   useEffect(() => {
     if (student.show) {
       document.querySelector(".student-section")?.classList.add("show-student");
@@ -193,6 +185,7 @@ const Assessment = (props: any) => {
         ?.classList.remove("show-student");
     }
   }, [student]);
+
   useEffect(() => {
     if (!faculty.loaded) {
       (async () => {
@@ -204,6 +197,7 @@ const Assessment = (props: any) => {
       })();
     }
   }, [faculty, getFaculty]);
+
   const delayedSearch = useCallback(
     _.debounce(async () => {
       if (search.searchString.length > 0) {
@@ -228,11 +222,13 @@ const Assessment = (props: any) => {
     }, 3000),
     [search.searchString]
   );
+
   useEffect(() => {
     search.searchString.length && delayedSearch();
 
     return delayedSearch.cancel;
   }, [search.searchString, delayedSearch]);
+
   useEffect(() => {
     const dataCheck = async (ev: any) => {
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
@@ -280,6 +276,7 @@ const Assessment = (props: any) => {
       window.removeEventListener("scroll", dataCheck);
     };
   }, [props.count, exam.bioData, search, id, loadSingleBiodata]);
+
   useEffect(() => {
     const count = props.questions[id] || 0;
     const query = queryParser(props.location.search);
@@ -291,6 +288,7 @@ const Assessment = (props: any) => {
         : 1;
     setQuery((i) => ({ ...i, page }));
   }, [props.location.search, props.questions, id]);
+
   useEffect(() => {
     // @ts-ignore
     if (!triedLoading[query.page] && !critical) {
@@ -320,6 +318,7 @@ const Assessment = (props: any) => {
     exam.questions,
     props.questions,
   ]);
+
   useEffect(() => {
     const scrollCheck = () => {
       if (window.scrollY >= 521 && student.show) {
@@ -356,6 +355,7 @@ const Assessment = (props: any) => {
       studentId,
     });
   };
+
   const startCloseAssessmentCheck = () => {
     if (exam.status === 0) {
       toast.warning("No available result yet, Start Assessment first", {
@@ -370,9 +370,11 @@ const Assessment = (props: any) => {
       return;
     }
   };
+
   const handleUpload = () => {
     startCloseAssessmentCheck();
   };
+
   const handleAssessmentStatus = async (
     status = 1,
     message = "Assessment started"
@@ -390,7 +392,9 @@ const Assessment = (props: any) => {
       return false;
     }
   };
+
   const handleModalClose = () => setModalData({ ...modalData, show: false });
+
   const onClickConfirmCloseAssessment = () => {
     setModalData({
       show: true,
@@ -419,6 +423,7 @@ const Assessment = (props: any) => {
       ),
     });
   };
+
   const onClickShowAddStudentModal = () => {
     setModalData({
       show: true,
@@ -435,6 +440,18 @@ const Assessment = (props: any) => {
       ),
     });
   };
+
+  const onClickShowAddMassScoreModal = () => {
+    setModalData({
+      show: true,
+      display: (
+        <AddMassScoreModal
+          handleModalClose={handleModalClose}
+        />
+      ),
+    });
+  };
+
   const handleTimeExtend = async () => {
     try {
       return (
@@ -451,6 +468,7 @@ const Assessment = (props: any) => {
       toast.error(error.message, { position: "top-center" });
     }
   };
+
   const handleShowExtendModal = () => {
     setModalData({
       show: true,
@@ -480,6 +498,51 @@ const Assessment = (props: any) => {
       ),
     });
   };
+
+  const handleScoreModal = () => {
+    setModalData({
+      show: true,
+      display: (
+        <div className="text-center profile">
+          <h3>Examination Score</h3>
+          <div className="d-flex flex-column align-items-center">
+            <div className="d-flex align-items-center mb-4">
+              <h4 style={{ marginBottom: 0 }}>45</h4>
+            </div>
+            {administrator.isRootAdmin ? (
+              <TextField
+                name="timeIncrease"
+                placeholder="45"
+                type="number"
+                // handleInputs={(ev: any) => setExtendTime(ev.target.value)}
+              />
+            ) : (
+              <></>
+            )}
+          </div>
+
+          <div className="">
+            <button onClick={handleModalClose} className="btn btn-primary">
+              Cancel
+            </button>
+
+            {administrator.isRootAdmin ? (
+              <button
+                // onClick={handleTimeExtend}
+                type="submit"
+                className="btn btn-primary ml-2"
+              >
+                Add
+              </button>
+            ) : (
+              <></>
+            )}
+          </div>
+        </div>
+      ),
+    });
+  };
+
   if (!exam.docStatus || props.loading) {
     // Return page loading or 404 page
 
@@ -507,48 +570,60 @@ const Assessment = (props: any) => {
       <h2 className="text-center">
         <span style={{ textTransform: "uppercase" }}>{exam.course}</span> -{" "}
         <span style={{ textTransform: "capitalize" }}>{exam.title}</span> <br />{" "}
-        <span
-          className={
-            exam.status === 0
-              ? "pending status"
+        <span className="d-flex flex-column justify-content-center align-items-center">
+          <span
+            className={
+              exam.status === 0
+                ? "pending status"
+                : exam.status === 1
+                ? "running status"
+                : "closed status"
+            }
+          >
+            {exam.status === 0
+              ? "Pending"
               : exam.status === 1
-              ? "running status"
-              : "closed status"
-          }
-        >
-          {exam.status === 0
-            ? "Pending"
-            : exam.status === 1
-            ? "Running"
-            : "Closed"}
+              ? "Running"
+              : "Closed"}
+          </span>
+
+          <button
+            className="btn mt-2"
+            style={{
+              color: "#007bff",
+              cursor: "pointer",
+            }}
+          >
+            Edit Assesment
+            <i className="icon-edit ml-2"></i>
+          </button>
         </span>
-        <button
-          className="btn mt-2"
-          style={{
-            color: "#007bff",
-            cursor: "pointer",
-            // border: "none",
-            // background: "transparent",
-            // width: 36,
-            // height: 36,
-            // borderRadius: "50%",
-            // display: "flex",
-            // justifyContent: "center",
-            // alignItems: "center",
-            // textAlign: "center",
-          }}
-        >
-          Edit Assesment
-          <i className="icon-edit ml-2"></i>
-        </button>
       </h2>
       {/* Quick Info Section */}
 
       <section className="d-flex justify-content-center">
         <div className="d-flex dash-detail">
-          <i className="icon-assessment">
-            <span className="path1"></span>
-            <span className="path2"></span>
+          <i className="icon-total">
+            <span className="path1" />
+            <span className="path2" />
+            <span className="path3" />
+            <span className="path4" />
+            <span className="path5" />
+            <span className="path6" />
+            <span className="path7" />
+            <span className="path8" />
+            <span className="path9" />
+            <span className="path10" />
+            <span className="path11" />
+            <span className="path12" />
+            <span className="path13" />
+            <span className="path14" />
+            <span className="path15" />
+            <span className="path16" />
+            <span className="path17" />
+            <span className="path18" />
+            <span className="path19" />
+            <span className="path20" />
           </i>
           <div className="ml-3 total-assessment">
             <h3>
@@ -563,8 +638,15 @@ const Assessment = (props: any) => {
         </div>
         <div className="d-flex dash-detail">
           <i className="icon-pending">
-            <span className="path1"></span>
-            <span className="path2"></span>
+            <span className="path1" />
+            <span className="path2" />
+            <span className="path3" />
+            <span className="path4" />
+            <span className="path5" />
+            <span className="path6" />
+            <span className="path7" />
+            <span className="path8" />
+            <span className="path9" />
           </i>
           <div className="ml-3 total-pending">
             <h3>
@@ -578,9 +660,21 @@ const Assessment = (props: any) => {
           </div>
         </div>
         <div className="d-flex dash-detail">
-          <i className="icon-closed">
+          <i className="icon-finished">
             <span className="path1"></span>
             <span className="path2"></span>
+            <span className="path3"></span>
+            <span className="path4"></span>
+            <span className="path5"></span>
+            <span className="path6"></span>
+            <span className="path7"></span>
+            <span className="path8"></span>
+            <span className="path9"></span>
+            <span className="path10"></span>
+            <span className="path11"></span>
+            <span className="path12"></span>
+            <span className="path13"></span>
+            <span className="path14"></span>
           </i>
           <div className="ml-3 total-closed">
             <h3>
@@ -595,8 +689,26 @@ const Assessment = (props: any) => {
         </div>
         <div className="d-flex dash-detail">
           <i className="icon-running">
-            <span className="path1"></span>
-            <span className="path2"></span>
+            <span className="path1" />
+            <span className="path2" />
+            <span className="path3"></span>
+            <span className="path4"></span>
+            <span className="path5"></span>
+            <span className="path6"></span>
+            <span className="path7"></span>
+            <span className="path8"></span>
+            <span className="path9"></span>
+            <span className="path10"></span>
+            <span className="path11"></span>
+            <span className="path12"></span>
+            <span className="path13"></span>
+            <span className="path14"></span>
+            <span className="path15"></span>
+            <span className="path16"></span>
+            <span className="path17"></span>
+            <span className="path18"></span>
+            <span className="path19"></span>
+            <span className="path20"></span>
           </i>
           <div className="ml-3 total-running">
             <h3>
@@ -640,7 +752,7 @@ const Assessment = (props: any) => {
                   resultUrl.loading ? "disabled" : ""
                 }`}
               >
-                Download Result (PDF)
+                Download Result <i className="icon-file-pdf-o ml-2"></i>
               </a>
               <a
                 target="_blank"
@@ -650,7 +762,7 @@ const Assessment = (props: any) => {
                   resultUrl.loading ? "disabled" : ""
                 }`}
               >
-                Download Result (Spreadsheet)
+                Download Result <i className="icon-file_download ml-1"></i>
               </a>
             </div>
           </>
@@ -666,12 +778,15 @@ const Assessment = (props: any) => {
 
         <section className="tbl">
           <div className="d-flex justify-content-between align-items-center ctrl-actions">
-            <button
-              className="btn btn-primary"
-              onClick={onClickShowAddStudentModal}
-            >
-              Add Student
-            </button>
+            {exam.status < 2 ? (
+              <button
+                className="btn btn-primary"
+                onClick={onClickShowAddStudentModal}
+              >
+                Add Student
+              </button>
+            ) : null}
+
             <form>
               <input
                 className="btn"
@@ -684,7 +799,7 @@ const Assessment = (props: any) => {
                     searchString: ev.target.value,
                   });
                 }}
-                placeholder="&#xe902; Search Student"
+                placeholder="&#xe947; Search Student"
                 style={{ fontFamily: "Poppins, icomoon" }}
               />
             </form>
@@ -700,20 +815,36 @@ const Assessment = (props: any) => {
                   Reopen Assesment
                 </button>
               ) : null}
-              <button
-                className="mr-3 btn btn-primary"
-                disabled={exam.status !== 0}
-                onClick={() => handleAssessmentStatus()}
-              >
-                Start Assesment
-              </button>
-              <button
-                className="btn btn-danger"
-                disabled={exam.status === 0 || exam.status === 2}
-                onClick={onClickConfirmCloseAssessment}
-              >
-                Close Assessment
-              </button>
+
+              {administrator.isRootAdmin ? (
+                exam.status === 2 ? (
+                  <button
+                    className="btn btn-outline-primary"
+                    onClick={() => onClickShowAddMassScoreModal()}
+                  >
+                    Add Mass Score
+                  </button>
+                ) : null
+              ) : null}
+              {exam.status < 2 ? (
+                <button
+                  className="mr-3 btn btn-primary"
+                  disabled={exam.status !== 0}
+                  onClick={() => handleAssessmentStatus()}
+                >
+                  Start Assesment
+                </button>
+              ) : null}
+
+              {exam.status < 2 ? (
+                <button
+                  className="btn btn-danger"
+                  disabled={exam.status === 0 || exam.status === 2}
+                  onClick={onClickConfirmCloseAssessment}
+                >
+                  Close Assessment
+                </button>
+              ) : null}
             </div>
           </div>
           <div className="dta-head ">
@@ -736,6 +867,7 @@ const Assessment = (props: any) => {
           updateBiodata={props.updateBiodata}
           examId={exam._id}
           handleShowExtendModal={handleShowExtendModal}
+          handleScoreModal={handleScoreModal}
         />
       </div>
       <div
@@ -766,6 +898,7 @@ function mapStateToProps(state: any) {
     biodatas: state.biodatas,
     count: state.counts.biodatas,
     questions: state.counts.questions,
+    administrator: state.administrator,
     loading: state.apiCallsInProgress > 0,
   };
 }

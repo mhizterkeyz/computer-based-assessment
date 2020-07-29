@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 export const StudentList = ({ user, status, showStudent, _id }: any) => {
   return (
     <div
-      className="dta-body"
+      className="dta-body align-items-center"
       onClick={() => {
         showStudent(
           user,
@@ -59,6 +59,7 @@ export const StudentInfo = ({
   useEffect(() => {
     setStudent((i) => ({ ...i, ...stud }));
   }, [stud]);
+
   const handleRetake = async () => {
     try {
       return (
@@ -75,6 +76,14 @@ export const StudentInfo = ({
     } catch (error) {
       toast.error(error.message, { position: "top-center" });
     }
+  };
+
+  const titleCase = (str: string) => {
+    debugger;
+    return str
+      .split(" ")
+      .map((w) => w[0].toUpperCase() + w.substr(1).toLowerCase())
+      .join(" ");
   };
 
   return (
@@ -157,6 +166,26 @@ export const StudentInfo = ({
           disabled={student.status === 0 || student.status === 1}
         >
           Retake
+        </button>
+        <button
+          className="btn btn-primary"
+          onClick={() => {
+            if (student.status === 0) {
+              toast.error(
+                `${student.user.name
+                  .split(" ")
+                  .map((w) => w[0].toUpperCase() + w.substr(1).toLowerCase())
+                  .join(" ")} did not write this Exam`
+              );
+              return;
+            }
+
+            return props.handleScoreModal();
+          }}
+          // onClick={props.handleScoreModal}
+          // disabled={student.status === 0 || student.status === 1}
+        >
+          View Score
         </button>
       </div>
 

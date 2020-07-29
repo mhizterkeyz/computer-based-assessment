@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import delete_icon from "../../../svg/delete_sweep_24px_outlined.svg";
 import Modal from "../../Modal";
 import {
   createPin,
@@ -45,8 +44,9 @@ const Admin = ({ name, username, email, deleteAdministrator, _id }: any) => {
             toast.error(error.message, { position: "top-center" });
           }
         }}
+        className="btn btn-light faculty__btn"
       >
-        <img src={delete_icon} alt="delete icon" />
+        <i className="icon-delete_forever" />
       </button>
     </div>
   );

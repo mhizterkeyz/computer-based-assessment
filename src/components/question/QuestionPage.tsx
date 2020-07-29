@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, Link } from "react-router-dom";
 import "./QuestionPage.scss";
-import display_img from "../../image/Rectangle-19.png";
 import timer_icon from "../../svg/access_alarms_24px_outlined.svg";
 import Modal from "../Modal";
 import { answerExam, submitExam, getExams } from "../../api/studentApi";
@@ -255,7 +254,6 @@ const QuestionPage = (props: any) => {
           {...{
             Preloader,
             minutes,
-            display_img,
             loading,
             timer_icon,
             seconds,
