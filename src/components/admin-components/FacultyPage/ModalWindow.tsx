@@ -15,20 +15,6 @@ export const AddFacultyWindow = ({
   };
 
   const handleCreateFaculty = async () => {
-    if (
-      Object.values(faculty).filter(
-        (a: any) =>
-          a.faculty
-            .toLowerCase()
-            .indexOf(input.faculty.toLowerCase().split(" ")[0]) !== -1
-      ).length > 0
-    ) {
-      toast.warning(`${input.faculty} Faculty Exists`, {
-        position: "top-center",
-      });
-      return;
-    }
-
     try {
       await createFaculty(input.faculty);
       toast.success(`${input.faculty} Faculty was Successfully Added`, {
