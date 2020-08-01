@@ -280,3 +280,36 @@
     background: #4180fe;
   }
 }
+form {
+  position: relative;
+  div.loading-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #ffffff9c;
+    z-index: 999;
+    top: 0;
+    left: 0;
+    .spinner {
+      position: fixed;
+      width: 30px;
+      height: 30px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: rot 0.5s linear 0s infinite;
+      border-radius: 50%;
+      border: 5px solid #4180feb4;
+      border-left-color: #4180fe33;
+      border-top-color: #4180feb4;
+    }
+  }
+}
+@keyframes rot {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

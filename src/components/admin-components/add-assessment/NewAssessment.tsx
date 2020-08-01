@@ -53,6 +53,7 @@ const NewAssessment = (props: any) => {
       dur2: 0,
     },
   });
+  const [busy, setBusy] = useState(false);
 
   //  Input handlers
   //  Duration handler
@@ -85,6 +86,7 @@ const NewAssessment = (props: any) => {
   //  Submit
   const handleSubmit = async (ev: any) => {
     ev.preventDefault();
+    setBusy(true);
     try {
       const toSend = {
         ...inputs,
@@ -138,6 +140,7 @@ const NewAssessment = (props: any) => {
         position: "top-center",
       });
     }
+    setBusy(false);
   };
 
   return (
@@ -248,6 +251,9 @@ const NewAssessment = (props: any) => {
 
           <div className="d-flex justify-content-center">
             <input type="submit" value="Proceed" className="btn btn-primary" />
+          </div>
+          <div className={`loading-overlay ${busy ? "" : "d-none"}`}>
+            <div className="spinner"></div>
           </div>
         </form>
       </section>

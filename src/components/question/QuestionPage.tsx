@@ -134,7 +134,7 @@ const QuestionPage = (props: any) => {
       //  Quick check to make sure you're supposed to be here...
       (async () => {
         try {
-          const req = await answerExam(exam.answered);
+          const req = await answerExam({});
           if (req.status === 200) {
             return;
           }
@@ -163,7 +163,6 @@ const QuestionPage = (props: any) => {
     }
   }, [exam]);
   useEffect(() => {
-    if (!exam.examLoaded) return () => {};
     const { seconds, minutes, interval } = counter;
     const myInterval = setInterval(() => {
       if (seconds > 0) {
@@ -187,7 +186,7 @@ const QuestionPage = (props: any) => {
         }
       }
     }, interval);
-
+    if (!exam.examLoaded) return () => clearInterval(myInterval);
     return () => clearInterval(myInterval);
   }, [counter, props.history, exam.examLoaded]);
   useEffect(() => {
