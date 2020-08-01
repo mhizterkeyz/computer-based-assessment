@@ -47,6 +47,7 @@ export const StudentInfo = ({
   const [student, setStudent] = useState({
     status: 0,
     _id: "",
+    exam: 0,
     user: {
       name: "",
       matric: "",
@@ -170,17 +171,17 @@ export const StudentInfo = ({
         <button
           className="btn btn-primary"
           onClick={() => {
-            if (student.status === 0) {
-              toast.error(
-                `${student.user.name
-                  .split(" ")
-                  .map((w) => w[0].toUpperCase() + w.substr(1).toLowerCase())
-                  .join(" ")} did not write this Exam`
-              );
-              return;
-            }
+            // if (student.status <= 1) {
+            //   toast.error(
+            //     `${student.user.name
+            //       .split(" ")
+            //       .map((w) => w[0].toUpperCase() + w.substr(1).toLowerCase())
+            //       .join(" ")} has not submitted his/her assessment`
+            //   );
+            //   return;
+            // }
 
-            return props.handleScoreModal();
+            return props.handleScoreModal(student.exam);
           }}
           // onClick={props.handleScoreModal}
           // disabled={student.status === 0 || student.status === 1}

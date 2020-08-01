@@ -46,7 +46,10 @@ const AssessmentHistory = (props: any) => {
   ]);
   const onScrollHandler = useCallback(
     async function (ev: any) {
-      if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+      if (
+        window.innerHeight + window.scrollY >=
+        document.body.offsetHeight - 40
+      ) {
         const examLength = Object.values(exams).filter(
           (elem: any) => typeof elem === "object"
         ).length;
@@ -125,6 +128,54 @@ const AssessmentHistory = (props: any) => {
     return delayedSearch.cancel;
   }, [search.searchString, delayedSearch]);
 
+  //  Live updates useEffect
+  const [updatePageLength, setUPL] = useState(1);
+  useEffect(() => {
+    const examLength = Object.values(exams).filter(
+      (elem: any) => typeof elem === "object"
+    ).length;
+    let t = examLength / 5;
+    const a = parseInt(t.toString().split(".")[1]) > 0 ? 1 : 0;
+    t = Math.floor(t) + a;
+    if (t !== updatePageLength) {
+      setUPL(t);
+    }
+  }, [exams, updatePageLength]);
+  useEffect(() => {
+    let updaterFunction = async (page: number) => {
+      try {
+        if (search.search) {
+          const res = await getExams(page, search.searchString);
+          const searchResult: any = Object.values(res.exams).reduce(
+            (acc: any, cur: any) => ({ ...acc, [cur._id]: cur }),
+            {}
+          );
+          setSearch((i) => ({
+            ...i,
+            searchResult: { ...search.searchResult, ...searchResult },
+            searchCount: res.count,
+          }));
+        } else {
+          await loadUpExams(true, page);
+        }
+      } catch (error) {
+        //  Live update failed. Do nothing.
+      }
+      const nextPage = page + 1 > updatePageLength ? 1 : page + 1;
+      setTimeout(updaterFunction, 3000, nextPage);
+    };
+    updaterFunction(1);
+    return () => {
+      updaterFunction = async () => {};
+    };
+  }, [
+    search.search,
+    loadUpExams,
+    search.searchString,
+    updatePageLength,
+    search.searchResult,
+  ]);
+
   return (
     <>
       {props.loading ? (
@@ -171,12 +222,12 @@ const AssessmentHistory = (props: any) => {
                 fontSize: 11,
               }}
             >
-              {props.count ===
+              {props.count <=
                 Object.values(exams).filter(
                   (elem: any) => typeof elem === "object"
                 ).length ||
               (search.search &&
-                search.searchCount ===
+                search.searchCount <=
                   Object.values(exams).filter(
                     (elem: any) => typeof elem === "object"
                   ).length) ? (

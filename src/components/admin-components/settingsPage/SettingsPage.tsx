@@ -101,14 +101,20 @@ const SettingsPage = (props: any) => {
   };
 
   const { getAdministrators } = props;
+
   useEffect(() => {
-    (async () => {
+    let administratorUpdate = async () => {
       try {
-        await getAdministrators();
+        await getAdministrators(true);
       } catch (error) {
-        setErrors((i) => ({ ...i, onSaveError: error.message }));
+        //  Administrator update failed. do nothing.
       }
-    })();
+      setTimeout(administratorUpdate, 10000);
+    };
+    administratorUpdate();
+    return () => {
+      administratorUpdate = async () => {};
+    };
   }, [getAdministrators]);
 
   const nonRootAdmin = Object.values(props.otherAdministrator).filter(

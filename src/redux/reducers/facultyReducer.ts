@@ -8,7 +8,7 @@ export default function (
 ) {
   switch (action.type) {
     case types.GET_FACULTY_SUCCESS:
-      return _.merge({}, state, action.faculties);
+      return action.faculties;
     case types.CREATE_FACULTY_SUCCESS:
       return _.merge({}, state, action.faculty);
     case types.CREATE_DEPARTMENT_SUCCESS:

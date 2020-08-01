@@ -21,6 +21,23 @@ const RunningAssessment = (props: any) => {
       })();
     }
   }, [loadSingleExam, exams, activeChecked]);
+
+  //Live update
+  useEffect(() => {
+    let updater = async () => {
+      try {
+        await loadSingleExam("find?active=1", true);
+      } catch (error) {
+        //  Updates failed. be quiet...
+      }
+      setTimeout(updater, 10000);
+    };
+    updater();
+    return () => {
+      updater = async () => {};
+    };
+  });
+
   return (
     <>
       {props.loading ? (

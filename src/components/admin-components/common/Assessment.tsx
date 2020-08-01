@@ -10,7 +10,9 @@ import { StudentList, StudentInfo } from "./AssessmentStudentList";
 import { toast } from "react-toastify";
 import Modal from "../../Modal";
 import PreviewQuestions from "./PreviewQuestions";
-import AddStudentModalWindow, { AddMassScoreModal } from "./AssessmentModalWindow";
+import AddStudentModalWindow, {
+  AddMassScoreModal,
+} from "./AssessmentModalWindow";
 import {
   facultyAlphabeticalSortFn,
   departmentAlphabeticalSortFn,
@@ -224,14 +226,17 @@ const Assessment = (props: any) => {
   );
 
   useEffect(() => {
-    search.searchString.length && delayedSearch();
+    delayedSearch();
 
     return delayedSearch.cancel;
   }, [search.searchString, delayedSearch]);
 
   useEffect(() => {
     const dataCheck = async (ev: any) => {
-      if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+      if (
+        window.innerHeight + window.scrollY >=
+        document.body.offsetHeight - 40
+      ) {
         if (
           ((Object.keys(exam.bioData).length > 0 &&
             props.count[id] &&
@@ -336,6 +341,123 @@ const Assessment = (props: any) => {
       window.removeEventListener("scroll", scrollCheck);
     };
   }, [student.show]);
+
+  //  Live update effect
+  const [updatePageLength, setUPL] = useState(1);
+  useEffect(() => {
+    const length = Object.keys(exam.bioData).length;
+    let t = length / 5;
+    const a = parseInt(t.toString().split(".")[1]) > 0 ? 1 : 0;
+    t = Math.floor(t) + a;
+    if (t !== updatePageLength) {
+      setUPL(t);
+    }
+  }, [exam.bioData, updatePageLength]);
+  useEffect(() => {
+    let updaterFunction = async (page: number) => {
+      try {
+        if (search.search) {
+          const res = await getOneBioData(id, page, search.searchString);
+          const searchResult: any = Object.values(res.biodatas)[0];
+          setSearch((i) => ({
+            ...i,
+            searchResult: { ...i.searchResult, ...searchResult },
+            search: true,
+            ...res,
+            searchCount: res.count,
+          }));
+        } else {
+          await loadSingleBiodata(id, page, true);
+        }
+      } catch (error) {
+        //  Live update failed. Do nothing.
+      }
+      const nextPage = page + 1 > updatePageLength ? 1 : page + 1;
+      setTimeout(updaterFunction, 10000, nextPage);
+    };
+    if (
+      props.location.pathname === `/admin/exams/${exam._id}/questions` ||
+      props.location.pathname === "/admin/running-asssesment/questions"
+    )
+      return () => {
+        updaterFunction = async () => {};
+      };
+    updaterFunction(1);
+    return () => {
+      updaterFunction = async () => {};
+    };
+  }, [
+    updatePageLength,
+    search.search,
+    id,
+    search.searchString,
+    loadSingleBiodata,
+    props.location.pathname,
+    exam._id,
+  ]);
+  useEffect(() => {
+    let questionUpdater = async () => {
+      try {
+        await loadUpQuestions(id, query.page, true);
+      } catch (error) {
+        //  question update failed. do nothing
+      }
+      setTimeout(questionUpdater, 10000);
+    };
+    if (
+      props.location.pathname !== `/admin/exams/${exam._id}/questions` &&
+      props.location.pathname !== "/admin/running-asssesment/questions"
+    )
+      return () => {
+        questionUpdater = async () => {};
+      };
+    questionUpdater();
+    return () => {
+      questionUpdater = async () => {};
+    };
+  }, [id, query.page, loadUpQuestions, props.location.pathname, exam._id]);
+  useEffect(() => {
+    let facultyUpdater = async () => {
+      try {
+        await getFaculty();
+      } catch (error) {
+        //  Faculty update failed. do nothing
+      }
+      setTimeout(facultyUpdater, 10000);
+    };
+    if (
+      props.location.pathname !== `/admin/exams/${exam._id}/questions` &&
+      props.location.pathname !== "/admin/running-asssesment/questions"
+    )
+      return () => {
+        facultyUpdater = async () => {};
+      };
+    facultyUpdater();
+    return () => {
+      facultyUpdater = async () => {};
+    };
+  }, [getFaculty, props.location.pathname, exam._id]);
+  useEffect(() => {
+    let updateExam = async () => {
+      try {
+        await loadSingleExam(id, true);
+      } catch (error) {
+        //  update failed. do nothing
+      }
+      setTimeout(updateExam, 10000);
+    };
+    if (
+      props.location.pathname === `/admin/exams/${exam._id}/questions` ||
+      props.location.pathname === "/admin/running-asssesment/questions"
+    )
+      return () => {
+        updateExam = async () => {};
+      };
+    updateExam();
+    return () => {
+      updateExam = async () => {};
+    };
+  }, [loadSingleExam, id, props.location.pathname, exam._id]);
 
   const showStudent = (
     user: any,
@@ -444,11 +566,7 @@ const Assessment = (props: any) => {
   const onClickShowAddMassScoreModal = () => {
     setModalData({
       show: true,
-      display: (
-        <AddMassScoreModal
-          handleModalClose={handleModalClose}
-        />
-      ),
+      display: <AddMassScoreModal handleModalClose={handleModalClose} />,
     });
   };
 
@@ -507,12 +625,20 @@ const Assessment = (props: any) => {
           <h3>Examination Score</h3>
           <div className="d-flex flex-column align-items-center">
             <div className="d-flex align-items-center mb-4">
-              <h4 style={{ marginBottom: 0 }}>45</h4>
+              <h4 style={{ marginBottom: 0 }}>
+                {
+                  //  @ts-ignore
+                  exam.bioData[student._id].exam
+                }
+              </h4>
             </div>
             {administrator.isRootAdmin ? (
               <TextField
                 name="timeIncrease"
-                placeholder="45"
+                placeholder={
+                  //  @ts-ignore
+                  exam.bioData[student._id].exam
+                }
                 type="number"
                 // handleInputs={(ev: any) => setExtendTime(ev.target.value)}
               />

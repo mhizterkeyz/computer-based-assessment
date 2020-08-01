@@ -32,16 +32,19 @@ const FacultyPage = ({
   });
 
   useEffect(() => {
-    if (!faculty.loaded) {
-      (async () => {
-        try {
-          await getFaculty();
-        } catch (error) {
-          toast.error(`Error: ${error.message}`, { position: "top-center" });
-        }
-      })();
-    }
-  }, [faculty, getFaculty]);
+    let facultyUpdater = async () => {
+      try {
+        await getFaculty(true);
+      } catch (error) {
+        //  Faculty update failed. do nothing
+      }
+      setTimeout(facultyUpdater, 10000);
+    };
+    facultyUpdater();
+    return () => {
+      facultyUpdater = async () => {};
+    };
+  }, [getFaculty]);
 
   useEffect(() => {
     let acc = document.querySelectorAll(".faculty__accordion");

@@ -28,6 +28,26 @@ const Index = ({ administrator, VerifyAdministrator, ...props }: any) => {
       VerifyAdministrator();
     }
   }, [VerifyAdministrator, administrator, props.history]);
+
+  //  Live scores
+  useEffect(() => {
+    let verifyUpdate = async () => {
+      try {
+        VerifyAdministrator();
+      } catch (error) {
+        //  verification failed. mind ya business
+      }
+      setTimeout(verifyUpdate, 10000);
+    };
+    if (!localStorage["jwt"] || !localStorage["route"]) {
+      return (verifyUpdate = async () => {});
+    }
+    verifyUpdate();
+    return () => {
+      verifyUpdate = async () => {};
+    };
+  }, [VerifyAdministrator]);
+
   if (!administrator.loaded) {
     return <Preloader />;
   }

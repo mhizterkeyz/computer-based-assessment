@@ -8,6 +8,7 @@ export default function (
 ) {
   switch (action.type) {
     case types.GET_ADMINISTRATOR_SUCCESS:
+      return action.admin;
     case types.CREATE_ADMINISTRATOR_SUCCESS:
       return _.merge({}, state, action.admin);
     case types.DELETE_ADMINISTRATOR_OPTIMISTIC:
