@@ -242,6 +242,13 @@ export const createExam = (dta: any) => {
   };
 };
 
+export const deleteExam = (exam_id: string) => {
+  return async (dispatch: any) => {
+    dispatch({ type: types.DELETE_EXAM_OPTIMISTIC, exam_id });
+    await Api.deleteExamination(exam_id);
+  };
+};
+
 export const loadUpResults = (exam_id: string) => {
   return async (dispatch: any) => {
     try {

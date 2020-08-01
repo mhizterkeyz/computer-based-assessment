@@ -332,15 +332,19 @@ export const deleteAdministrator = async (admin_id: string) => {
 };
 
 export const getResults = async (exam_id: string, type = "") => {
-  try {
-    const req = await api.get(`${apiUrl}/exams/${exam_id}/results${type}`);
-    const { statusText, status } = req;
-    const res = await req.json();
-    parseResponseError({ res, status, statusText });
-    return res.data;
-  } catch (error) {
-    throw error;
-  }
+  const req = await api.get(`${apiUrl}/exams/${exam_id}/results${type}`);
+  const { statusText, status } = req;
+  const res = await req.json();
+  parseResponseError({ res, status, statusText });
+  return res.data;
+};
+
+export const deleteExamination = async (exams_id: string) => {
+  const req = await api.delete(`${apiUrl}/exams/${exams_id}`);
+  const { statusText, status } = req;
+  const res = await req.json();
+  parseResponseError({ res, status, statusText });
+  return res.data;
 };
 
 export const getFaculty = async () => {

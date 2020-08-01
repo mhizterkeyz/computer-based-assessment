@@ -4,6 +4,11 @@ import _ from "lodash";
 
 export default function (state: any = initialState.exams, action: any) {
   switch (action.type) {
+    case types.DELETE_EXAM_OPTIMISTIC:
+      return Object.keys(state).reduce((acc: any, cur: string) => {
+        if (cur === action.exam_id) return acc;
+        return { ...acc, [cur]: state[cur] };
+      }, {});
     case types.GET_EXAMS_SUCCESS:
       return _.merge({}, state, action.exams);
     case types.CREATE_EXAM_SUCCESS:

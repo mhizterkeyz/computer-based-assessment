@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 import "./AssessmentHistory.scss";
 
-const Examination = ({ exam }: { exam: any }) => {
+const Examination = ({ exam, ...props }: any) => {
   let status = {
     class: "",
     name: "",
@@ -27,7 +27,6 @@ const Examination = ({ exam }: { exam: any }) => {
       .split(" ")
       .map((w) => w[0].toUpperCase() + w.substr(1).toLowerCase())
       .join(" ");
-
   return (
     <Link
       className="dta-body"
@@ -41,7 +40,36 @@ const Examination = ({ exam }: { exam: any }) => {
       <span className="">{decDate}</span>
       {/* <span className="">7th June 2020</span> */}
       <span className={status.class}>{status.name}</span>
-     
+      <button
+        onClick={(ev: any) => {
+          ev.stopPropagation();
+          ev.preventDefault();
+          props.confirmModal(
+            <div className="text-center confirm-modal">
+              <h2>Are you sure you want to do this?</h2>
+              <p>This operation is irreversible.</p>
+              <div className="">
+                <button className="btn" onClick={() => props.closeModal()}>
+                  Cancel
+                </button>
+                <button
+                  className="btn ml-2"
+                  onClick={() => {
+                    props.deleteExam(exam._id);
+                    props.closeModal();
+                  }}
+                >
+                  Yes I'm sure
+                </button>
+              </div>
+            </div>
+          );
+        }}
+        title="delete examination"
+        className="flying-btn btn btn-light"
+      >
+        <i className="icon-delete_forever" />
+      </button>
     </Link>
   );
 };

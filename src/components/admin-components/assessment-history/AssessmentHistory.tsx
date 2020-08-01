@@ -1,10 +1,14 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { connect } from "react-redux";
 import { toast } from "react-toastify";
+import Modal from "../../Modal";
 import _ from "lodash";
 
 import "./AssessmentHistory.scss";
-import { loadUpExams } from "../../../redux/actions/AdministratorActions";
+import {
+  loadUpExams,
+  deleteExam,
+} from "../../../redux/actions/AdministratorActions";
 import { getExams } from "../../../api/AdministratorCalls";
 import Preloader from "../../Preloader";
 import Examination from "./Examination";
@@ -19,6 +23,10 @@ const AssessmentHistory = (props: any) => {
   const [exams, setexams] = useState({});
   const [preReq, setPreReq] = useState({
     calledLoadUp: false,
+  });
+  const [modalData, setModalData] = useState({
+    show: false,
+    display: <></>,
   });
   let { exams: stateExams, loadUpExams } = props;
 
@@ -176,8 +184,26 @@ const AssessmentHistory = (props: any) => {
     search.searchResult,
   ]);
 
+  //  Modal Handler
+  const handleModalClose = () => setModalData({ ...modalData, show: false });
+  const handleModalOpen = (display = <></>) =>
+    setModalData({ display, show: true });
+  const handleExamDelete = async (exam_id: string) => {
+    try {
+      await props.deleteExam(exam_id);
+      toast.success("exam deleted", { position: "top-center" });
+    } catch (error) {
+      toast.error(error.message, {
+        position: "top-center",
+      });
+    }
+  };
+
   return (
     <>
+      <Modal show={modalData.show} handleClose={handleModalClose}>
+        {modalData.display}
+      </Modal>
       {props.loading ? (
         <Preloader />
       ) : (
@@ -212,7 +238,13 @@ const AssessmentHistory = (props: any) => {
               Object.values(exams)
                 .filter((elem: any) => typeof elem === "object")
                 .map((exam: any, i: number) => (
-                  <Examination exam={exam} key={`examination_history_${i}`} />
+                  <Examination
+                    exam={exam}
+                    confirmModal={handleModalOpen}
+                    closeModal={handleModalClose}
+                    deleteExam={handleExamDelete}
+                    key={`examination_history_${i}`}
+                  />
                 ))
             )}
             <div
@@ -253,6 +285,7 @@ function mapStateToProps(state: any) {
 
 const mapDispatchToProps = {
   loadUpExams,
+  deleteExam,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssessmentHistory);

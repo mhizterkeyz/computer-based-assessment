@@ -3,12 +3,33 @@
   margin: 0 auto;
 
   .dta-head {
-    grid-template-columns: 1fr 1fr .3fr .3fr;
+    grid-template-columns: 1fr 1fr 0.3fr 0.3fr;
     font-weight: 600;
   }
 
   .dta-body {
-    grid-template-columns: 1fr 1fr .3fr .3fr;
+    grid-template-columns: 1fr 1fr 0.3fr 0.3fr;
+    position: relative;
     // font-weight: 600;
+    .flying-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      // font-size: 1.2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #fff;
+      color: #c4c4c4;
+      border: 1px solid #c4c4c4;
+      position: absolute;
+      right: 5%;
+      top: 50%;
+      transform: translateY(-50%);
+      &:hover {
+        color: #ee291b;
+        border-color: #ee291b;
+      }
+    }
   }
 }
