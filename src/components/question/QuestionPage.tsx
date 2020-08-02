@@ -144,7 +144,7 @@ const QuestionPage = (props: any) => {
             return window.location.reload();
           }
         } catch (error) {
-          toast.error("Error: " + error.message, { position: "top-center" });
+          //  We don't need to know if your check failed...
         }
       })();
       const { timeAllowed, displayTime, timeLeft } = exam;
