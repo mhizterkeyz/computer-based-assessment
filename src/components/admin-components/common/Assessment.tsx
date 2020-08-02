@@ -358,14 +358,30 @@ const Assessment = (props: any) => {
       try {
         if (search.search) {
           const res = await getOneBioData(id, page, search.searchString);
-          const searchResult: any = Object.values(res.biodatas)[0];
-          setSearch((i) => ({
-            ...i,
-            searchResult: { ...i.searchResult, ...searchResult },
-            search: true,
+          let searchResult: any = Object.values(res.biodatas)[0];
+          const arr = (function categorize(arra, res = {}, page = 1): any {
+            // @ts-ignore
+            res[page] = arra.splice(0, 5).reduce((acc: any, cur: any) => {
+              return { ...acc, [cur._id]: cur };
+            }, {});
+            if (arra.length <= 0) return res;
+            return categorize(arra, res, ++page);
+          })(Object.values(search.searchResult));
+          arr[page] = searchResult;
+          searchResult = Object.values(arr).reduce(
+            (acc: any, cur: any) => ({ ...acc, ...cur }),
+            {}
+          );
+          const newSearch = {
+            ...search,
+            searchResult,
             ...res,
             searchCount: res.count,
-          }));
+          };
+          if (!_.isEqual(search, newSearch)) {
+            // @ts-ignore
+            setSearch(newSearch);
+          }
         } else {
           await loadSingleBiodata(id, page, true);
         }
@@ -387,10 +403,9 @@ const Assessment = (props: any) => {
       updaterFunction = async () => {};
     };
   }, [
+    search,
     updatePageLength,
-    search.search,
     id,
-    search.searchString,
     loadSingleBiodata,
     props.location.pathname,
     exam._id,

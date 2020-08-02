@@ -154,15 +154,31 @@ const AssessmentHistory = (props: any) => {
       try {
         if (search.search) {
           const res = await getExams(page, search.searchString);
-          const searchResult: any = Object.values(res.exams).reduce(
+          let searchResult: any = Object.values(res.exams).reduce(
             (acc: any, cur: any) => ({ ...acc, [cur._id]: cur }),
             {}
           );
-          setSearch((i) => ({
-            ...i,
-            searchResult: { ...search.searchResult, ...searchResult },
+          const arr = (function categorize(arra, res = {}, page = 1): any {
+            // @ts-ignore
+            res[page] = arra.splice(0, 5).reduce((acc: any, cur: any) => {
+              return { ...acc, [cur._id]: cur };
+            }, {});
+            if (arra.length <= 0) return res;
+            return categorize(arra, res, ++page);
+          })(Object.values(search.searchResult));
+          arr[page] = searchResult;
+          searchResult = Object.values(arr).reduce(
+            (acc: any, cur: any) => ({ ...acc, ...cur }),
+            {}
+          );
+          const newSearch = {
+            ...search,
+            searchResult,
             searchCount: res.count,
-          }));
+          };
+          if (!_.isEqual(search, newSearch)) {
+            setSearch(newSearch);
+          }
         } else {
           await loadUpExams(true, page);
         }
@@ -170,19 +186,13 @@ const AssessmentHistory = (props: any) => {
         //  Live update failed. Do nothing.
       }
       const nextPage = page + 1 > updatePageLength ? 1 : page + 1;
-      setTimeout(updaterFunction, 3000, nextPage);
+      setTimeout(updaterFunction, 10000, nextPage);
     };
     updaterFunction(1);
     return () => {
       updaterFunction = async () => {};
     };
-  }, [
-    search.search,
-    loadUpExams,
-    search.searchString,
-    updatePageLength,
-    search.searchResult,
-  ]);
+  }, [search, loadUpExams, updatePageLength, search.searchResult]);
 
   //  Modal Handler
   const handleModalClose = () => setModalData({ ...modalData, show: false });

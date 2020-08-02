@@ -12,9 +12,13 @@ export const AdministratorVerifySuccess = (administrator: any) => ({
   administrator,
 });
 
-export const getExamsSuccess = (exams: any) => ({
+export const getExamsSuccess = (
+  exams: any,
+  page: boolean | number | undefined = false
+) => ({
   type: types.GET_EXAMS_SUCCESS,
   exams,
+  page,
 });
 
 export const updateExamStatusSuccess = (exams: any) => ({
@@ -128,7 +132,9 @@ export const loadUpExams = (updateCall: boolean = false, page = 1) => {
       !updateCall && dispatch(beginApiCall());
       const data = await Api.getExams(page);
       dispatch({ type: types.UPDATE_COUNTS, count: { exams: data.count } });
-      return dispatch(getExamsSuccess(data.exams));
+      let p: undefined | boolean | number = page;
+      if (!updateCall) p = false;
+      return dispatch(getExamsSuccess(data.exams, p));
     } catch (error) {
       !updateCall && dispatch(apiCallError());
       throw error;
@@ -193,9 +199,12 @@ export const loadSingleBiodata = (
           },
         },
       });
+      let updat = {};
+      if (updateCall) updat = { page, id };
       return dispatch({
         type: types.GET_BIODATA_SUCCESS,
         biodatas: data.biodatas,
+        ...updat,
       });
     } catch (error) {
       !updateCall && dispatch(apiCallError());
