@@ -163,6 +163,7 @@ const QuestionPage = (props: any) => {
     }
   }, [exam]);
   useEffect(() => {
+    if (!exam.examLoaded) return () => {};
     const { seconds, minutes, interval } = counter;
     const myInterval = setInterval(() => {
       if (seconds > 0) {
@@ -186,7 +187,6 @@ const QuestionPage = (props: any) => {
         }
       }
     }, interval);
-    if (!exam.examLoaded) return () => clearInterval(myInterval);
     return () => clearInterval(myInterval);
   }, [counter, props.history, exam.examLoaded]);
   useEffect(() => {
