@@ -104,7 +104,10 @@ const Assessment = (props: any) => {
   const [resultUrl, setResultUrl] = useState({
     pdf: "",
     xlsx: "",
-    loading: true,
+    loadingPdf: true,
+    loadingXlsx: true,
+    refreshingPdf: false,
+    refreshingXlsx: false,
   });
 
   const [editScore, setEditScore] = useState(false);
@@ -162,17 +165,25 @@ const Assessment = (props: any) => {
     if (exam.status === 2) {
       (async () => {
         try {
-          setResultUrl((i) => ({ ...i, loading: true }));
+          setResultUrl((i) => ({ ...i, loadingPdf: true }));
           const pdf = `http://localhost:8000/api/static/${await getResults(
             exam._id
           )}`;
+          setResultUrl((i) => ({ ...i, pdf, loadingPdf: false }));
+        } catch (error) {
+          setResultUrl((i) => ({ ...i, pdf: "", loadingPdf: true }));
+        }
+      })();
+      (async () => {
+        try {
+          setResultUrl((i) => ({ ...i, loadingXlsx: true }));
           const xlsx = `http://localhost:8000/api/static/${await getResults(
             exam._id,
             "?xlsx=1"
           )}`;
-          setResultUrl((i) => ({ ...i, pdf, xlsx, loading: false }));
+          setResultUrl((i) => ({ ...i, xlsx, loadingXlsx: false }));
         } catch (error) {
-          setResultUrl((i) => ({ ...i, pdf: "", xlsx: "", loading: true }));
+          setResultUrl((i) => ({ ...i, xlsx: "", loadingXlsx: true }));
         }
       })();
     }
@@ -885,22 +896,78 @@ const Assessment = (props: any) => {
               Upload Result
             </button>
             <div>
-              <a
-                href={`${resultUrl.pdf}`}
-                className={`btn mr-1 btn-success ${
-                  resultUrl.loading ? "disabled" : ""
-                }`}
-              >
-                Download Result <i className="icon-file-pdf-o ml-2"></i>
-              </a>
-              <a
-                href={`${resultUrl.xlsx}`}
-                className={`btn btn-success ${
-                  resultUrl.loading ? "disabled" : ""
-                }`}
-              >
-                Download Result <i className="icon-file_download ml-1"></i>
-              </a>
+              <div className="btn-group mr-2">
+                <a
+                  href={`${resultUrl.pdf}`}
+                  className={`btn btn-success ${
+                    resultUrl.loadingPdf ? "disabled" : ""
+                  }`}
+                >
+                  Download Result <i className="icon-file-pdf-o ml-2"></i>
+                </a>
+                <button
+                  onClick={async () => {
+                    setResultUrl((i) => ({ ...i, refreshingPdf: true }));
+                    try {
+                      const pdf = `http://localhost:8000/api/static/${await getResults(
+                        exam._id,
+                        "?refresh=1"
+                      )}`;
+                      setResultUrl((i) => ({ ...i, pdf }));
+                    } catch (error) {
+                      toast.error(error.message, { position: "top-center" });
+                    }
+                    setResultUrl((i) => ({ ...i, refreshingPdf: false }));
+                  }}
+                  title="refresh pdf"
+                  className="btn btn-success"
+                  disabled={resultUrl.refreshingPdf}
+                >
+                  <span
+                    className={`glyphicon ${
+                      resultUrl.refreshingPdf ? "spin" : ""
+                    }`}
+                  >
+                    &#128472;
+                  </span>
+                </button>
+              </div>
+              <div className="btn-group">
+                <a
+                  href={`${resultUrl.xlsx}`}
+                  className={`btn btn-success ${
+                    resultUrl.loadingXlsx ? "disabled" : ""
+                  }`}
+                >
+                  Download Result <i className="icon-file_download ml-1"></i>
+                </a>
+                <button
+                  onClick={async () => {
+                    setResultUrl((i) => ({ ...i, refreshingXlsx: true }));
+                    try {
+                      const xlsx = `http://localhost:8000/api/static/${await getResults(
+                        exam._id,
+                        "?xlsx=1&&refresh=1"
+                      )}`;
+                      setResultUrl((i) => ({ ...i, xlsx }));
+                    } catch (error) {
+                      toast.error(error.message, { position: "top-center" });
+                    }
+                    setResultUrl((i) => ({ ...i, refreshingXlsx: false }));
+                  }}
+                  title="refresh spreadsheet"
+                  className={`btn btn-success`}
+                  disabled={resultUrl.refreshingXlsx}
+                >
+                  <span
+                    className={`glyphicon ${
+                      resultUrl.refreshingXlsx ? "spin" : ""
+                    }`}
+                  >
+                    &#128472;
+                  </span>
+                </button>
+              </div>
             </div>
           </>
         ) : (
