@@ -886,8 +886,6 @@ const Assessment = (props: any) => {
             </button>
             <div>
               <a
-                target="_blank"
-                rel="noopener noreferrer"
                 href={`${resultUrl.pdf}`}
                 className={`btn mr-1 btn-success ${
                   resultUrl.loading ? "disabled" : ""
@@ -896,8 +894,6 @@ const Assessment = (props: any) => {
                 Download Result <i className="icon-file-pdf-o ml-2"></i>
               </a>
               <a
-                target="_blank"
-                rel="noopener noreferrer"
                 href={`${resultUrl.xlsx}`}
                 className={`btn btn-success ${
                   resultUrl.loading ? "disabled" : ""
