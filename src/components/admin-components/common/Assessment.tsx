@@ -774,7 +774,7 @@ const Assessment = (props: any) => {
                     props.count[props.match.params.id].count) ||
                   0}
             </h3>
-            <h4>Students</h4>
+            <h4>Total Students</h4>
           </div>
         </div>
         <div className="d-flex dash-detail">

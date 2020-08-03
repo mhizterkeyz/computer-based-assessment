@@ -136,8 +136,9 @@ const NewAssessment = (props: any) => {
       });
       props.history.push("/admin/exams");
     } catch (error) {
-      toast.error(`Try that again: ${error.message}`, {
+      toast.error(`Fix this Error: ${error.message}`, {
         position: "top-center",
+        autoClose: false,
       });
     }
     setBusy(false);
