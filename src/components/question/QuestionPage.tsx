@@ -241,7 +241,7 @@ const QuestionPage = (props: any) => {
   const { minutes, seconds } = counter;
   if (!exam.examLoaded) {
     //  500 error should go here
-    return <></>;
+    return <Preloader />;
   }
   return (
     <>
