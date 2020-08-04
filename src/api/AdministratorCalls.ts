@@ -60,13 +60,17 @@ export const verifyAdministrator = async () => {
     throw error;
   }
 };
-// const slugify = (data: string): string => {
-//   data = data.replace(" ", "-").toLowerCase();
-//   if (data.includes(" ")) {
-//     return slugify(data);
-//   }
-//   return data;
-// };
+
+export const addMassScore = async (examId: string, score: number) => {
+  const req = await api
+    .body({ score })
+    .put(`${apiUrl}/exams/${examId}/mass-score`);
+  const { status, statusText } = req;
+  const res = await req.json();
+  parseResponseError({ res, status, statusText });
+  return res.data;
+};
+
 export const getExams = async (page = 1, search = "") => {
   const url =
     search.length > 0
