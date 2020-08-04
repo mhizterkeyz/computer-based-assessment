@@ -592,7 +592,12 @@ const Assessment = (props: any) => {
   const onClickShowAddMassScoreModal = () => {
     setModalData({
       show: true,
-      display: <AddMassScoreModal handleModalClose={handleModalClose} />,
+      display: (
+        <AddMassScoreModal
+          examId={exam._id}
+          handleModalClose={handleModalClose}
+        />
+      ),
     });
   };
 
