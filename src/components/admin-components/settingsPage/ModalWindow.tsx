@@ -178,7 +178,7 @@ export const AddAdminModalWindow = ({
         />
 
         <div className="">
-          <button className="btn btn-primary" onClick={handleModalClose}>
+          <button className="btn btn-danger" onClick={handleModalClose}>
             Cancel
           </button>
 

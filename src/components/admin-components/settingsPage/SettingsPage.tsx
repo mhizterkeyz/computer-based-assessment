@@ -180,7 +180,7 @@ const SettingsPage = (props: any) => {
           name={{ key: "PROFILE", value: "Click to update profile" }}
           onClickShowModal={() => onClickShowProfileModal()}
         />
-
+        
         <div className="admin-list">
           <div className="d-flex justify-content-between align-items-center mb-3">
             <h3>View Admin</h3>

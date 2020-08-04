@@ -43,7 +43,7 @@ const PreviewQuestions = ({ setPreview, examQuestions, ...props }: any) => {
               >
                 {`Question ${page}`}
               </h4>
-              <button
+              {/* <button
                 className="btn"
                 style={{
                   color: "#007bff",
@@ -52,7 +52,7 @@ const PreviewQuestions = ({ setPreview, examQuestions, ...props }: any) => {
               >
                 Edit Question
                 <i className="icon-edit ml-2"></i>
-              </button>
+              </button> */}
             </div>
             <div className="d-flex justify-content-center">
               {question &&

@@ -73,6 +73,17 @@ const CredentialsPage = ({
           >
             Proceed
           </button>
+
+          <button
+            className="btn ml-3"
+            onClick={() => {
+              delete localStorage["jwt"];
+              delete localStorage["route"];
+              window.location.reload();
+            }}
+          >
+            Logout
+          </button>
         </div>
       </div>
     </section>

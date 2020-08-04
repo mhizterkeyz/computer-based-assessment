@@ -739,7 +739,7 @@ const Assessment = (props: any) => {
               : "Closed"}
           </span>
 
-          <button
+          {/* <button
             className="btn mt-2"
             style={{
               color: "#007bff",
@@ -748,7 +748,7 @@ const Assessment = (props: any) => {
           >
             Edit Assesment
             <i className="icon-edit ml-2"></i>
-          </button>
+          </button> */}
         </span>
       </h2>
       {/* Quick Info Section */}

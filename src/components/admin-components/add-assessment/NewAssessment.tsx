@@ -83,6 +83,7 @@ const NewAssessment = (props: any) => {
     const { name, value } = ev.target;
     setInputs({ ...inputs, [name]: value });
   };
+  
   //  Submit
   const handleSubmit = async (ev: any) => {
     ev.preventDefault();
@@ -96,7 +97,11 @@ const NewAssessment = (props: any) => {
             ? parseInt(inputs.questionsPerStudent)
             : inputs.questionsPerStudent,
       };
-      await props.createExam(toSend);
+
+      let examResp = await props.createExam(toSend);
+      console.log(examResp);
+      
+
       setInputs({
         timeAllowed: 0,
         displayTime: 0,
@@ -131,9 +136,11 @@ const NewAssessment = (props: any) => {
         },
         instructions: "",
       });
+
       toast.success("Exam added successfully!", {
         position: "top-center",
       });
+
       props.history.push("/admin/exams");
     } catch (error) {
       toast.error(`Fix this Error: ${error.message}`, {

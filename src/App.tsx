@@ -36,6 +36,11 @@ function App({
       })();
     }
   }, [verifyStudent, student]);
+
+  useEffect(() => {
+    document.addEventListener("contextmenu", (event) => event.preventDefault());
+  });
+
   if (!student.loaded) {
     return (
       <Router>
@@ -47,6 +52,7 @@ function App({
       </Router>
     );
   }
+
   if (!student.loggedIn) {
     return (
       <Router>
