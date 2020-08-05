@@ -16,6 +16,7 @@ import Header from "./components/Header";
 import { student as studentInterface } from "./components/model/student";
 import { verifyStudent } from "./redux/actions/studentAction";
 import Preloader from "./components/Preloader";
+import ContactDeveloperPage from "./components/admin-components/ContactDeveloper/ContactDeveloper";
 // import LiveUpdater from "./LiveUpdater";
 
 function App({
@@ -58,6 +59,7 @@ function App({
       <Router>
         <Switch>
           <Route path="/admin" component={Administrator} />
+          <Route path="/developer" component={ContactDeveloperPage} />
           <Route
             render={(routeProps) => <StudentLoginPage {...routeProps} />}
           />
