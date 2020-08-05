@@ -663,7 +663,7 @@ const Assessment = (props: any) => {
                 }
               </h4>
             </div>
-            {administrator.isRootAdmin ? (
+            {/* {administrator.isRootAdmin ? (
               <TextField
                 name="timeIncrease"
                 placeholder={
@@ -674,8 +674,8 @@ const Assessment = (props: any) => {
                 // handleInputs={(ev: any) => setExtendTime(ev.target.value)}
               />
             ) : (
-              <></>
-            )}
+              null
+            )} */}
           </div>
 
           <div className="">
@@ -683,7 +683,7 @@ const Assessment = (props: any) => {
               Cancel
             </button>
 
-            {administrator.isRootAdmin ? (
+            {/* {administrator.isRootAdmin ? (
               <button
                 // onClick={handleTimeExtend}
                 type="submit"
@@ -692,8 +692,8 @@ const Assessment = (props: any) => {
                 Add
               </button>
             ) : (
-              <></>
-            )}
+              null
+            )} */}
           </div>
         </div>
       ),
