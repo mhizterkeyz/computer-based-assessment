@@ -185,54 +185,32 @@ export const submitExam = async (data: any) => {
     const { statusText, status } = req;
     const res = await req.json();
     parseResponseError({ res, status, statusText });
-    return {
-      exams: {
-        [res.data.exam._id]: {
-          ...res.data.exam,
-          questions: res.data.questions
-            ? res.data.questions
-                .sort((a: any, b: any) => {
-                  const d1: any = new Date(a.createdAt);
-                  const d2: any = new Date(b.createdAt);
-                  return d1 - d2;
-                })
-                .reduce(
-                  (acc: any, cur: any, i: number) => ({ ...acc, [i + 1]: cur }),
-                  {}
-                )
-            : {},
-        },
-      },
-      count: res.data.examCount,
-      biodatas: {
-        [res.data.exam._id]: res.data.bioData
-          ? res.data.bioData.reduce(
-              (acc: any, cur: any) => ({ ...acc, [cur._id]: cur }),
-              {}
-            )
-          : {},
-      },
-      biodataCount: {
-        biodatas: {
-          [res.data.exam._id]: {
-            count: res.data.bioData ? res.data.bioData.length : 0,
-            done: 0,
-            pending: res.data.bioData ? res.data.bioData.length : 0,
-            running: 0,
-          },
-        },
-      },
-      questionsCount: {
-        questions: {
-          [res.data.exam._id]: res.data.questions
-            ? res.data.questions.length
-            : 0,
-        },
-      },
-    };
+    return res.data.exam;
   } catch (error) {
     throw error;
   }
+};
+
+export const addBiodata = async ({ toSend, examId }: any) => {
+  const req = await api
+    .body(toSend)
+    .headers({ Authorization: "Bearer " + localStorage["jwt"] })
+    .post(`${apiUrl}/exams/${examId}/biodatas`);
+  const { statusText, status } = req;
+  const res = await req.json();
+  parseResponseError({ res, status, statusText });
+  return res.data;
+};
+
+export const addQuestion = async ({ toSend, examId }: any) => {
+  const req = await api
+    .body(toSend)
+    .headers({ Authorization: "Bearer " + localStorage["jwt"] })
+    .post(`${apiUrl}/exams/${examId}/questions`);
+  const { statusText, status } = req;
+  const res = await req.json();
+  parseResponseError({ res, status, statusText });
+  return res.data;
 };
 
 export const getBioData = async (base64: any) => {
@@ -432,17 +410,6 @@ export const createDepartment = async (
   } catch (error) {
     throw error;
   }
-};
-
-export const addBiodata = async ({ toSend, examId }: any) => {
-  const req = await api
-    .body(toSend)
-    .headers({ Authorization: "Bearer " + localStorage["jwt"] })
-    .post(`${apiUrl}/exams/${examId}/biodatas`);
-  const { statusText, status } = req;
-  const res = await req.json();
-  parseResponseError({ res, status, statusText });
-  return res.data;
 };
 
 export const updateSingleBiodata = async ({ data, examId, biodataId }: any) => {

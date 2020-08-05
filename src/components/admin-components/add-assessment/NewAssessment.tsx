@@ -6,6 +6,12 @@ import { toast } from "react-toastify";
 import BioData from "./NewBioData";
 import Questions from "./NewQuestions";
 import { createExam } from "../../../redux/actions/AdministratorActions";
+import {
+  submitExam,
+  addBiodata,
+  addQuestion,
+  deleteExamination,
+} from "../../../api/AdministratorCalls";
 import "./AddAssessment.scss";
 
 const NewAssessment = (props: any) => {
@@ -54,6 +60,21 @@ const NewAssessment = (props: any) => {
     },
   });
   const [busy, setBusy] = useState(false);
+  const [counts, setCounts] = useState({
+    examData: false,
+    questions: {
+      count: 0,
+      total: 0,
+    },
+    biodata: {
+      count: 0,
+      total: 0,
+    },
+    error: {
+      status: false,
+      message: "",
+    },
+  });
 
   //  Input handlers
   //  Duration handler
@@ -83,65 +104,118 @@ const NewAssessment = (props: any) => {
     const { name, value } = ev.target;
     setInputs({ ...inputs, [name]: value });
   };
-  
+
   //  Submit
   const handleSubmit = async (ev: any) => {
     ev.preventDefault();
     setBusy(true);
     try {
-      const toSend = {
-        ...inputs,
-        questions: Object.values(inputs.questions),
-        questionsPerStudent:
-          typeof inputs.questionsPerStudent === "string"
-            ? parseInt(inputs.questionsPerStudent)
-            : inputs.questionsPerStudent,
+      const {
+        timeAllowed,
+        displayTime,
+        title,
+        course,
+        questionsPerStudent,
+        examType,
+        instructions,
+      } = inputs;
+      //  Lets separate our data
+      const metadata = {
+        timeAllowed,
+        displayTime,
+        title,
+        course,
+        questionsPerStudent,
+        examType,
+        instructions,
       };
 
-      let examResp = await props.createExam(toSend);
-      console.log(examResp);
-      
-
-      setInputs({
-        timeAllowed: 0,
-        displayTime: 0,
-        title: "",
-        course: "",
-        questionsPerStudent: 35,
-        examType: true,
-        bioData: [
-          {
-            matric: "",
-            name: "",
-            department: "",
-            level: 100,
-            ca: 0,
-          },
-        ],
-        questions: {
-          "0": {
-            images: [],
-            question: "",
-            questionFor: [],
-            type: true,
-            marks: 0,
-            correct: "a",
-            options: {
-              a: "",
-              b: "",
-              c: "",
-              d: "",
-            },
-          },
-        },
-        instructions: "",
+      //  First we send our meta data
+      const exam = await submitExam(metadata);
+      setCounts({
+        ...counts,
+        examData: true,
       });
 
-      toast.success("Exam added successfully!", {
-        position: "top-center",
-      });
+      //upon successful exam upload exam _id is returned
+
+      try {
+        await new Promise((resolve, reject) => {
+          let running = true;
+          let done = {
+            question: false,
+            biodata: false,
+          };
+          const setDone = (prop: string) => {
+            // @ts-ignore
+            done[prop] = true;
+            if (done.question && done.biodata) {
+              resolve("done");
+            }
+          };
+          //We should upload questions first
+          (async function questionLoop(ques, res = {}): Promise<any> {
+            if (ques.length <= 0 || !running) {
+              setDone("question");
+              return res;
+            }
+            try {
+              let question = ques.splice(0, 1)[0];
+              question = await addQuestion({
+                toSend: question,
+                examId: exam._id,
+              });
+              setCounts((i) => ({
+                ...i,
+                questions: {
+                  ...i.questions,
+                  count: i.questions.count + 1,
+                  total: ques.length + 1 + i.questions.count,
+                },
+              }));
+              // @ts-ignore
+              res[question._id] = question;
+              return await questionLoop(ques, res);
+            } catch (error) {
+              running = false;
+              reject(error);
+            }
+          })(Object.values(inputs.questions));
+          (async function biodataLoop(bio, res = {}): Promise<any> {
+            if (bio.length <= 0 || !running) {
+              setDone("biodata");
+              return res;
+            }
+            try {
+              let biodata = bio.splice(0, 1)[0];
+              biodata = await addBiodata({ toSend: biodata, examId: exam._id });
+              setCounts((i) => ({
+                ...i,
+                biodata: {
+                  ...i.biodata,
+                  count: i.biodata.count + 1,
+                  total: bio.length + 1 + i.biodata.count,
+                },
+              }));
+              // @ts-ignore
+              res[biodata._id] = biodata;
+              return await biodataLoop(bio, res);
+            } catch (error) {
+              running = false;
+              reject(error);
+            }
+          })(Object.values(inputs.bioData));
+        });
+      } catch (error) {
+        // In the event something goes wrong, we want to clean up
+        await deleteExamination(exam._id);
+        throw error;
+      }
 
       props.history.push("/admin/exams");
+      toast.success("Assessment added successfully", {
+        position: "top-center",
+      });
     } catch (error) {
       toast.error(`Fix this Error: ${error.message}`, {
         position: "top-center",
@@ -262,6 +336,34 @@ const NewAssessment = (props: any) => {
           </div>
           <div className={`loading-overlay ${busy ? "" : "d-none"}`}>
             <div className="spinner"></div>
+            <div
+              className="progress"
+              style={{
+                position: "fixed",
+                top: "70%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                padding: "20px",
+              }}
+            >
+              <div className="uploading_data">
+                Uploading exam data ({counts.examData ? "100%" : "0%"})
+              </div>
+              <div className="uplaoding_questions">
+                Uploading questions (
+                {Math.floor(
+                  (counts.questions.count / (counts.questions.total || 1)) * 100
+                )}
+                %)
+              </div>
+              <div className="uplaoding_questions">
+                Uploading biodata (
+                {Math.floor(
+                  (counts.biodata.count / (counts.biodata.total || 1)) * 100
+                )}
+                %)
+              </div>
+            </div>
           </div>
         </form>
       </section>
