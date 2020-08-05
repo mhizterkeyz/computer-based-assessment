@@ -180,16 +180,18 @@ const SettingsPage = (props: any) => {
           name={{ key: "PROFILE", value: "Click to update profile" }}
           onClickShowModal={() => onClickShowProfileModal()}
         />
-        
+
         <div className="admin-list">
           <div className="d-flex justify-content-between align-items-center mb-3">
             <h3>View Admin</h3>
-            <button
-              className="btn btn-primary ml-3 add-admin"
-              onClick={onClickShowAddAdminModal}
-            >
-              Add Admin
-            </button>
+            {props.administrator.isRootAdmin ? (
+              <button
+                className="btn btn-primary ml-3 add-admin"
+                onClick={onClickShowAddAdminModal}
+              >
+                Add Admin
+              </button>
+            ) : null}
           </div>
           <div className="dta-head ">
             <span>Name</span>
