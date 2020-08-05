@@ -15,6 +15,9 @@ export const parseResponseError = ({ res, status, statusText }: any) => {
       }, "");
     const err = new Error(message);
     err.name = statusText.replace(" ", "_");
+    
+    // @ts-ignore
+    err.status = status;
     throw err;
   }
 };

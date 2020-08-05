@@ -5,8 +5,6 @@ import Header from "../Header";
 import { connect } from "react-redux";
 import { loadStudent } from "../../redux/actions/studentAction";
 import { toast } from "react-toastify";
-// import Header from '../Header';
-// import Footer from '../Footer';
 
 const StudentLoginPage = (props: any) => {
   useEffect(() => {
@@ -30,20 +28,6 @@ const StudentLoginPage = (props: any) => {
   const handleSubmit = async (ev: FormEvent) => {
     ev.preventDefault();
     if (busy) return;
-    // try {
-    //   setInputs({ ...inputs, invalid: false });
-
-    //   const user = await login(inputs);
-    //   console.log(user);
-    //   if (!user.status) {
-    //     setInputs({ ...inputs, invalid: true, password: "" });
-    //   }
-    //   if (user) setBusy(false);
-    //   // props.handleLogin(user);
-    // } catch (e) {
-    //   //TODO: Error handling
-    //   console.log(e);
-    // }
 
     try {
       setBusy(true);
@@ -53,6 +37,11 @@ const StudentLoginPage = (props: any) => {
         toast.error(`Invalid Matric.no or PIN.`, { position: "top-center" });
         setBusy(false);
         return setInputs({ ...inputs, password: "", invalid: true });
+      }
+      
+      if (error.status === 451) {
+        props.history.push("/developer");
+        return;
       }
       toast.error(`Network Error: ${error.message}`, {
         position: "top-center",

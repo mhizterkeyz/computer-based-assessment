@@ -35,6 +35,12 @@ const Login = (props: any) => {
         setBusy(false);
         return setInputs({ ...inputs, password: "", invalid: true });
       }
+      
+      if (error.status === 451) {
+        props.history.push("/developer");
+        return;
+      }
+
       toast.error(`Network error: ${error.message}`, {
         position: "top-center",
       });
